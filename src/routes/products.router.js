@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
 
     let limit = req.query.limit;
     if (!limit) res.send({ products });
-    else if (isNaN(limit) || (!isNaN(limit) && limit <= 0))
+    else if (isNaN(limit) || (!isNaN(limit) && +limit <= 0))
       res
         .status(400)
         .send({ status: "error", error: "limit must be a positive number" });

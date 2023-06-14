@@ -1,10 +1,11 @@
 import fs from "fs";
-import { Product, ProductManager } from "./products.js";
+import { ProductManager } from "./products.js";
+import __dirname from "../utils.js";
 
 export class Cart {
-  constructor(products = []) {
+  constructor() {
     this.id = undefined;
-    this.products = products;
+    this.products = [];
   }
 }
 
@@ -55,22 +56,8 @@ export class CartManager {
       };
     }
 
-    //Verificamos que existan los productos del cart
-    const pm = new ProductManager();
-    let products = await pm.getProducts();
-    newCart.products.forEach((p) => {
-      if (!products.includes(p?.id))
-        return { error: "One of the products doesn't exist" };
-      if (!Object.keys(p).includes("quantity"))
-        return {
-          error: "One of the products doesn't have the quantity property",
-        };
-    });
-
-    let carts = await this.getCarts();
-
     //Asignamos el id
-    console.log(carts);
+    let carts = await this.getCarts();
     carts.length === 0
       ? (newCart.id = 1)
       : (newCart.id = carts[carts?.length - 1].id + 1);
@@ -89,84 +76,45 @@ export class CartManager {
       return { error: "Product Id property must be a positive number" };
 
     //Verificamos si existe carrito
-    let newCart = await this.getCartById(cartId);
-    if (Object.keys(newCart).includes("error"))
+    let cartToEdit = await this.getCartById(cartId);
+    if (Object.keys(cartToEdit).includes("error"))
       return { error: "Cart not found" };
 
     //Verificamos si existe producto
-    let mp = new ProductManager();
+    let mp = new ProductManager(`${__dirname}/data/products.json`);
     let product = await mp.getProductById(productId);
     if (Object.keys(product).includes("error"))
-      return { error: "Product to add doesn't exist" };
+      return { error: "Product not found" };
 
     //Agregamos el producto al carrito
-    let productExistInCart = newCart?.products.some((p) => p?.id === productId);
+    let productExistInCart = cartToEdit?.products.some(
+      (p) => p?.productId === productId
+    );
     if (productExistInCart) {
-      newCart.products = newCart.products.map((p) =>
-        p?.id === productId ? { ...p, quantity: p?.quantity + 1 } : p
+      cartToEdit.products = cartToEdit.products.map((p) =>
+        p?.productId === productId ? { ...p, quantity: p?.quantity + 1 } : p
       );
     } else {
-      newCart.products.push({ ...product, quantity: 1 });
+      cartToEdit.products.push({ productId: product.id, quantity: 1 });
     }
 
     //Actualizamos la lista de carritos
     let carts = await this.getCarts();
-    let newCarts = carts.map((c) => (c.id === newCart.id ? newCart : c));
+    let newCarts = carts.map((c) => (c.id === cartToEdit.id ? cartToEdit : c));
 
     //Actualizamos el archivo
     fs.promises.writeFile(this.__path, JSON.stringify(newCarts, null, "\t"));
-    return newCart;
+    return cartToEdit;
   };
 }
 
 // const prueba = async () => {
 //   const cm = new CartManager("../data/carts.json");
-//   const pm = new ProductManager("../data/products.json");
 //   console.log(await cm.getCarts());
-//   const prod1 = new Product(
-//     "cod1",
-//     "producto 1",
-//     "descripcion 1",
-//     1000,
-//     true,
-//     11,
-//     "Velas"
-//   );
-//   const prod2 = new Product(
-//     "cod2",
-//     "producto 2",
-//     "descripcion 2",
-//     2000,
-//     true,
-//     12,
-//     "Mates"
-//   );
-// const prod3 = new Product(
-//   "cod4",
-//   "producto 4",
-//   "descripcion 4",
-//   4000,
-//   true,
-//   14,
-//   "Ruedas"
-// );
-//   console.log(await pm.addProduct(prod1));
-//   console.log(await pm.addProduct(prod2));
-// console.log(await pm.addProduct(prod3));
-
-// let product1 = await pm.getProductById(1);
-// product1 = { ...product1, quantity: 1 };
-// let product2 = await pm.getProductById(2);
-// product2 = { ...product2, quantity: 1 };
-// let product3 = await pm.getProductById(3);
-// product3 = { ...product3, quantity: 1 };
-// let product4 = await pm.getProductById(4);
-// product4 = { ...product4, quantity: 1 };
-
-// let cart1 = new Cart([product2, product3]);
-// console.log(await cm.addCart(cart1));
+//   let cart1 = new Cart();
+//   console.log(await cm.addCart(cart1));
 
 //   console.log(await cm.addProductToCart(2, 1));
 // };
 
-// prueba();
+// prueba()
