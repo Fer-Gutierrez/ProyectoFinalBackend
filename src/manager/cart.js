@@ -108,6 +108,7 @@ export class CartManager {
   };
 }
 
+/******************* TEST ***************************/
 // const prueba = async () => {
 //   const cm = new CartManager("../data/carts.json");
 //   console.log(await cm.getCarts());

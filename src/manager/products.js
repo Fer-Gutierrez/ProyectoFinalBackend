@@ -182,6 +182,7 @@ export class ProductManager {
   };
 }
 
+/******************* TEST ***************************/
 // const prueba = async () => {
 // let pm = new ProductManager("../data/products.json");
 // console.log(await pm.getProductById(1));
