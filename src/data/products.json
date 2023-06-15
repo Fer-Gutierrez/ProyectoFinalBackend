@@ -52,11 +52,7 @@
 		"status": true,
 		"stock": 15,
 		"category": "Vehiculo",
-		"thumbnails": [
-			"linkimg1",
-			"linkimg2",
-			"linkimg3"
-		]
+		"thumbnails": []
 	},
 	{
 		"id": 6,
