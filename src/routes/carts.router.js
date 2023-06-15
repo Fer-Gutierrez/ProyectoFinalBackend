@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     ? res
         .status(404)
         .send({ status: "error", error: Object.values(resultado)[0] })
-    : res.send({ status: "Ok", message: "Cart added", cartAdded: resultado });
+    : res.send({ status: "Ok", message: "Cart added", data: resultado });
 });
 
 router.get("/:cid", async (req, res) => {
@@ -26,7 +26,7 @@ router.get("/:cid", async (req, res) => {
     let cart = await cartManager.getCartById(+cartId);
     Object.keys(cart).includes("error")
       ? res.status(404).send({ status: "error", error: Object.values(cart)[0] })
-      : res.send({ status: "Ok", cart });
+      : res.send({ status: "Ok", data: cart });
   }
 });
 
@@ -53,7 +53,7 @@ router.post("/:cid/products/:pid", async (req, res) => {
       : res.send({
           status: "Ok",
           message: "The product was added to cart",
-          cart: resultado,
+          data: resultado,
         });
   }
 });

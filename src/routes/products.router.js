@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { ProductManager } from "../manager/products.js";
-import __dirname from "../utils.js";
+import { Product, ProductManager } from "../manager/products.js";
+import __dirname, { uploader } from "../utils.js";
 
 const router = Router();
 const productManager = new ProductManager(`${__dirname}/data/products.json`);
@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
         .send({ status: "error", error: "limit must be a positive number" });
     else {
       products.splice(limit);
-      res.send({ products });
+      res.send({ status: "Ok", data: products });
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
@@ -25,9 +25,8 @@ router.get("/", async (req, res) => {
 });
 
 router.get("/:pid", async (req, res) => {
-  let id = req.params.pid;
-
   try {
+    let id = req.params.pid;
     if (isNaN(id) || +id <= 0)
       res
         .status(400)
@@ -38,32 +37,42 @@ router.get("/:pid", async (req, res) => {
         res
           .status(404)
           .send({ status: "error", error: Object.values(product)[0] });
-      else res.send({ product });
+      else res.send({ status: "Ok", data: product });
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
   }
 });
 
-router.post("/", async (req, res) => {
-  let newPrroduct = req.body;
-  let result = await productManager.addProduct(newPrroduct);
+router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
   try {
+    const files = req.files;
+    let newProduct = new Product(
+      req.body.code,
+      req.body.title,
+      req.body.description,
+      req.body.price,
+      req.body.status,
+      req.body.stock,
+      req.body.category,
+      files ? files.map((f) => f.path) : []
+    );
+
+    let result = await productManager.addProduct(newProduct);
     if (Object.keys(result).includes("error"))
       res
         .status(404)
         .send({ status: "error", error: Object.values(result)[0] });
-    else res.send({ result });
+    else res.send({ status: "OK", message: "Product was added", data: result });
   } catch (err) {
     res.status(500).send({ status: "error", err });
   }
 });
 
 router.put("/:pid", async (req, res) => {
-  let id = req.params.pid;
-  let porductToUpdate = req.body;
-
   try {
+    let id = req.params.pid;
+    let porductToUpdate = req.body;
     if (isNaN(id) || +id <= 0)
       res
         .status(400)
@@ -77,8 +86,8 @@ router.put("/:pid", async (req, res) => {
       else
         res.send({
           status: "OK",
-          message: "Product updated",
-          productUpdated: result,
+          message: "Product was updated",
+          data: result,
         });
     }
   } catch (err) {
@@ -87,8 +96,8 @@ router.put("/:pid", async (req, res) => {
 });
 
 router.delete("/:pid", async (req, res) => {
-  let id = req.params.pid;
   try {
+    let id = req.params.pid;
     if (isNaN(id) || +id <= 0)
       res
         .status(400)
@@ -102,8 +111,8 @@ router.delete("/:pid", async (req, res) => {
       else
         res.send({
           status: "OK",
-          message: "Deleted product",
-          deletedProduct: result,
+          message: "Product was deleted",
+          data: result,
         });
     }
   } catch (err) {
