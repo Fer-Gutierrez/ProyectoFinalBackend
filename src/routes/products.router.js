@@ -69,10 +69,21 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
   }
 });
 
-router.put("/:pid", async (req, res) => {
+router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
   try {
+    const files = req.files;
     let id = req.params.pid;
-    let porductToUpdate = req.body;
+    let porductToUpdate = new Product(
+      req.body.code,
+      req.body.title,
+      req.body.description,
+      req.body.price,
+      req.body.status,
+      req.body.stock,
+      req.body.category,
+      files ? files.map((f) => f.path) : []
+    );
+
     if (isNaN(id) || +id <= 0)
       res
         .status(400)

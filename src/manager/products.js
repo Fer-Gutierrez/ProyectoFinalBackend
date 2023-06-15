@@ -131,9 +131,6 @@ export class ProductManager {
       };
     }
 
-    //Verificamos que el id del param sea igual al id body
-    if (productToUpdate.id !== id) return { error: "The id is not equal" };
-
     //Verificar existencias de las prop obligatorias
     let propSinValor = this.productHaveRequiredProps(productToUpdate);
     if (propSinValor) {
@@ -163,7 +160,7 @@ export class ProductManager {
       JSON.stringify(newListProducts, null, "\t")
     );
 
-    return productToUpdate;
+    return { ...productToUpdate, id };
   };
 
   deleteProduct = async (id) => {
