@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Product, ProductManager } from "../manager/products.js";
 import __dirname, { uploader } from "../utils.js";
+import { socketServer } from "../app.js";
 
 const router = Router();
 const productManager = new ProductManager(`${__dirname}/data/products.json`);
@@ -57,13 +58,17 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
       req.body.category,
       files ? files.map((f) => f.path) : []
     );
+    console.log(newProduct);
 
     let result = await productManager.addProduct(newProduct);
     if (Object.keys(result).includes("error"))
       res
         .status(404)
         .send({ status: "error", error: Object.values(result)[0] });
-    else res.send({ status: "OK", message: "Product was added", data: result });
+    else {
+      res.send({ status: "OK", message: "Product was added", data: result });
+      sondProductsSocket();
+    }
   } catch (err) {
     res.status(500).send({ status: "error", err });
   }
@@ -100,6 +105,7 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
           message: "Product was updated",
           data: result,
         });
+      sondProductsSocket();
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
@@ -125,10 +131,18 @@ router.delete("/:pid", async (req, res) => {
           message: "Product was deleted",
           data: result,
         });
+      sondProductsSocket();
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
   }
 });
+
+const sondProductsSocket = async () => {
+  socketServer.emit(
+    "refreshListProducts",
+    JSON.stringify(await productManager.getProducts(), null, "\t")
+  );
+};
 
 export default router;
