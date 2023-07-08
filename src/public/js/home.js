@@ -29,54 +29,54 @@ const obtenerDatos = async () => {
 
 obtenerDatos();
 
-let addProductForm = document.getElementById("addProductForm");
-addProductForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+// let addProductForm = document.getElementById("addProductForm");
+// addProductForm.addEventListener("submit", (e) => {
+//   e.preventDefault();
 
-  //Convertimos el objeto en array:
-  let imgArray = [];
-  if (e.target.thumbnails.files.length > 0)
-    imgArray = Array.prototype.slice.call(e.target.thumbnails.files);
-  console.log(imgArray);
+//   //Convertimos el objeto en array:
+//   let imgArray = [];
+//   if (e.target.thumbnails.files.length > 0)
+//     imgArray = Array.prototype.slice.call(e.target.thumbnails.files);
+//   console.log(imgArray);
 
-  //Configuramos la llamada:
-  const formData = new FormData();
-  formData.append("code", e.target.code.value);
-  formData.append("title", e.target.title.value);
-  formData.append("description", e.target.description.value);
-  formData.append("price", e.target.price.value);
-  formData.append("stock", e.target.stock.value);
-  formData.append("status", e.target.status.value === "on" && "true");
-  formData.append("category", e.target.category.value);
-  formData.append("thumbnails", imgArray);
+//   //Configuramos la llamada:
+//   const formData = new FormData();
+//   formData.append("code", e.target.code.value);
+//   formData.append("title", e.target.title.value);
+//   formData.append("description", e.target.description.value);
+//   formData.append("price", e.target.price.value);
+//   formData.append("stock", e.target.stock.value);
+//   formData.append("status", e.target.status.value === "on" && "true");
+//   formData.append("category", e.target.category.value);
+//   formData.append("thumbnails", imgArray);
 
-  const options = {
-    method: "POST",
-    body: formData,
-  };
+//   const options = {
+//     method: "POST",
+//     body: formData,
+//   };
 
-  fetch("http://localhost:8080/api/products/", options)
-    .then((res) => res.json())
-    .then((res) => {
-      console.log(res);
-      res.status === "OK" ? alert(res.message) : alert(res.error);
-    })
-    .catch((err) => console.log(err));
+//   fetch("http://localhost:8080/api/products/", options)
+//     .then((res) => res.json())
+//     .then((res) => {
+//       console.log(res);
+//       res.status === "OK" ? alert(res.message) : alert(res.error);
+//     })
+//     .catch((err) => console.log(err));
 
-  addProductForm.reset();
-});
+//   addProductForm.reset();
+// });
 
-let deleteProductForm = document.getElementById("deleteProductForm");
-deleteProductForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  fetch(`http://localhost:8080/api/products/${e.target.id.value}`, {
-    method: "DELETE",
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      console.log(res);
-      res.status === "OK" ? alert(res.message) : alert(res.error);
-    })
-    .catch((err) => console.log(err));
-  deleteProductForm.reset();
-});
+// let deleteProductForm = document.getElementById("deleteProductForm");
+// deleteProductForm.addEventListener("submit", (e) => {
+//   e.preventDefault();
+//   fetch(`http://localhost:8080/api/products/${e.target.id.value}`, {
+//     method: "DELETE",
+//   })
+//     .then((res) => res.json())
+//     .then((res) => {
+//       console.log(res);
+//       res.status === "OK" ? alert(res.message) : alert(res.error);
+//     })
+//     .catch((err) => console.log(err));
+//   deleteProductForm.reset();
+// });
