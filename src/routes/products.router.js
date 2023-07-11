@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Product, ProductManager } from "../manager/products.js";
+import { Product, ProductManager } from "../dao/fileManager/products.js";
 import __dirname, { uploader } from "../utils.js";
 import { socketServer } from "../app.js";
 

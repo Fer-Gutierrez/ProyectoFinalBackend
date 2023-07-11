@@ -5,7 +5,7 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
 import { Server } from "socket.io";
-import { ProductManager } from "./manager/products.js";
+import { ProductManager } from "./dao/fileManager/products.js";
 
 //CONFIGURACION DE EXPRESS
 const app = express();

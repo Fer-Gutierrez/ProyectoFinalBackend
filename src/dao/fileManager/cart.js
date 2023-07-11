@@ -1,6 +1,6 @@
 import fs from "fs";
 import { ProductManager } from "./products.js";
-import __dirname from "../utils.js";
+import __dirname from "../../utils.js";
 
 export class Cart {
   constructor() {
