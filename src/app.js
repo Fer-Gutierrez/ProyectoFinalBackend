@@ -7,9 +7,9 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
 import { Server } from "socket.io";
-import { ProductFileManager } from "./dao/fileManager/products.js";
 import Database from "./dbConfig.js";
 import ProductDbManager from "./dao/dbManager/products.js";
+import MessageDbManager from "./dao/dbManager/messages.js";
 
 //CONEXION BD
 const db = new Database();
@@ -38,10 +38,27 @@ export const socketServer = new Server(httpServer); //Creamos el socketServer ut
 //----- abrimos conexcion con cada cliente -Handshake-:
 socketServer.on("connection", async (socket) => {
   console.log("Cliente conectado");
+
+  //ENVIO LOS PRODUCTOS POR PRIMERA VEZ:
   // const pm = new ProductFileManager(`${__dirname}/data/products.json`);
   const pm = new ProductDbManager();
   let products = await pm.getProducts();
   socket.emit("refreshListProducts", JSON.stringify(products, null, "\t"));
+
+  //ESCUCHO LOS MENSAJES:
+  socket.on("chatMessage", async (data) => {
+    data = JSON.parse(data);
+    let messageRecived = { user: data.user, message: data.message };
+    const mm = new MessageDbManager();
+    let messageSaved = await mm.addMessage(messageRecived);
+    console.log(messageSaved);
+    if (!Object.keys(messageSaved).includes("errors")) {
+      socketServer.emit(
+        "chatMessage",
+        JSON.stringify(messageRecived, null, "\t")
+      );
+    }
+  });
 });
 
 //ROUTES API

@@ -1,0 +1,17 @@
+<div id="container" class="chatContainer" >
+    <h1 class="chatTitle">Chat con WebSocket</h1>
+    <div id="messageContainer">
+
+    </div>
+    <form id="messageForm">
+        <input
+            autocomplete="off" 
+            type="text" 
+            id="messageInput" 
+            name="messageInput"
+        >
+        <button type="submit" value="Enviar">Enviar</button>
+    </form>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/chat.js"></script>
