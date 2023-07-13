@@ -1,11 +1,18 @@
 import express from "express";
-import productsRouter from "./routes/products.router.js";
-import cartsRouter from "./routes/carts.router.js";
+import productsFileRouter from "./routes/productsFile.router.js";
+import cartsFileRouter from "./routes/cartsFile.router.js";
+import productsDbRouter from "./routes/productsDb.router.js";
+import cartsDbRouter from "./routes/cartDb.router.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
 import { Server } from "socket.io";
-import { ProductManager } from "./dao/fileManager/products.js";
+import { ProductFileManager } from "./dao/fileManager/products.js";
+import Database from "./dbConfig.js";
+import ProductDbManager from "./dao/dbManager/products.js";
+
+//CONEXION BD
+const db = new Database();
 
 //CONFIGURACION DE EXPRESS
 const app = express();
@@ -31,13 +38,14 @@ export const socketServer = new Server(httpServer); //Creamos el socketServer ut
 //----- abrimos conexcion con cada cliente -Handshake-:
 socketServer.on("connection", async (socket) => {
   console.log("Cliente conectado");
-  const pm = new ProductManager(`${__dirname}/data/products.json`);
-  socket.emit(
-    "refreshListProducts",
-    JSON.stringify(await pm.getProducts(), null, "\t")
-  );
+  // const pm = new ProductFileManager(`${__dirname}/data/products.json`);
+  const pm = new ProductDbManager();
+  let products = await pm.getProducts();
+  socket.emit("refreshListProducts", JSON.stringify(products, null, "\t"));
 });
 
 //ROUTES API
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
+app.use("/api/products/", productsDbRouter);
+app.use("/api/carts/", cartsDbRouter);
+app.use("/api/products/file", productsFileRouter);
+app.use("/api/carts/file", cartsFileRouter);

@@ -1,13 +1,13 @@
 import { Router } from "express";
-import { Cart, CartManager } from "../dao/fileManager/cart.js";
+import { Cart, CartFileManager } from "../dao/fileManager/cart.js";
 import __dirname from "../utils.js";
 
 const router = Router();
-const cartManager = new CartManager(`${__dirname}/data/carts.json`);
+const cartFileManager = new CartFileManager(`${__dirname}/data/carts.json`);
 
 router.post("/", async (req, res) => {
   let newCart = new Cart();
-  let resultado = await cartManager.addCart(newCart);
+  let resultado = await cartFileManager.addCart(newCart);
   Object.keys(resultado).includes("error")
     ? res
         .status(404)
@@ -23,7 +23,7 @@ router.get("/:cid", async (req, res) => {
       error: "Cart id property must be a positive number",
     });
   else {
-    let cart = await cartManager.getCartById(+cartId);
+    let cart = await cartFileManager.getCartById(+cartId);
     Object.keys(cart).includes("error")
       ? res.status(404).send({ status: "error", error: Object.values(cart)[0] })
       : res.send({ status: "Ok", data: cart });
@@ -45,7 +45,7 @@ router.post("/:cid/products/:pid", async (req, res) => {
       error: "Product id property must be a positive number",
     });
   else {
-    let resultado = await cartManager.addProductToCart(+cartId, +productId);
+    let resultado = await cartFileManager.addProductToCart(+cartId, +productId);
     Object.keys(resultado).includes("error")
       ? res
           .status(404)

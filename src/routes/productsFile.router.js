@@ -1,14 +1,16 @@
 import { Router } from "express";
-import { Product, ProductManager } from "../dao/fileManager/products.js";
+import { Product, ProductFileManager } from "../dao/fileManager/products.js";
 import __dirname, { uploader } from "../utils.js";
 import { socketServer } from "../app.js";
 
 const router = Router();
-const productManager = new ProductManager(`${__dirname}/data/products.json`);
+const productFileManager = new ProductFileManager(
+  `${__dirname}/data/products.json`
+);
 
 router.get("/", async (req, res) => {
   try {
-    let products = await productManager.getProducts();
+    let products = await productFileManager.getProducts();
 
     let limit = req.query.limit;
     if (!limit) res.send({ products });
@@ -33,7 +35,7 @@ router.get("/:pid", async (req, res) => {
         .status(400)
         .send({ status: "error", error: "pid must be a positive number" });
     else {
-      let product = await productManager.getProductById(+id);
+      let product = await productFileManager.getProductById(+id);
       if (Object.keys(product).includes("error"))
         res
           .status(404)
@@ -60,14 +62,14 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
     );
     console.log(newProduct);
 
-    let result = await productManager.addProduct(newProduct);
+    let result = await productFileManager.addProduct(newProduct);
     if (Object.keys(result).includes("error"))
       res
         .status(404)
         .send({ status: "error", error: Object.values(result)[0] });
     else {
       res.send({ status: "OK", message: "Product was added", data: result });
-      sondProductsSocket();
+      sendProductsSocket();
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
@@ -94,7 +96,7 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
         .status(400)
         .send({ status: "error", error: "pid must be a positive number" });
     else {
-      let result = await productManager.updateProduct(+id, porductToUpdate);
+      let result = await productFileManager.updateProduct(+id, porductToUpdate);
       if (Object.keys(result).includes("error"))
         res
           .status(404)
@@ -105,7 +107,7 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
           message: "Product was updated",
           data: result,
         });
-      sondProductsSocket();
+      sendProductsSocket();
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
@@ -120,7 +122,7 @@ router.delete("/:pid", async (req, res) => {
         .status(400)
         .send({ status: "error", error: "pid must be a positive number" });
     else {
-      let result = await productManager.deleteProduct(+id);
+      let result = await productFileManager.deleteProduct(+id);
       if (Object.keys(result).includes("error"))
         res
           .status(404)
@@ -131,14 +133,14 @@ router.delete("/:pid", async (req, res) => {
           message: "Product was deleted",
           data: result,
         });
-      sondProductsSocket();
+      sendProductsSocket();
     }
   } catch (err) {
     res.status(500).send({ status: "error", err });
   }
 });
 
-const sondProductsSocket = async () => {
+const sendProductsSocket = async () => {
   socketServer.emit(
     "refreshListProducts",
     JSON.stringify(await productManager.getProducts(), null, "\t")

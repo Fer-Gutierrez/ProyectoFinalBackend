@@ -1,6 +1,6 @@
-import productModel from "../models/products";
+import productModel from "../models/products.model.js";
 
-export default class Products {
+export default class ProductDbManager {
   constructor() {
     console.log("Estamos trabajando con BDMongo (products)");
   }
@@ -11,7 +11,7 @@ export default class Products {
   };
 
   getProductById = async (id) => {
-    let product = await productModel.find((p) => p._id === id);
+    let product = await productModel.findOne({ _id: id });
     return product;
   };
 
@@ -26,7 +26,9 @@ export default class Products {
 
   updateProduct = async (id, productToUpdate) => {
     try {
-      let result = await productModel.updateOne({ _id: id }, productToUpdate);
+      let result = await productModel.updateOne({ _id: id }, productToUpdate, {
+        runValidators: true,
+      });
       return result;
     } catch (error) {
       return error;
@@ -36,6 +38,15 @@ export default class Products {
   deleteProduct = async (id) => {
     try {
       let result = await productModel.deleteOne({ _id: id });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  existProduct = async (id) => {
+    try {
+      let result = await productModel.findOne({ _id: id });
       return result;
     } catch (error) {
       return error;

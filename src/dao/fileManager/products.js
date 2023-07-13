@@ -23,7 +23,7 @@ export class Product {
   }
 }
 
-export class ProductManager {
+export class ProductFileManager {
   constructor(path) {
     this.__path = path;
   }

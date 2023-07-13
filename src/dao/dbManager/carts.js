@@ -1,6 +1,6 @@
-import cartModel from "../models/carts";
+import cartModel from "../models/carts.model.js";
 
-export default class Carts {
+export default class CartDbManager {
   constructor() {
     console.log("Estamos trabajando con BDMongo (carts)");
   }
@@ -11,7 +11,11 @@ export default class Carts {
   };
 
   getCartById = async (id) => {
-    let cart = await cartModel.findOne({ _id: id });
+    let cart = await cartModel
+      .findOne({ _id: id })
+      .populate("products.product");
+
+    return cart;
   };
 
   addCart = async (newCart) => {
@@ -23,13 +27,24 @@ export default class Carts {
     }
   };
 
-  addProductToCart = async (cartId, product) => {
+  addProductToCart = async (cartId, productId) => {
     try {
-      let cart = cartModel.findOne({ _id: cartId });
-      let newListProducts = cart.products;
-      newListProducts.push(product);
+      let cart = await cartModel.findOne({ _id: cartId });
+      console.log(cart);
+      cart.products.push({ product: productId });
 
-      let result = cart.updateOne({ products: newListProducts });
+      let result = await cartModel.updateOne({ _id: cartId }, cart, {
+        runValidators: true,
+      });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  existCart = async (cartId) => {
+    try {
+      let result = await cartModel.findOne({ _id: cartId });
       return result;
     } catch (error) {
       return error;

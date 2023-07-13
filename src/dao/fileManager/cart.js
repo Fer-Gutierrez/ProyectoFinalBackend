@@ -1,5 +1,5 @@
 import fs from "fs";
-import { ProductManager } from "./products.js";
+import { ProductFileManager } from "./products.js";
 import __dirname from "../../utils.js";
 
 export class Cart {
@@ -9,7 +9,7 @@ export class Cart {
   }
 }
 
-export class CartManager {
+export class CartFileManager {
   constructor(path) {
     this.__path = path;
   }
@@ -81,7 +81,7 @@ export class CartManager {
       return { error: "Cart not found" };
 
     //Verificamos si existe producto
-    let mp = new ProductManager(`${__dirname}/data/products.json`);
+    let mp = new ProductFileManager(`${__dirname}/data/products.json`);
     let product = await mp.getProductById(productId);
     if (Object.keys(product).includes("error"))
       return { error: "Product not found" };

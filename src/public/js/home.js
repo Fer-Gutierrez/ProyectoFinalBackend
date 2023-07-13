@@ -11,7 +11,7 @@ const obtenerDatos = async () => {
     divItemContenedor.className = "itemContenedor";
     let tituloItem = document.createElement("strong");
     tituloItem.className = "tituloItem";
-    tituloItem.innerText = `${p.id} - ${p.code} - ${p.title}:`;
+    tituloItem.innerText = `${p._id} - ${p.code} - ${p.title}:`;
     let datosItem = document.createElement("p");
     datosItem.className = "datosItem";
     datosItem.innerText = `
