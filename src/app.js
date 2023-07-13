@@ -33,6 +33,12 @@ export const httpServer = app.listen(8080, () =>
   console.log("Servidor Arriba")
 );
 
+//ROUTES API
+app.use("/api/products/", productsDbRouter);
+app.use("/api/carts/", cartsDbRouter);
+app.use("/api/products/file", productsFileRouter);
+app.use("/api/carts/file", cartsFileRouter);
+
 //CONFIGURACION DE SOCKET.IO
 export const socketServer = new Server(httpServer); //Creamos el socketServer utilizando httpServer
 //----- abrimos conexcion con cada cliente -Handshake-:
@@ -60,9 +66,3 @@ socketServer.on("connection", async (socket) => {
     }
   });
 });
-
-//ROUTES API
-app.use("/api/products/", productsDbRouter);
-app.use("/api/carts/", cartsDbRouter);
-app.use("/api/products/file", productsFileRouter);
-app.use("/api/carts/file", cartsFileRouter);

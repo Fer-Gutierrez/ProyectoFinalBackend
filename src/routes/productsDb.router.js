@@ -57,11 +57,17 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
       category,
       thumbnails: files ? files.map((f) => f.path) : [],
     });
-    if (Object.keys(result).includes("errors"))
+
+    if (Object.keys(result).includes("errors")) {
       res
         .status(400)
         .send({ status: "Bad Request", error: Object.values(result)[0] });
-    else {
+    } else if (!Object.keys(result).includes("_id")) {
+      res.status(400).send({
+        status: "Bad Request",
+        error: "Product wasn't added. Repeated Code.",
+      });
+    } else {
       res.send({ status: "OK", message: "Product was added", data: result });
       sendProductsSocket();
     }
@@ -81,7 +87,7 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
       return res
         .status(404)
         .send({ status: "Not found", message: "pid doesn't found" });
-        
+
     let result = await productDbManager.updateProduct(id, {
       code,
       title,
@@ -92,11 +98,16 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
       category,
       thumbnails: files ? files.map((f) => f.path) : [],
     });
-
+    console.log(result);
     if (Object.keys(result).includes("errors"))
       res
         .status(400)
         .send({ status: "Bad Request", error: Object.values(result)[0] });
+    else if (!Object.keys(result).includes("modifiedCount"))
+      res.status(400).send({
+        status: "Bad Request",
+        error: "Product wasn't update. Repeated Code.",
+      });
     else
       res.send({
         status: "OK",
