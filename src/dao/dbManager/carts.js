@@ -6,7 +6,7 @@ export default class CartDbManager {
   }
 
   getCarts = async () => {
-    let carts = await cartModel.find().lean();
+    let carts = await cartModel.find().populate("products.product").lean();
     return carts;
   };
 
@@ -30,7 +30,6 @@ export default class CartDbManager {
   addProductToCart = async (cartId, productId) => {
     try {
       let cart = await cartModel.findOne({ _id: cartId });
-      console.log(cart);
       cart.products.push({ product: productId });
 
       let result = await cartModel.updateOne({ _id: cartId }, cart, {
@@ -45,6 +44,79 @@ export default class CartDbManager {
   existCart = async (cartId) => {
     try {
       let result = await cartModel.findOne({ _id: cartId });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  existProductInCart = async (cartId, productId) => {
+    try {
+      let cart = await cartModel.findOne({ _id: cartId });
+      let result = cart.products.some(
+        (p) => p.product.toString() === productId
+      );
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  deleteProductInCart = async (cartId, productId) => {
+    try {
+      let cart = await cartModel.findOne({ _id: cartId });
+      let newListProducts = cart.products.filter(
+        (p) => p.product.toString() !== productId
+      );
+
+      cart.products = newListProducts;
+
+      let result = cartModel.updateOne({ _id: cartId }, cart, {
+        runValidators: true,
+      });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  updateProductsInCart = async (cartId, products) => {
+    try {
+      let cart = await cartModel.findOne({ _id: cartId });
+      cart.products = products;
+      let result = await cartModel.updateOne({ _id: cartId }, cart, {
+        runValidators: true,
+      });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  updateQuantityProductInCart = async (cartId, productId, quantity) => {
+    try {
+      let cart = await cartModel.findOne({ _id: cartId });
+      let productIndex = cart.products.findIndex(
+        (p) => p.product.toString() === productId
+      );
+
+      cart.products[0].quantity = quantity;
+      let result = await cartModel.updateOne({ _id: cartId }, cart, {
+        runValidators: true,
+      });
+      return result;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  removeProductsInCart = async (cartId) => {
+    try {
+      let cart = await cartModel.findOne({ _id: cartId });
+      cart.products = [];
+      let result = await cartModel.updateOne({ _id: cartId }, cart, {
+        runValidators: true,
+      });
       return result;
     } catch (error) {
       return error;

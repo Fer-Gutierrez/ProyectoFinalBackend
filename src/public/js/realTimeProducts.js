@@ -31,10 +31,11 @@ addProductForm.addEventListener("submit", (e) => {
   fetch("http://localhost:8080/api/products/", options)
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
-      res.status === "OK" ? alert(res.message) : alert(res.error);
+      res.status === "OK"
+        ? alert(res.message)
+        : alert(JSON.stringify(res.error, null, "\t"));
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log("entrando", err));
 
   addProductForm.reset();
 });
@@ -48,8 +49,9 @@ deleteProductForm.addEventListener("submit", (e) => {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
-      res.status === "OK" ? alert(res.message) : alert(res.error);
+      res.status === "OK"
+        ? alert(res.message)
+        : alert(JSON.stringify(res.error, null, "\t"));
     })
     .catch((err) => console.log(err));
   deleteProductForm.reset();
@@ -57,7 +59,7 @@ deleteProductForm.addEventListener("submit", (e) => {
 
 //WebSocket
 socket.on("refreshListProducts", (data) => {
-  console.log(data);
+  // console.log(data);
   const result = JSON.parse(data);
 
   let productsContenedor = document.getElementById("productsContenedor");

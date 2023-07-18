@@ -47,6 +47,7 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
   try {
     const { code, title, description, price, status, stock, category, files } =
       req.body;
+
     let result = await productDbManager.addProduct({
       code,
       title,
@@ -98,7 +99,7 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
       category,
       thumbnails: files ? files.map((f) => f.path) : [],
     });
-    console.log(result);
+
     if (Object.keys(result).includes("errors"))
       res
         .status(400)
@@ -123,6 +124,12 @@ router.put("/:pid", uploader.array("thumbnails", 10), async (req, res) => {
 router.delete("/:pid", async (req, res) => {
   try {
     let id = req.params.pid;
+    let existProduct = await productDbManager.existProduct(id);
+    if (!existProduct || existProduct.reason)
+      return res
+        .status(400)
+        .send({ status: "Bad request", error: "Id doesn't exist." });
+
     let result = await productDbManager.deleteProduct(id);
     if (Object.keys(result).includes("errors"))
       res
