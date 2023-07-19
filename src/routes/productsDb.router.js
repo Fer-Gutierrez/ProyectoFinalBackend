@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
     if (status !== undefined && Number(status) !== 1 && Number(status) !== 0)
       return res.status(400).send({
         status: "errors",
-        error: "status must be a 1 or 0",
+        error: "status must be a 1(true) or 0(false)",
       });
 
     if (price !== undefined && !isNaN(Number(price)) && Number(price) < 0)
@@ -58,25 +58,37 @@ router.get("/", async (req, res) => {
         error: "stock must be 0 or a positive number",
       });
 
-    let products = await productDbManager.getProducts(
+    let result = await productDbManager.getProducts(
       title,
       code,
       description,
       category,
-      Number(price),
-      Number(stock),
-      status
+      price && Number(price),
+      stock && Number(stock),
+      status,
+      page,
+      limit,
+      sort
     );
 
-    if (!limit) res.send({ products });
-    else if (isNaN(limit) || (!isNaN(limit) && +limit <= 0))
-      res
-        .status(400)
-        .send({ status: "errors", error: "limit must be a positive number" });
-    else {
-      products.splice(limit);
-      res.send({ status: "Ok", data: products });
-    }
+    let prevLink = result.hasPrevPage && req.url + `&page=${result.prevPage}`;
+    let nextLink = result.hasNextPage && req.url + `&page=${result.nextPage}`;
+
+    let response = {
+      status: "OK",
+      payload: result.docs,
+      totalRecords: result.totalDocs,
+      totalPages: result.totalPages,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevLink,
+      nextLink,
+    };
+
+    res.send({ status: "Ok", data: response });
   } catch (err) {
     res.status(500).send({ status: "Internal Server Error", err });
   }

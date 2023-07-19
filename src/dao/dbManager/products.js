@@ -12,24 +12,33 @@ export default class ProductDbManager {
     category = "",
     price,
     stock,
-    status
+    status,
+    page,
+    limit,
+    sort
   ) => {
-    let aggregationStages = [
-      {
-        $match: {
-          title: { $regex: title, $options: "i" },
-          description: { $regex: description, $options: "i" },
-          code: { $regex: code, $options: "i" },
-          category: { $regex: category, $options: "i" },
-        },
-      },
-    ];
-    price && aggregationStages.push({ $match: { price: price } });
-    stock && aggregationStages.push({ $match: { stock: stock } });
-    status !== undefined &&
-      aggregationStages.push({ $match: { status: Boolean(Number(status)) } });
 
-    let result = await productModel.aggregate(aggregationStages);
+    let queryFilter = {
+      title: { $regex: title, $options: "i" },
+      description: { $regex: description, $options: "i" },
+      code: { $regex: code, $options: "i" },
+      category: { $regex: category, $options: "i" },
+    };
+    if (price) queryFilter.price = price;
+    if (stock) queryFilter.stock = stock;
+    if (status) queryFilter.status = Boolean(Number(status));
+
+    let sortOptions = {};
+    if (sort)
+      sort === "desc" ? (sortOptions.price = -1) : (sortOptions.price = 1);
+
+    let result = await productModel.paginate(queryFilter, {
+      page,
+      limit,
+      lean: true,
+      sort: sortOptions,
+    });
+
     return result;
   };
 
