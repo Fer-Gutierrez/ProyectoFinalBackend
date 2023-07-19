@@ -5,9 +5,32 @@ export default class ProductDbManager {
     console.log("Estamos trabajando con BDMongo (products)");
   }
 
-  getProducts = async () => {
-    let products = await productModel.find().lean();
-    return products;
+  getProducts = async (
+    title = "",
+    code = "",
+    description = "",
+    category = "",
+    price,
+    stock,
+    status
+  ) => {
+    let aggregationStages = [
+      {
+        $match: {
+          title: { $regex: title, $options: "i" },
+          description: { $regex: description, $options: "i" },
+          code: { $regex: code, $options: "i" },
+          category: { $regex: category, $options: "i" },
+        },
+      },
+    ];
+    price && aggregationStages.push({ $match: { price: price } });
+    stock && aggregationStages.push({ $match: { stock: stock } });
+    status !== undefined &&
+      aggregationStages.push({ $match: { status: Boolean(Number(status)) } });
+
+    let result = await productModel.aggregate(aggregationStages);
+    return result;
   };
 
   getProductById = async (id) => {

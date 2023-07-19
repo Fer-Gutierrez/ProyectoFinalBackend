@@ -8,9 +8,66 @@ const productDbManager = new ProductDbManager();
 
 router.get("/", async (req, res) => {
   try {
-    let products = await productDbManager.getProducts();
+    const {
+      limit = 10,
+      page = 1,
+      sort,
+      title,
+      code,
+      description,
+      price,
+      stock,
+      status,
+      category,
+    } = req.query;
 
-    let limit = req.query.limit;
+    if (isNaN(limit) || (!isNaN(limit) && +limit <= 0))
+      return res
+        .status(400)
+        .send({ status: "errors", error: "limit must be a positive number" });
+
+    if (isNaN(page) || (!isNaN(page) && +page <= 0))
+      return res
+        .status(400)
+        .send({ status: "errors", error: "page must be a positive number" });
+
+    if (
+      sort !== undefined &&
+      sort.toLowerCase() !== "asc" &&
+      sort.toLowerCase() !== "desc"
+    )
+      return res
+        .status(400)
+        .send({ status: "errors", error: "sort must be a 'asc' or 'desc'" });
+
+    if (status !== undefined && Number(status) !== 1 && Number(status) !== 0)
+      return res.status(400).send({
+        status: "errors",
+        error: "status must be a 1 or 0",
+      });
+
+    if (price !== undefined && !isNaN(Number(price)) && Number(price) < 0)
+      return res.status(400).send({
+        status: "errors",
+        error: "price must be 0 or a positive number",
+      });
+
+    if (stock !== undefined && !isNaN(Number(stock)) && Number(stock) < 0)
+      return res.status(400).send({
+        status: "errors",
+        error: "stock must be 0 or a positive number",
+      });
+
+    let products = await productDbManager.getProducts(
+      title,
+      code,
+      description,
+      category,
+      Number(price),
+      Number(stock),
+      status
+    );
+
     if (!limit) res.send({ products });
     else if (isNaN(limit) || (!isNaN(limit) && +limit <= 0))
       res
@@ -60,11 +117,11 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
     });
 
     if (Object.keys(result).includes("errors")) {
-      res
+      return res
         .status(400)
         .send({ status: "Bad Request", error: Object.values(result)[0] });
-    } else if (!Object.keys(result).includes("_id")) {
-      res.status(400).send({
+    } else if (Object.keys(result).includes("keyValue")) {
+      return res.status(400).send({
         status: "Bad Request",
         error: "Product wasn't added. Repeated Code.",
       });
