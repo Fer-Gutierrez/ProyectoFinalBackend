@@ -71,8 +71,22 @@ router.get("/", async (req, res) => {
       sort
     );
 
-    let prevLink = result.hasPrevPage && req.url + `&page=${result.prevPage}`;
-    let nextLink = result.hasNextPage && req.url + `&page=${result.nextPage}`;
+   
+    let prevLink = "";
+    if (result.hasPrevPage) {
+      let posInitialPage = req.url.indexOf("&page=");
+      let url =
+        posInitialPage !== -1 ? req.url.slice(0, posInitialPage) : req.url;
+      prevLink = "api/products" + url + `&page=${result.prevPage}`;
+    }
+
+    let nextLink = "";
+    if (result.hasNextPage) {
+      let posInitialPage = req.url.indexOf("&page=");
+      let url =
+        posInitialPage !== -1 ? req.url.slice(0, posInitialPage) : req.url;
+      nextLink = "api/products" + url + `&page=${result.nextPage}`;
+    }
 
     let response = {
       status: "OK",

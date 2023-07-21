@@ -1,6 +1,10 @@
 import express from "express";
+import ProductDbManager from "../dao/dbManager/products.js";
+import CartDbManager from "../dao/dbManager/carts.js";
 
 const router = express.Router();
+const productDbManager = new ProductDbManager();
+const cartDbManager = new CartDbManager();
 
 //HOME:
 router.get("/", (req, res) => {
@@ -20,7 +24,40 @@ router.get("/realtimeproducts", (req, res) => {
 router.get("/chat", (req, res) => {
   res.render("chat", {
     title: "Chat",
-    styles: "css/styles.css"
+    styles: "css/styles.css",
+  });
+});
+
+//PRODUCTS CON PAGINATE
+router.get("/products", (req, res) => {
+  res.render("products", {
+    title: "Products with paginate",
+    styles: "css/productsStyles.css",
+  });
+});
+
+router.get("/product/:pid", async (req, res) => {
+  let id = req.params.pid;
+  let product = await productDbManager.getProductById(id);
+  product = { ...product._doc, _id: product._id.toString() };
+  res.render("productDetail", {
+    title: "Product Detail",
+    styles: "css/productsDetailStyles.css",
+    product,
+  });
+});
+
+router.get("/carts/:cid", async (req, res) => {
+  let cartId = req.params.cid;
+  console.log(cartId);
+  let cart = await cartDbManager.getCartById(cartId);
+  cart = { ...cart._doc, _id: cart._id.toString() };
+  console.log(cart);
+  console.log(cart.products[0].product);
+  res.render("cartDetail", {
+    title: "Product Detail",
+    styles: "css/productsDetailStyles.css",
+    cart,
   });
 });
 

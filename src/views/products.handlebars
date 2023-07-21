@@ -1,0 +1,56 @@
+<h1 class="tituloPrincipal">Productos</h1>
+<div class="productsContenedor">
+    <h2>Filtros:</h2>
+    <form id="formFiltro" class="panelFiltro">
+        <div class="contenedorDatos">
+            <input type="text" name="code" id="code" placeholder="code">
+        </div>
+         <div class="contenedorDatos">
+            <input type="text" name="title" id="title" placeholder="titulo">
+        </div>
+        <div class="contenedorDatos">
+            <input type="text" name="description" id="description" placeholder="descripcion">
+        </div>
+        <div class="contenedorDatos">
+            <input type="text" name="category" id="category" placeholder="category">
+        </div>
+        <div class="contenedorDatos">
+            <input type="number" name="status" id="status">
+        </div>
+        <div class="contenedorDatos">
+
+            <input type="number" name="price" id="price" placeholder="price">
+        </div>
+        <div class="contenedorDatos">
+
+            <input type="number" name="stock" id="stock" placeholder="stock">
+        </div>
+        <div class="contenedorDatos">
+            <input type="number" name="limit" id="limit" placeholder="registros por pag">
+        </div>
+        <button type="submit">Aplicar Filtros</button>
+    </form>
+    <h2 style="margin-top: .7rem;">Resultados de Busqueda:</h2>
+    <div class="panelNavegacion">
+        <button id="btnAnterior">Anterior</button>
+        <div class="contenedorDatos">
+            <h4>Page:</h4>
+            <p id="pageNumber">0</p>
+        </div>
+        <div class="contenedorDatos">
+            <h4>Registros totales:</h4>
+            <p id="totalRecords">0</p>
+        </div>
+        <div class="contenedorDatos">
+            <h4>Paginas Totales:</h4>
+            <p id="totalPages">0</p>
+        </div>
+        <button id="btnSiguiente">Siguiente</button>
+    </div>
+    <div id="panelDatos">
+       
+    </div>
+</div>
+<script src="js/products.js"></script>
+
+ 

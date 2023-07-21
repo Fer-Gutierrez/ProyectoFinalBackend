@@ -1,0 +1,66 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.tituloPrincipal {
+  text-align: center;
+  margin: 0.5rem;
+}
+
+.productsContenedor {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  /* border: solid 1px red; */
+}
+
+.panelFiltro {
+  display: flex;
+  margin: 0.2rem;
+  padding: 0.2rem;
+  flex-wrap: wrap;
+  /* background-color: rgb(147, 173, 198); */
+  border-radius: 0.5rem;
+  align-items: center;
+}
+
+.panelNavegacion {
+  display: flex;
+  margin: 0.2rem;
+  padding: 0.2rem;
+  flex-direction: row;
+  color: whitesmoke;
+  background-color: rgb(48, 91, 129);
+  border-radius: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contenedorDatos {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0.2rem;
+}
+
+#panelDatos {
+  display: flex;
+  margin: 0.2rem;
+  padding: 0.2rem;
+  flex-direction: column;
+  /* border: solid 1px blue; */
+  border-radius: 0.5rem;
+  gap: 0.5rem;
+}
+
+.itemContenedor {
+  padding: 0.3rem;
+  border-bottom: solid 1px grey;
+}
+
+#btnAnterior,
+#btnSiguiente {
+  margin: 0 1rem;
+}

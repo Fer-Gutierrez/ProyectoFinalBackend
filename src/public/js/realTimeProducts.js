@@ -85,3 +85,5 @@ socket.on("refreshListProducts", (data) => {
     productsContenedor.append(divItemContenedor);
   });
 });
+
+

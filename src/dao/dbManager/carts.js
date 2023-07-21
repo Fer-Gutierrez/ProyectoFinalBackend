@@ -29,6 +29,11 @@ export default class CartDbManager {
 
   addProductToCart = async (cartId, productId) => {
     try {
+      let existProductInCart = await this.existProductInCart(cartId, productId);
+      if (existProductInCart) {
+        return await this.updateQuantityProductInCart(cartId, productId, 1);
+      }
+
       let cart = await cartModel.findOne({ _id: cartId });
       cart.products.push({ product: productId });
 
@@ -100,7 +105,7 @@ export default class CartDbManager {
         (p) => p.product.toString() === productId
       );
 
-      cart.products[0].quantity = quantity;
+      cart.products[productIndex].quantity += quantity;
       let result = await cartModel.updateOne({ _id: cartId }, cart, {
         runValidators: true,
       });
