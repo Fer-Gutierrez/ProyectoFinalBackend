@@ -1,13 +1,15 @@
 <dir>
     <h1 style="text-align: center;">Cart Detail</h1>
     {{#if cart}}
-        <strong>Carrito Id:{{cart_id}}</strong>
-        <ul>
+        <strong>Carrito Id:{{cart._id}}</strong>
+        <p>Estas llevando:</p>
+        <ul style="list-style: none;">
         {{#each cart.products}}
-            <li>{{this.quantity}} - Precio: ${{this.product.price}}</li>
+            <li>{{this.quantity}} unidades de {{this.product.title}} - Precio unitario: ${{this.product.price}}</li>
         {{/each}}
         </ul>
     {{else}}
         <p>El carrito no fue encontrado.</p>
     {{/if}}
+    <a href="http://localhost:8080/products"><button>Ver todos los productos</button></a>
 </dir>

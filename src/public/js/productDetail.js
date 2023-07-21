@@ -1,6 +1,8 @@
-console.log("producDetail");
+//VARIABLES
 let parrWithId = document.getElementById("productId");
 let productId = parrWithId.innerText;
+
+//ELEMENTOS
 let btnAddToCart = document.getElementById("btnAddToCart");
 btnAddToCart.addEventListener("click", async () => {
   let cartExistente = localStorage.getItem("carritoId");
@@ -14,6 +16,16 @@ btnAddToCart.addEventListener("click", async () => {
   }
 });
 
+let btnViewCart = document.getElementById("ViewCart");
+btnViewCart.addEventListener("click", () => {
+  let cartId = localStorage.getItem("carritoId");
+  console.log(cartId);
+  cartId
+    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
+//FUNCIONES
 crearCarrito = async () => {
   try {
     let response = await fetch("http://localhost:8080/api/carts/", {
@@ -23,7 +35,7 @@ crearCarrito = async () => {
 
     if (res.status === "Ok" || res.status === "OK") {
       localStorage.setItem("carritoId", res.data._id);
-    //   console.log(localStorage.getItem("carritoId"));
+      //   console.log(localStorage.getItem("carritoId"));
       return localStorage.getItem("carritoId");
     } else if (res.status === "errors") {
       alert(`Error: ${res.error}`);

@@ -1,8 +1,9 @@
-console.log("estamos trabajando con products");
+//VARIABLES
 let urlFiltro = "";
 let urlNextPage = "";
 let urlPrevPage = "";
 
+//ELEMENTOS
 //aplicar filtros:
 let formFilter = document.getElementById("formFiltro");
 formFilter.addEventListener("submit", (e) => {
@@ -43,6 +44,16 @@ btnSiguiente.addEventListener("click", () => {
   realizarConsulta(urlNextPage);
 });
 
+let btnViewCart = document.getElementById("ViewCart");
+btnViewCart.addEventListener("click", () => {
+  let cartId = localStorage.getItem("carritoId");
+  console.log(cartId);
+  cartId
+    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
+//FUNCIONES
 realizarConsulta = async (url) => {
   try {
     let response = await fetch(url, { method: "GET" });

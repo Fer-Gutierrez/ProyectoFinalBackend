@@ -36,6 +36,7 @@ router.get("/products", (req, res) => {
   });
 });
 
+//PRODUCT DETAIL
 router.get("/product/:pid", async (req, res) => {
   let id = req.params.pid;
   let product = await productDbManager.getProductById(id);
@@ -47,13 +48,23 @@ router.get("/product/:pid", async (req, res) => {
   });
 });
 
+//CART DETAIL
 router.get("/carts/:cid", async (req, res) => {
   let cartId = req.params.cid;
-  console.log(cartId);
+
   let cart = await cartDbManager.getCartById(cartId);
   cart = { ...cart._doc, _id: cart._id.toString() };
-  console.log(cart);
-  console.log(cart.products[0].product);
+
+  let newListProductsInCart = [];
+  cart.products.forEach((p) => {
+    newListProductsInCart.push({
+      _id: p._id.toString(),
+      quantity: p.quantity,
+      product: { ...p.product._doc, _id: p.product._id.toString() },
+    });
+  });
+  cart.products = newListProductsInCart;
+
   res.render("cartDetail", {
     title: "Product Detail",
     styles: "css/productsDetailStyles.css",
