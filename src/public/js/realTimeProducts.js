@@ -1,6 +1,15 @@
 console.log("Se activo el socket del cliente -chat-");
 const socket = io();
 
+let btnViewCart = document.getElementById("ViewCart");
+btnViewCart.addEventListener("click", () => {
+  let cartId = localStorage.getItem("carritoId");
+  console.log(cartId);
+  cartId
+    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
 //AddProducts
 let addProductForm = document.getElementById("addProductForm");
 addProductForm.addEventListener("submit", (e) => {
@@ -85,5 +94,3 @@ socket.on("refreshListProducts", (data) => {
     productsContenedor.append(divItemContenedor);
   });
 });
-
-

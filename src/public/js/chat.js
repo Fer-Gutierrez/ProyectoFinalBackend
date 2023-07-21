@@ -1,5 +1,14 @@
 const socket = io();
 
+let btnViewCart = document.getElementById("ViewCart");
+btnViewCart.addEventListener("click", () => {
+  let cartId = localStorage.getItem("carritoId");
+  console.log(cartId);
+  cartId
+    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
 let form = document.getElementById("messageForm");
 let divMessages = document.getElementById("messageContainer");
 let messageInput = document.getElementById("messageInput");
