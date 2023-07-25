@@ -1,10 +1,19 @@
 <div style="display: flex; flex-direction: column;">
-  <h1 style="margin: 10px auto;">Listado de Productos (No Real Time)</h1>
-  <div style="display: flex; flex-direction:row; gap: .3rem">
-  <a href="http://localhost:8080/products"><button>Buscar Productos</button></a>
-  <button id="ViewCart">Ver Mi Carrito</button>
-  <a href="http://localhost:8080/chat"><button>Ir al Chat</button></a>
-  <a href="http://localhost:8080/realtimeProducts"><button>Ir a RealTimeProducts</button></a>
+  <div style="display: flex; flex-direction:row; gap: .3rem; align-items: center;">
+    <a href="http://localhost:8080/products"><button>Buscar Productos</button></a>
+    <button id="ViewCart">Ver Mi Carrito</button>
+    <a href="http://localhost:8080/chat"><button>Ir al Chat</button></a>
+    <a href="http://localhost:8080/realtimeProducts"><button>Ir a RealTimeProducts</button></a>
+     <div style="margin-left: auto;">
+            {{#if user}}
+                <p>{{user.role}}: {{user.name}} / {{user.email}}</p>
+                <button style=" float: right;" id="logout-btn">Log Out</button>
+            {{else}}
+                <a href="http://localhost:8080/login"><button>Log In</button></a>
+                <a href="http://localhost:8080/register"><button>Register</button></a>
+            {{/if}}
+        </div>
   </div>
+  <h1 style="margin: 10px auto;">Home - Listado de Productos (No Real Time)</h1>
 </div>
 <script src="js/home.js"></script>

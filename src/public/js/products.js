@@ -47,10 +47,22 @@ btnSiguiente.addEventListener("click", () => {
 let btnViewCart = document.getElementById("ViewCart");
 btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
-  console.log(cartId);
   cartId
     ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
+//Logout
+let btnLogout = document.getElementById("logout-btn");
+btnLogout.addEventListener("click", async () => {
+  let result = await fetch("/api/sessions/logout", { method: "GET" });
+  if (result.status === 200) {
+    alert("Cerró sesion!");
+    window.location.replace("/");
+  } else {
+    result = await result.json();
+    alert(`${result.status}: ${result.error}`);
+  }
 });
 
 //FUNCIONES
@@ -67,7 +79,6 @@ realizarConsulta = async (url) => {
       alert(`Error: La consulta no fue existosa`);
     }
   } catch (error) {
-    console.log("Error al intentar consultar los datos:", error);
     alert(`Error al intentar consultar los datos: ${error}`);
   }
 };
@@ -175,7 +186,6 @@ crearCarrito = async () => {
       alert(`Error: No fue posible crear el carrito`);
     }
   } catch (error) {
-    console.log("Error al intentar agregar el carrito:", error);
     alert(`Error al intentar agregar el carrito: ${error}`);
   }
 };
@@ -197,7 +207,6 @@ agregarProductoAlCarrito = async (cartId, productId) => {
       return `Error: No fue posible agregar el producto al carrito`;
     }
   } catch (error) {
-    console.log("Error al intentar agregar el carrito:", error);
     alert(`Error al intentar agregar el carrito: ${error}`);
   }
 };

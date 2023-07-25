@@ -60,7 +60,6 @@ router.post("/", uploader.array("thumbnails", 10), async (req, res) => {
       req.body.category,
       files ? files.map((f) => f.path) : []
     );
-    console.log(newProduct);
 
     let result = await productFileManager.addProduct(newProduct);
     if (Object.keys(result).includes("error"))

@@ -4,7 +4,6 @@ const socket = io();
 let btnViewCart = document.getElementById("ViewCart");
 btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
-  console.log(cartId);
   cartId
     ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
@@ -19,7 +18,6 @@ addProductForm.addEventListener("submit", (e) => {
   let imgArray = [];
   if (e.target.thumbnails.files.length > 0)
     imgArray = Array.prototype.slice.call(e.target.thumbnails.files);
-  console.log(imgArray);
 
   //Configuramos la llamada:
   const formData = new FormData();
@@ -44,7 +42,7 @@ addProductForm.addEventListener("submit", (e) => {
         ? alert(res.message)
         : alert(JSON.stringify(res.error, null, "\t"));
     })
-    .catch((err) => console.log("entrando", err));
+    .catch((err) => console.log("error:", err));
 
   addProductForm.reset();
 });
@@ -62,13 +60,25 @@ deleteProductForm.addEventListener("submit", (e) => {
         ? alert(res.message)
         : alert(JSON.stringify(res.error, null, "\t"));
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log("error", err));
   deleteProductForm.reset();
+});
+
+//Logout
+let btnLogout = document.getElementById("logout-btn");
+btnLogout.addEventListener("click", async () => {
+  let result = await fetch("/api/sessions/logout", { method: "GET" });
+  if (result.status === 200) {
+    alert("Cerró sesion!");
+    window.location.replace("/");
+  } else {
+    result = await result.json();
+    alert(`${result.status}: ${result.error}`);
+  }
 });
 
 //WebSocket
 socket.on("refreshListProducts", (data) => {
-  // console.log(data);
   const result = JSON.parse(data);
 
   let productsContenedor = document.getElementById("productsContenedor");

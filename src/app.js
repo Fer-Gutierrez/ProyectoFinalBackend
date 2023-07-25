@@ -2,6 +2,7 @@ import express from "express";
 import productsFileRouter from "./routes/productsFile.router.js";
 import cartsFileRouter from "./routes/cartsFile.router.js";
 import productsDbRouter from "./routes/productsDb.router.js";
+import sessionRouter from "./routes/session.router.js";
 import cartsDbRouter from "./routes/cartDb.router.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
@@ -10,6 +11,9 @@ import { Server } from "socket.io";
 import Database from "./dbConfig.js";
 import ProductDbManager from "./dao/dbManager/products.js";
 import MessageDbManager from "./dao/dbManager/messages.js";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+import { user, password } from "./dbConfig.js";
 
 //CONEXION BD
 const db = new Database();
@@ -25,19 +29,35 @@ app.engine("handlebars", handlebars.engine()); //Creo el motor de vistas
 app.set("views", `${__dirname}/views`); //Defino la ruta donde estaran las vistas
 app.set("view engine", "handlebars"); //Defino el motor crear para correr las vistas
 
+//SESSION:
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: `mongodb+srv://${user}:${password}@ecommerce-pfbackend.c4du6ot.mongodb.net/?retryWrites=true&w=majority`,
+      dbName: "e-commerce",
+      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      ttl: 3000,
+    }),
+    secret: "palabraSecreta",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
 //ROUTES VIEWS
 app.use("/", viewsRouter);
-
-//CONFIGURACION DE HTTP SERVER
-export const httpServer = app.listen(8080, () =>
-  console.log("Servidor Arriba")
-);
 
 //ROUTES API
 app.use("/api/products/", productsDbRouter);
 app.use("/api/carts/", cartsDbRouter);
 app.use("/api/products/file", productsFileRouter);
 app.use("/api/carts/file", cartsFileRouter);
+app.use("/api/sessions", sessionRouter);
+
+//CONFIGURACION DE HTTP SERVER
+export const httpServer = app.listen(8080, () =>
+  console.log("Servidor Arriba")
+);
 
 //CONFIGURACION DE SOCKET.IO
 export const socketServer = new Server(httpServer); //Creamos el socketServer utilizando httpServer
@@ -57,7 +77,7 @@ socketServer.on("connection", async (socket) => {
     let messageRecived = { user: data.user, message: data.message };
     const mm = new MessageDbManager();
     let messageSaved = await mm.addMessage(messageRecived);
-    console.log(messageSaved);
+
     if (!Object.keys(messageSaved).includes("errors")) {
       socketServer.emit(
         "chatMessage",
@@ -66,5 +86,3 @@ socketServer.on("connection", async (socket) => {
     }
   });
 });
-
-

@@ -1,12 +1,27 @@
 const socket = io();
 
+//Btn-verCarrito
 let btnViewCart = document.getElementById("ViewCart");
 btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
-  console.log(cartId);
+
   cartId
     ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
+//Btn-Logout
+let btnLogout = document.getElementById("logout-btn");
+btnLogout.addEventListener("click", async () => {
+
+  let result = await fetch("/api/sessions/logout", { method: "GET" });
+  if (result.status === 200) {
+    alert("Cerró sesion!");
+    window.location.replace("/");
+  } else {
+    result = await result.json();
+    alert(`${result.status}: ${result.error}`);
+  }
 });
 
 let form = document.getElementById("messageForm");

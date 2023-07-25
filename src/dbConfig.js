@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import envJSON from "./env.json" assert { type: "json" };
 
 const node_env = process.env.NODE_ENV || "development";
-const user = envJSON[node_env].USER;
-const password = envJSON[node_env].PASSWORD;
+export const user = envJSON[node_env].USER;
+export const password = envJSON[node_env].PASSWORD;
 
 export default class Database {
   constructor() {

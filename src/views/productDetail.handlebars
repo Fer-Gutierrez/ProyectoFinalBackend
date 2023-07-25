@@ -1,5 +1,17 @@
 <div>
+    <div style="display: flex; flex-direction:row; align-items: center;">
     <a href="http://localhost:8080/chat"><button>Ir al Chat</button></a>
+        <div style="margin-left: auto;">
+            {{#if user}}
+                <p>{{user.role}}: {{user.name}} / {{user.email}}</p>
+                <button style=" float: right;" id="logout-btn">Log Out</button>
+            {{else}}
+                <a href="http://localhost:8080/login"><button>Log In</button></a>
+                <a href="http://localhost:8080/register"><button>Register</button></a>
+            {{/if}}
+        </div>
+    </div>
+    
     <h1 style="text-align: center;">Product Detail</h1>
     {{#if product}}
         <h3>{{product.code}} - {{ product.title }}</h3>

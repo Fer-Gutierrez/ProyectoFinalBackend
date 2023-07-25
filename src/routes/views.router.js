@@ -10,6 +10,7 @@ const cartDbManager = new CartDbManager();
 router.get("/", (req, res) => {
   res.render("home", {
     title: "Home",
+    user: req.session.user,
   });
 });
 
@@ -17,6 +18,7 @@ router.get("/", (req, res) => {
 router.get("/realtimeproducts", (req, res) => {
   res.render("realTimeProducts", {
     title: "Real Time Producst",
+    user: req.session.user,
   });
 });
 
@@ -25,14 +27,16 @@ router.get("/chat", (req, res) => {
   res.render("chat", {
     title: "Chat",
     styles: "css/styles.css",
+    user: req.session.user,
   });
 });
 
-//PRODUCTS CON PAGINATE
+//PRODUCTS WITH PAGINATE
 router.get("/products", (req, res) => {
   res.render("products", {
     title: "Products with paginate",
     styles: "css/productsStyles.css",
+    user: req.session.user,
   });
 });
 
@@ -45,6 +49,7 @@ router.get("/product/:pid", async (req, res) => {
     title: "Product Detail",
     styles: "css/productsDetailStyles.css",
     product,
+    user: req.session.user,
   });
 });
 
@@ -69,6 +74,20 @@ router.get("/carts/:cid", async (req, res) => {
     title: "Product Detail",
     styles: "css/productsDetailStyles.css",
     cart,
+    user: req.session.user,
+  });
+});
+
+//REGISTER:
+router.get("/register", (req, res) => {
+  res.render("register", {
+    title: "Resgister",
+  });
+});
+
+router.get("/login", (req, res) => {
+  res.render("login", {
+    title: "Login",
   });
 });
 

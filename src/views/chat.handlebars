@@ -1,9 +1,18 @@
 <div id="container" class="chatContainer" >
-    <div style="display: flex; flex-direction:row; gap: .3rem">
+    <div style="display: flex; flex-direction:row; gap: .3rem; align-items: center;">
         <a href="http://localhost:8080/products"><button>Buscar Productos</button></a>
-        <button style="align-self:flex-start;" id="ViewCart">Ver Mi Carrito</button>
+        <button id="ViewCart">Ver Mi Carrito</button>
         <a href="http://localhost:8080/"><button>Ir al Home</button></a>
         <a href="http://localhost:8080/realtimeProducts"><button>Ir a RealTimeProducts</button></a>
+        <div style="margin-left: auto;">
+            {{#if user}}
+                <p>{{user.role}}: {{user.name}} / {{user.email}}</p>
+                <button style=" float: right;" id="logout-btn">Log Out</button>
+            {{else}}
+                <a href="http://localhost:8080/login"><button>Log In</button></a>
+                <a href="http://localhost:8080/register"><button>Register</button></a>
+            {{/if}}
+        </div>
     </div>
     <h1 class="chatTitle">Chat con WebSocket</h1>
     <div id="messageContainer">
