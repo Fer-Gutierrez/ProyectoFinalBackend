@@ -1,6 +1,7 @@
 import express from "express";
 import ProductDbManager from "../dao/dbManager/products.js";
 import CartDbManager from "../dao/dbManager/carts.js";
+import cookieParser from "cookie-parser";
 
 const router = express.Router();
 const productDbManager = new ProductDbManager();
@@ -8,6 +9,13 @@ const cartDbManager = new CartDbManager();
 
 //HOME:
 router.get("/", (req, res) => {
+  if (req.session.counter) {
+    req.session.counter++;
+  } else {
+    req.session.counter = 1;
+    res.redirect("/login");
+  }
+
   res.render("home", {
     title: "Home",
     user: req.session.user,

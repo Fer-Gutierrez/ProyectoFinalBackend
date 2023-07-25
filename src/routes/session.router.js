@@ -12,8 +12,12 @@ router.post("/register", async (req, res) => {
       .send({ status: "error", error: "El email ya se ecuentra registrado." });
 
   let rol = "usuario";
-  if(email.toString().toLowerCase() === "admincoder@coder.com" && password === "adminCod3r123"){
-    rol = "admin"
+  if (email.toString().toLowerCase() === "admincoder@coder.com") {
+    // rol = "admin"
+    return res.status(400).send({
+      status: "error",
+      error: "No se puede utilizar ese email para registrarse",
+    });
   }
 
   const user = {
@@ -41,17 +45,29 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email, password });
 
-  if (!user)
-    return res
-      .status(400)
-      .send({ status: "error", error: "Email y contraseña incorrectos." });
+  if (
+    email.toString().toLowerCase() === "admincoder@coder.com" &&
+    password === "adminCod3r123"
+  ) {
+    req.session.user = {
+      name: `Usuario Coder`,
+      email: "admincoder@coder.com",
+      age: 20,
+      role: "admin",
+    };
+  } else {
+    if (!user)
+      return res
+        .status(400)
+        .send({ status: "error", error: "Email y contraseña incorrectos." });
 
-  req.session.user = {
-    name: `${user.first_name} ${user.last_name}`,
-    email: user.email,
-    age: user.age,
-    role: user.role
-  };
+    req.session.user = {
+      name: `${user.first_name} ${user.last_name}`,
+      email: user.email,
+      age: user.age,
+      role: user.role,
+    };
+  }
 
   res.send({
     status: "success",

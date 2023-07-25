@@ -3,68 +3,6 @@ let urlFiltro = "";
 let urlNextPage = "";
 let urlPrevPage = "";
 
-//ELEMENTOS
-//aplicar filtros:
-let formFilter = document.getElementById("formFiltro");
-formFilter.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  let code = e.target.code.value;
-  let title = e.target.title.value;
-  let description = e.target.description.value;
-  let category = e.target.category.value;
-  let status = e.target.status.value;
-  let price = e.target.price.value;
-  let stock = e.target.stock.value;
-  let limit = e.target.limit.value || 10;
-
-  let query = {
-    code,
-    title,
-    description,
-    category,
-    status,
-    price,
-    stock,
-    limit,
-  };
-
-  urlFiltro = `http://localhost:8080/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
-
-  realizarConsulta(urlFiltro);
-});
-
-let btnAnterior = document.getElementById("btnAnterior");
-btnAnterior.addEventListener("click", () => {
-  realizarConsulta(urlPrevPage);
-});
-
-let btnSiguiente = document.getElementById("btnSiguiente");
-btnSiguiente.addEventListener("click", () => {
-  realizarConsulta(urlNextPage);
-});
-
-let btnViewCart = document.getElementById("ViewCart");
-btnViewCart.addEventListener("click", () => {
-  let cartId = localStorage.getItem("carritoId");
-  cartId
-    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
-    : alert("No tiene nada en el carrito, favor de agregar un producto.");
-});
-
-//Logout
-let btnLogout = document.getElementById("logout-btn");
-btnLogout.addEventListener("click", async () => {
-  let result = await fetch("/api/sessions/logout", { method: "GET" });
-  if (result.status === 200) {
-    alert("Cerró sesion!");
-    window.location.replace("/");
-  } else {
-    result = await result.json();
-    alert(`${result.status}: ${result.error}`);
-  }
-});
-
 //FUNCIONES
 realizarConsulta = async (url) => {
   try {
@@ -210,3 +148,65 @@ agregarProductoAlCarrito = async (cartId, productId) => {
     alert(`Error al intentar agregar el carrito: ${error}`);
   }
 };
+
+//ELEMENTOS
+//aplicar filtros:
+let formFilter = document.getElementById("formFiltro");
+formFilter.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  let code = e.target.code.value;
+  let title = e.target.title.value;
+  let description = e.target.description.value;
+  let category = e.target.category.value;
+  let status = e.target.status.value;
+  let price = e.target.price.value;
+  let stock = e.target.stock.value;
+  let limit = e.target.limit.value || 10;
+
+  let query = {
+    code,
+    title,
+    description,
+    category,
+    status,
+    price,
+    stock,
+    limit,
+  };
+
+  urlFiltro = `http://localhost:8080/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
+
+  realizarConsulta(urlFiltro);
+});
+
+let btnAnterior = document.getElementById("btnAnterior");
+btnAnterior.addEventListener("click", () => {
+  realizarConsulta(urlPrevPage);
+});
+
+let btnSiguiente = document.getElementById("btnSiguiente");
+btnSiguiente.addEventListener("click", () => {
+  realizarConsulta(urlNextPage);
+});
+
+let btnViewCart = document.getElementById("ViewCart");
+btnViewCart.addEventListener("click", () => {
+  let cartId = localStorage.getItem("carritoId");
+  cartId
+    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    : alert("No tiene nada en el carrito, favor de agregar un producto.");
+});
+
+//Logout
+let btnLogout = document.getElementById("logout-btn");
+btnLogout.addEventListener("click", async () => {
+  let result = await fetch("/api/sessions/logout", { method: "GET" });
+  if (result.status === 200) {
+    alert("Cerró sesion!");
+    window.location.replace("/");
+  } else {
+    result = await result.json();
+    alert(`${result.status}: ${result.error}`);
+  }
+});
