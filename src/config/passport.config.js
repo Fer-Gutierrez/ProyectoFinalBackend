@@ -95,7 +95,8 @@ const initializedPassport = () => {
             let newUser = {
               first_name: profile._json.name || "",
               last_name: "",
-              email: profile._json.email || profile._json.login,
+              email:
+                "GitHubUser_" + (profile._json.email || profile._json.login),
               age: "",
               password: "",
             };
