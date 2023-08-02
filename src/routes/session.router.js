@@ -44,18 +44,6 @@ router.post("/register", async (req, res) => {
 });
 */
 
-// router.post(
-//   "/register",
-//   passport.authenticate(
-//     "register",
-//     { failureRedirect: "/failregister" },
-//     async (req, res) => {
-//       console.log(req);
-//       res.send({ status: "success", message: "User was registered" });
-//     }
-//   )
-// );
-
 router.post("/register", (req, res, next) => {
   passport.authenticate("register", (error, user, info) => {
     if (error) return res.status(400).send({ status: "error", error });
@@ -64,11 +52,12 @@ router.post("/register", (req, res, next) => {
     return res.send({
       status: "success",
       message: "Usuario registrado correctamente",
-      data: user
+      data: user,
     });
   })(req, res, next);
 });
 
+/*
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await userModel.findOne({ email, password });
@@ -102,6 +91,28 @@ router.post("/login", async (req, res) => {
     payload: req.session.user,
     message: "El usuario se logueo con exito.",
   });
+});
+*/
+
+router.post("/login", (req, res, next) => {
+  passport.authenticate("login", (error, user, info) => {
+    if (error) {
+      return res.status(500).send({ status: "errror", error });
+    }
+    if (!user)
+      return res.status(401).send({ status: "error", error: info.message });
+    req.session.user = {
+      name: `${user.first_name} ${user.last_name}`,
+      email: user.email,
+      age: user.age,
+      role: user.role,
+    };
+    res.send({
+      status: "success",
+      payload: req.session.user,
+      message: "El usuario se logueo con exito.",
+    });
+  })(req, res, next);
 });
 
 router.get("/logout", async (req, res) => {

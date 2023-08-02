@@ -36,13 +36,56 @@ const initializedPassport = () => {
     )
   );
 
+  passport.use(
+    "login",
+    new LocalStrategy(
+      {
+        passReqToCallback: true,
+        usernameField: "email",
+      },
+      async (req, username, password, done) => {
+        try {
+          if (
+            username.toString().toLowerCase() === "admincoder@coder.com" &&
+            password === "adminCod3r123"
+          ) {
+            const adminUser = {
+              name: `Usuario Coder`,
+              email: "admincoder@coder.com",
+              age: 20,
+              role: "admin",
+            };
+            return done(null, adminUser);
+          }
+
+          const user = await userModel.findOne({ email: username });
+
+          if (!user)
+            return done(null, false, {
+              message: `El usuario ${username} no existe`,
+            });
+          if (!isValidPassword(user, password))
+            return done(null, false, { message: `Credenciales incorrectas` });
+
+          return done(null, user);
+        } catch (error) {
+          return done(`Error: ${error}`);
+        }
+      }
+    )
+  );
+
   passport.serializeUser((user, done) => {
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id, done) => {
-    let user = await userModel.findById(id);
-    done(null, user);
+    try {
+      let user = await userModel.findById(id);
+      done(null, user);
+    } catch (error) {
+      done(`Error: ${error}`);
+    }
   });
 };
 
