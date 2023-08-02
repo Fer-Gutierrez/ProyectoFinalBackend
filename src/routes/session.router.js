@@ -1,8 +1,10 @@
 import { Router } from "express";
 import userModel from "../dao/models/user.model.js";
+import passport from "passport";
 
 const router = Router();
 
+/*
 router.post("/register", async (req, res) => {
   const { first_name, last_name, email, password, age } = req.body;
   const exist = await userModel.findOne({ email });
@@ -39,6 +41,32 @@ router.post("/register", async (req, res) => {
       data: result,
     });
   }
+});
+*/
+
+// router.post(
+//   "/register",
+//   passport.authenticate(
+//     "register",
+//     { failureRedirect: "/failregister" },
+//     async (req, res) => {
+//       console.log(req);
+//       res.send({ status: "success", message: "User was registered" });
+//     }
+//   )
+// );
+
+router.post("/register", (req, res, next) => {
+  passport.authenticate("register", (error, user, info) => {
+    if (error) return res.status(400).send({ status: "error", error });
+    if (!user)
+      return res.status(400).send({ status: "error", error: info.message });
+    return res.send({
+      status: "success",
+      message: "Usuario registrado correctamente",
+      data: user
+    });
+  })(req, res, next);
 });
 
 router.post("/login", async (req, res) => {

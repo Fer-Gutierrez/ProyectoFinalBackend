@@ -17,8 +17,7 @@ form.addEventListener("submit", async (e) => {
     alert(`${result.status}: ${result.error}`);
   }
   if (result.status === 200) {
-    alert(
-      `Usuario registrado con éxito, favor de dirigirse al login para ingresar.`
-    );
+    result = await result.json();
+    alert(result.message);
   }
 });

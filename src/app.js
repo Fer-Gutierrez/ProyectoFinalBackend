@@ -13,7 +13,9 @@ import ProductDbManager from "./dao/dbManager/products.js";
 import MessageDbManager from "./dao/dbManager/messages.js";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import { user, password } from "./dbConfig.js";
+import { user, password, secretWord } from "./dbConfig.js";
+import initializedPassport from "./config/passport.config.js";
+import passport from "passport";
 
 //CONEXION BD
 const db = new Database();
@@ -38,11 +40,16 @@ app.use(
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
       ttl: 3000,
     }),
-    secret: "palabraSecreta",
+    secret: secretWord,
     resave: false,
     saveUninitialized: false,
   })
 );
+
+//INIT PASSPORT
+initializedPassport();
+app.use(passport.initialize());
+app.use(passport.session({ secret: secretWord }));
 
 //ROUTES VIEWS
 app.use("/", viewsRouter);
