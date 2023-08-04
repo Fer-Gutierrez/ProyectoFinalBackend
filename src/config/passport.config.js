@@ -52,7 +52,8 @@ const initializedPassport = () => {
             password === "adminCod3r123"
           ) {
             const adminUser = {
-              name: `Usuario Coder`,
+              first_name: `Usuario`,
+              last_name: "Coder",
               email: "admincoder@coder.com",
               age: 20,
               role: "admin",
@@ -87,16 +88,20 @@ const initializedPassport = () => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          let user = await userModel.findOne({
-            email: profile._json.email || profile._json.login,
-          });
+          let email = "";
+          if (profile._json.email) {
+            email = profile._json.email;
+          } else {
+            email = `GitHubUser-${profile._json.login}`;
+          }
 
+          let user = await userModel.findOne({ email });
+          console.log(user);
           if (!user) {
             let newUser = {
               first_name: profile._json.name || "",
               last_name: "",
-              email:
-                "GitHubUser_" + (profile._json.email || profile._json.login),
+              email,
               age: "",
               password: "",
             };
