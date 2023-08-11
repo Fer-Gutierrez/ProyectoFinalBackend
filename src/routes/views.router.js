@@ -1,15 +1,15 @@
 import express from "express";
 import ProductDbManager from "../dao/dbManager/products.js";
 import CartDbManager from "../dao/dbManager/carts.js";
-import cookieParser from "cookie-parser";
+import { userCookieExtractor } from "../utils.js";
 
 const router = express.Router();
 const productDbManager = new ProductDbManager();
 const cartDbManager = new CartDbManager();
 
 //HOME:
-router.get("/", (req, res) => {
-  if (req.session.counter) {
+router.get("/", userCookieExtractor, (req, res) => {
+  if (req.session?.counter) {
     req.session.counter++;
   } else {
     req.session.counter = 1;
@@ -18,38 +18,38 @@ router.get("/", (req, res) => {
 
   res.render("home", {
     title: "Home",
-    user: req.session.user,
+    user: req.session?.user || req.user,
   });
 });
 
 //REAL TIME PRODUCTS:
-router.get("/realtimeproducts", (req, res) => {
+router.get("/realtimeproducts", userCookieExtractor, (req, res) => {
   res.render("realTimeProducts", {
     title: "Real Time Producst",
-    user: req.session.user,
+    user: req.session?.user || req.user,
   });
 });
 
 //CHAT
-router.get("/chat", (req, res) => {
+router.get("/chat", userCookieExtractor, (req, res) => {
   res.render("chat", {
     title: "Chat",
     styles: "css/styles.css",
-    user: req.session.user,
+    user: req.session?.user || req.user,
   });
 });
 
 //PRODUCTS WITH PAGINATE
-router.get("/products", (req, res) => {
+router.get("/products", userCookieExtractor, (req, res) => {
   res.render("products", {
     title: "Products with paginate",
     styles: "css/productsStyles.css",
-    user: req.session.user,
+    user: req.session?.user || req.user,
   });
 });
 
 //PRODUCT DETAIL
-router.get("/product/:pid", async (req, res) => {
+router.get("/product/:pid", userCookieExtractor, async (req, res) => {
   let id = req.params.pid;
   let product = await productDbManager.getProductById(id);
   product = { ...product._doc, _id: product._id.toString() };
@@ -57,12 +57,12 @@ router.get("/product/:pid", async (req, res) => {
     title: "Product Detail",
     styles: "css/productsDetailStyles.css",
     product,
-    user: req.session.user,
+    user: req.session?.user || req.user,
   });
 });
 
 //CART DETAIL
-router.get("/carts/:cid", async (req, res) => {
+router.get("/carts/:cid", userCookieExtractor, async (req, res) => {
   let cartId = req.params.cid;
 
   let cart = await cartDbManager.getCartById(cartId);
@@ -82,7 +82,7 @@ router.get("/carts/:cid", async (req, res) => {
     title: "Product Detail",
     styles: "css/productsDetailStyles.css",
     cart,
-    user: req.session.user,
+    user: req.session?.user || req.user,
   });
 });
 
@@ -93,6 +93,7 @@ router.get("/register", (req, res) => {
   });
 });
 
+//LOGIN:
 router.get("/login", (req, res) => {
   res.render("login", {
     title: "Login",

@@ -3,7 +3,13 @@ import local from "passport-local";
 import userModel from "../dao/models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
 import GitHubStrategy from "passport-github2";
-import { gitHub_clientId, gitHub_clientSectret } from "../dbConfig.js";
+import {
+  gitHub_clientId,
+  gitHub_clientSectret,
+  tokenKey,
+} from "../dbConfig.js";
+import { Strategy as JwtStrategy } from "passport-jwt";
+import { cookieExtractor } from "../utils.js";
 
 const LocalStrategy = local.Strategy;
 const initializedPassport = () => {
@@ -117,6 +123,24 @@ const initializedPassport = () => {
     )
   );
 
+  passport.use(
+    "current",
+    new JwtStrategy(
+      {
+        jwtFromRequest: cookieExtractor,
+        secretOrKey: tokenKey,
+      },
+      async (payload, done) => {
+        try {
+          const user = await userModel.findOne({ _id: payload.user.id });
+          if (!user) return done(null, false, { message: `User not found` });
+          done(null, user);
+        } catch (error) {
+          done(`Error: ${error}`, false);
+        }
+      }
+    )
+  );
 
   passport.serializeUser((user, done) => {
     done(null, user.id);

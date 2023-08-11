@@ -53,5 +53,27 @@ export const authToken = (req, res, next) => {
   });
 };
 
+//Metodo para extraer el Token JWT de una cookie:
+export const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.signedCookies) {
+    token = req.signedCookies["user"];
+  }
+  return token;
+};
+
+//Metodo para extraer el user del TOKEN de la cookie:
+export const userCookieExtractor = (req, res, next) => {
+  let token = req.signedCookies["user"];
+  if (!token) return next();
+  jwt.verify(token, tokenKey, (err, credentials) => {
+    console.log(`error: ${err}`);
+    console.log(`credentials: ${credentials.user}`);
+
+    req.user = credentials.user;
+    next();
+  });
+};
+
 export default __dirname;
 export const uploader = multer({ storage });
