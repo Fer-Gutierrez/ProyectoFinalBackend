@@ -2,7 +2,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import bcrypt, { genSaltSync } from "bcrypt";
-import { tokenKey } from "./dbConfig";
+import { tokenKey } from "./dbConfig.js";
 import jwt from "jsonwebtoken";
 
 //Ruta Absoluta:
@@ -30,6 +30,7 @@ export const isValidPassword = (user, password) =>
 //Metodo para generar JWT
 export const generateToken = (user) => {
   const token = jwt.sign({ user }, tokenKey, { expiresIn: "2h" });
+  return token;
 };
 
 //Metodo para obtener JWT

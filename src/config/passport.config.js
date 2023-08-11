@@ -65,10 +65,10 @@ const initializedPassport = () => {
 
           if (!user)
             return done(null, false, {
-              message: `El usuario ${username} no existe`,
+              message: `User ${username} not found`,
             });
           if (!isValidPassword(user, password))
-            return done(null, false, { message: `Credenciales incorrectas` });
+            return done(null, false, { message: `Incorrect credentials` });
 
           return done(null, user);
         } catch (error) {
@@ -116,6 +116,7 @@ const initializedPassport = () => {
       }
     )
   );
+
 
   passport.serializeUser((user, done) => {
     done(null, user.id);

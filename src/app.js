@@ -16,6 +16,7 @@ import MongoStore from "connect-mongo";
 import { user, password, secretWord } from "./dbConfig.js";
 import initializedPassport from "./config/passport.config.js";
 import passport from "passport";
+import cookieParser from "cookie-parser";
 
 //CONEXION BD
 const db = new Database();
@@ -25,6 +26,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`)); //ruta estatica
+app.use(cookieParser(secretWord));
 
 //CONFIGURACION DE HANDLEBARS - VISTAS
 app.engine("handlebars", handlebars.engine()); //Creo el motor de vistas
