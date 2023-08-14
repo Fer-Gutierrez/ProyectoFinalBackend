@@ -67,9 +67,6 @@ export const userCookieExtractor = (req, res, next) => {
   let token = req.signedCookies["user"];
   if (!token) return next();
   jwt.verify(token, tokenKey, (err, credentials) => {
-    console.log(`error: ${err}`);
-    console.log(`credentials: ${credentials.user}`);
-
     req.user = credentials.user;
     next();
   });
