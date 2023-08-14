@@ -6,7 +6,11 @@ form.addEventListener("submit", async (e) => {
   const infoLog = {};
   data.forEach((value, key) => (infoLog[key] = value));
 
-  let result = await loginWithJWT(infoLog);
+  let result = await fetch("/api/sessions/login", {
+    method: "POST",
+    body: JSON.stringify(infoLog),
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (result.status !== 200) {
     result = await result.json();
@@ -18,22 +22,3 @@ form.addEventListener("submit", async (e) => {
     window.location.replace("/products");
   }
 });
-
-const loginWithSession = async (infoLog) => {
-  let result = await fetch("/api/sessions/loginWithSession", {
-    method: "POST",
-    body: JSON.stringify(infoLog),
-    headers: { "Content-Type": "application/json" },
-  });
-  return result;
-};
-
-const loginWithJWT = async (infoLog) => {
-  let result = await fetch("/api/sessions/loginWithJWT", {
-    method: "POST",
-    body: JSON.stringify(infoLog),
-    headers: { "Content-Type": "application/json" },
-  });
-
-  return result;
-};

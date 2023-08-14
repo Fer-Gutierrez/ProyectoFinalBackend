@@ -8,6 +8,7 @@ export const secretWord = envJSON[node_env].SECRETWORD;
 export const gitHub_clientId = envJSON[node_env].GITHUB_CLIENTID;
 export const gitHub_clientSectret = envJSON[node_env].GITHUB_CLIENTSECRET;
 export const tokenKey = envJSON[node_env].TOKEN_KEY;
+export const LogValitdationType = envJSON[node_env].LOG_VALIDATION_TYPE;
 
 export default class Database {
   constructor() {

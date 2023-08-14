@@ -2,7 +2,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import bcrypt, { genSaltSync } from "bcrypt";
-import { tokenKey } from "./dbConfig.js";
+import { LogValitdationType, tokenKey } from "./dbConfig.js";
 import jwt from "jsonwebtoken";
 
 //Ruta Absoluta:
@@ -51,6 +51,18 @@ export const authToken = (req, res, next) => {
     req.user = credentials.user;
     next();
   });
+};
+
+//Middelware para devovler el session.user
+export const userSessionExtractor = (req, res, next) => {
+  if (LogValitdationType === "SESSIONS") {
+    res.send({
+      status: "success",
+      user: req.session.user,
+      message: "El usuario se logueo con exito.",
+    });
+  }
+  next();
 };
 
 //Metodo para extraer el Token JWT de una cookie:

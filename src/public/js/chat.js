@@ -6,11 +6,9 @@ let user;
 const validarUsuario = async () => {
   try {
     let result = await fetch("/api/sessions/current");
-    console.log(result);
 
     if (result.status === 200) {
       let data = await result.json();
-      console.log(data.user.email);
       user = data.user.email;
     } else {
       user = prompt("Ingrese su correo");
