@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { generateToken } from "../utils.js";
-import { LogValitdationType } from "../dbConfig.js";
+import { logValidationType } from "../dbConfig.js";
 import { userSessionExtractor } from "../utils.js";
 
 const router = Router();
@@ -27,7 +27,7 @@ router.post("/login", (req, res, next) => {
     if (!user)
       return res.status(401).send({ status: "error", error: info.message });
 
-    if (LogValitdationType === "JWT") {
+    if (logValidationType === "JWT") {
       const serialUser = {
         id: user._id,
         name: `${user.first_name} ${user.last_name}`,
@@ -39,7 +39,7 @@ router.post("/login", (req, res, next) => {
       res
         .cookie("user", token, { maxAge: 36000000, signed: true })
         .send({ status: "success", payload: serialUser });
-    } else if (LogValitdationType === "SESSIONS") {
+    } else if (logValidationType === "SESSIONS") {
       req.session.user = {
         id: user._id,
         name: `${user.first_name} ${user.last_name}`,
@@ -56,15 +56,14 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
-
 router.get("/logout", async (req, res) => {
-  if (LogValitdationType === "JWT") {
+  if (logValidationType === "JWT") {
     if (req.signedCookies["user"])
       return res
         .clearCookie("user")
         .send({ status: "success", message: "Se cerró la session" });
     else return res.send({ status: "error", message: "No existe cookie" });
-  } else if (LogValitdationType === "SESSIONS") {
+  } else if (logValidationType === "SESSIONS") {
     req.session.destroy((err) => {
       if (!err)
         return res.send({ status: "success", message: "Se cerró la sesión" });
@@ -76,7 +75,6 @@ router.get("/logout", async (req, res) => {
     });
   }
 });
-
 
 router.get(
   "/current",userSessionExtractor,

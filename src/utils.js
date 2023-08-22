@@ -2,7 +2,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import bcrypt, { genSaltSync } from "bcrypt";
-import { LogValitdationType, tokenKey } from "./dbConfig.js";
+import { logValidationType, tokenKey } from "./dbConfig.js";
 import jwt from "jsonwebtoken";
 
 //Ruta Absoluta:
@@ -55,7 +55,7 @@ export const authToken = (req, res, next) => {
 
 //Middelware para devovler el session.user
 export const userSessionExtractor = (req, res, next) => {
-  if (LogValitdationType === "SESSIONS") {
+  if (logValidationType === "SESSIONS") {
     res.send({
       status: "success",
       user: req.session.user,
@@ -82,6 +82,16 @@ export const userCookieExtractor = (req, res, next) => {
     req.user = credentials.user;
     next();
   });
+};
+
+//Custom Responses:
+export const generateCustomResponses = (req, res, next) => {
+  res.sendSuccess = (payload, status = 200) =>
+    res.status(status).send({ status: "success", payload });
+
+  res.sendError = (error, status = 500) =>
+    res.status(status).send({ status: "error", error });
+  next();
 };
 
 export default __dirname;

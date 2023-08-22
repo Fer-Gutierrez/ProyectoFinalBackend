@@ -13,11 +13,10 @@ export default class ProductDbManager {
     price,
     stock,
     status,
-    page,
-    limit,
+    page = 1,
+    limit = 10,
     sort
   ) => {
-
     let queryFilter = {
       title: { $regex: title, $options: "i" },
       description: { $regex: description, $options: "i" },

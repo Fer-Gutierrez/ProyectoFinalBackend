@@ -17,6 +17,7 @@ import { user, password, secretWord } from "./dbConfig.js";
 import initializedPassport from "./config/passport.config.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
+import productRouter from "./routes/product.router.js";
 
 //CONEXION BD
 const db = new Database();
@@ -57,7 +58,7 @@ app.use(passport.session({ secret: secretWord }));
 app.use("/", viewsRouter);
 
 //ROUTES API
-app.use("/api/products/", productsDbRouter);
+app.use("/api/products/", productRouter.getRouter());
 app.use("/api/carts/", cartsDbRouter);
 app.use("/api/products/file", productsFileRouter);
 app.use("/api/carts/file", cartsFileRouter);

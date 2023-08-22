@@ -1,4 +1,3 @@
-
 //VARIABLES
 let urlFiltro = "";
 let urlNextPage = "";
@@ -7,13 +6,13 @@ let urlPrevPage = "";
 //FUNCIONES
 realizarConsulta = async (url) => {
   try {
-    let response = await fetch(url, { method: "GET" });
-    let data = await response.json();
-
-    if (data.status === "Ok" || data.status === "OK") {
-      actualizarDatosEnPantalle(data);
-    } else if (data.status === "errors") {
-      alert(`Error: ${data.error}`);
+    let response = await fetch(url, { method: "GET" }).then((res) =>
+      res.json()
+    );
+    if (response.status === "success") {
+      actualizarDatosEnPantalle(response.payload);
+    } else if (response.status === "error") {
+      alert(`Error: ${response.error}`);
     } else {
       alert(`Error: La consulta no fue existosa`);
     }
@@ -52,12 +51,12 @@ actualizarDatosEnPantalle = ({ data }) => {
 
   let panelDatos = document.getElementById("panelDatos");
   panelDatos.innerHTML = "";
-  if (data.payload.length <= 0) {
+  if (data.length <= 0) {
     let parrInfo = document.createElement("p");
     parrInfo.innerText = "Ningun producto con el filtro aplicado";
     panelDatos.append(parrInfo);
   } else {
-    data.payload.forEach((p) => {
+    data.forEach((p) => {
       let div = document.createElement("div");
       div.className = "itemContenedor";
       div.innerHTML = `
@@ -175,7 +174,7 @@ formFilter.addEventListener("submit", (e) => {
     stock,
     limit,
   };
- 
+
   urlFiltro = `http://localhost:8080/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
 
   realizarConsulta(urlFiltro);

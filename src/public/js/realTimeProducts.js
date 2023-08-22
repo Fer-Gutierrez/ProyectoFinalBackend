@@ -64,15 +64,12 @@ deleteProductForm.addEventListener("submit", (e) => {
   deleteProductForm.reset();
 });
 
-
 //WebSocket
 socket.on("refreshListProducts", (data) => {
   const result = JSON.parse(data);
-
   let productsContenedor = document.getElementById("productsContenedor");
   productsContenedor.innerHTML = "";
-
-  result.forEach((p) => {
+  result.docs.forEach((p) => {
     let divItemContenedor = document.createElement("div");
     divItemContenedor.className = "itemContenedor";
     let tituloItem = document.createElement("strong");

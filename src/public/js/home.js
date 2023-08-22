@@ -3,7 +3,7 @@ const obtenerDatos = async () => {
     res.json()
   );
 
-  result.data.payload.forEach((p) => {
+  result.payload.data.forEach((p) => {
     let divItemContenedor = document.createElement("div");
     divItemContenedor.className = "itemContenedor";
     let tituloItem = document.createElement("strong");
@@ -34,4 +34,3 @@ btnViewCart.addEventListener("click", () => {
     ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
-

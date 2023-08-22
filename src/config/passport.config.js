@@ -1,6 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
 import userModel from "../dao/models/user.model.js";
+import userService from "../services/user.service.js";
 import { createHash, isValidPassword } from "../utils.js";
 import GitHubStrategy from "passport-github2";
 import {
@@ -10,6 +11,7 @@ import {
 } from "../dbConfig.js";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { cookieExtractor } from "../utils.js";
+import { adminEmail, adminPassword } from "../dbConfig.js";
 
 const LocalStrategy = local.Strategy;
 const initializedPassport = () => {
@@ -23,7 +25,8 @@ const initializedPassport = () => {
       async (req, username, password, done) => {
         const { first_name, last_name, email, age } = req.body;
         try {
-          let user = await userModel.findOne({ email: username });
+          // let user = await userModel.findOne({ email: username });
+          let user = await userService.getUser(email);
           if (user) return done(`El usuario ${username} ya existe`);
           const newUser = {
             first_name,
@@ -32,10 +35,10 @@ const initializedPassport = () => {
             age,
             password: createHash(password),
           };
-          let result = await userModel.create(newUser);
-          if (Object.keys(result).includes("error"))
-            return done(`Error: ${Object.values(result)[0]}`);
-
+          // let result = await userModel.create(newUser);
+          let result = await userService.createUser(newUser);
+          // if (Object.keys(result).includes("error"))
+          //   return done(`Error: ${Object.values(result)[0]}`);
           return done(null, result);
         } catch (error) {
           return done(`Error: ${error}`);
@@ -54,20 +57,21 @@ const initializedPassport = () => {
       async (req, username, password, done) => {
         try {
           if (
-            username.toString().toLowerCase() === "admincoder@coder.com" &&
-            password === "adminCod3r123"
+            username.toString().toLowerCase() === adminEmail &&
+            password === adminPassword
           ) {
             const adminUser = {
               first_name: `Usuario`,
               last_name: "Coder",
-              email: "admincoder@coder.com",
+              email: adminEmail,
               age: 20,
               role: "admin",
             };
             return done(null, adminUser);
           }
 
-          const user = await userModel.findOne({ email: username });
+          // const user = await userModel.findOne({ email: username });
+          const user = await userService.getUser(username);
 
           if (!user)
             return done(null, false, {
@@ -101,7 +105,8 @@ const initializedPassport = () => {
             email = `GitHubUser-${profile._json.login}`;
           }
 
-          let user = await userModel.findOne({ email });
+          // let user = await userModel.findOne({ email });
+          let user = await userService.getUser(email);
           console.log(user);
           if (!user) {
             let newUser = {
@@ -111,7 +116,8 @@ const initializedPassport = () => {
               age: "",
               password: "",
             };
-            let result = await userModel.create(newUser);
+            // let result = await userModel.create(newUser);
+            let result = await userService.createUser(newUser);
             return done(null, result);
           } else {
             return done(null, user);
@@ -132,7 +138,8 @@ const initializedPassport = () => {
       },
       async (payload, done) => {
         try {
-          const user = await userModel.findOne({ _id: payload.user.id });
+          // const user = await userModel.findOne({ _id: payload.user.id });
+          const user = await userService.getUserById(payload.user.id);
           if (!user) return done(null, false, { message: `User not found` });
           done(null, user);
         } catch (error) {
@@ -148,7 +155,8 @@ const initializedPassport = () => {
 
   passport.deserializeUser(async (id, done) => {
     try {
-      let user = await userModel.findById(id);
+      // let user = await userModel.findById(id);
+      let user = await userService.getUserById(id);
       done(null, user);
     } catch (error) {
       done(`Error: ${error}`);
