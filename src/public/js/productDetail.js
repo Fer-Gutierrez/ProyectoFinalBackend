@@ -25,7 +25,6 @@ btnViewCart.addEventListener("click", () => {
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
 
-
 //FUNCIONES
 crearCarrito = async () => {
   try {
@@ -57,10 +56,10 @@ agregarProductoAlCarrito = async (cartId, productId) => {
     );
     let res = await response.json();
 
-    if (res.status === "Ok" || res.status === "OK") {
+    if (response.status === 200) {
       return `producto agregado al carrito id: ${cartId} `;
-    } else if (res.status === "errors") {
-      return `No fue posible agregar el producto al carrito: ${res.error}`;
+    } else if (response.status !== 200) {
+      return `No fue posible agregar el producto al carrito: ${res.error.message}`;
     } else {
       return `Error: No fue posible agregar el producto al carrito`;
     }
