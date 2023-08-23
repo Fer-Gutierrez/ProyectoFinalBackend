@@ -1,9 +1,6 @@
 import express from "express";
 import productsFileRouter from "./routes/productsFile.router.js";
 import cartsFileRouter from "./routes/cartsFile.router.js";
-import productsDbRouter from "./routes/productsDb.router.js";
-import sessionRouter from "./routes/session.router.js";
-import cartsDbRouter from "./routes/cartDb.router.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
@@ -18,6 +15,8 @@ import initializedPassport from "./config/passport.config.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import productRouter from "./routes/product.router.js";
+import cartRouter from "./routes/cart.router.js";
+import sessionRouter from "./routes/session.router.js";
 
 //CONEXION BD
 const db = new Database();
@@ -59,10 +58,10 @@ app.use("/", viewsRouter);
 
 //ROUTES API
 app.use("/api/products/", productRouter.getRouter());
-app.use("/api/carts/", cartsDbRouter);
+app.use("/api/carts/", cartRouter.getRouter());
 app.use("/api/products/file", productsFileRouter);
 app.use("/api/carts/file", cartsFileRouter);
-app.use("/api/sessions", sessionRouter);
+app.use("/api/sessions", sessionRouter.getRouter());
 
 //CONFIGURACION DE HTTP SERVER
 export const httpServer = app.listen(8080, () =>

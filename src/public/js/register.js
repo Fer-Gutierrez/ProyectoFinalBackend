@@ -12,12 +12,12 @@ form.addEventListener("submit", async (e) => {
     headers: { "Content-Type": "application/json" },
   });
 
-  if (result.status === 400) {
+  if (result.status !== 200) {
     result = await result.json();
-    alert(`${result.status}: ${result.error}`);
+    alert(`${result.status}: ${result.error.message}`);
   }
   if (result.status === 200) {
     result = await result.json();
-    alert(result.message);
+    alert(result.payload.message);
   }
 });

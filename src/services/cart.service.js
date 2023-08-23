@@ -1,6 +1,7 @@
 import cartModel from "../dao/models/carts.model.js";
-import productsService from "./products.service.js";
+import productsService from "./product.service.js";
 import fs from "fs";
+import __dirname from "../utils.js";
 
 class CartService {
   constructor(path) {
@@ -77,9 +78,16 @@ class CartService {
     }
   };
 
-  deleteProductInCart = async (cartId, productId) => {
+  removeProductInCart = async (cartId, productId) => {
     try {
       let cart = await cartModel.findOne({ _id: cartId });
+      const productIdExistsInCart = cart.products.some(
+        (p) => p.product.toString() === productId
+      );
+      if (!productIdExistsInCart)
+        throw new Error(
+          `The productId (${productId}) doesnt exist in Cart ${cartId}`
+        );
       let newListProducts = cart.products.filter(
         (p) => p.product.toString() !== productId
       );
@@ -125,7 +133,7 @@ class CartService {
     }
   };
 
-  removeProductsInCart = async (cartId) => {
+  removeAllProductsInCart = async (cartId) => {
     try {
       let cart = await cartModel.findOne({ _id: cartId });
       cart.products = [];
@@ -259,11 +267,11 @@ class CartService {
   };
 }
 
-export default new CartService(`${__dirname}/data/products.json`)
+export default new CartService(`${__dirname}/data/products.json`);
 
 class Cart {
-    constructor() {
-      this.id = undefined;
-      this.products = [];
-    }
+  constructor() {
+    this.id = undefined;
+    this.products = [];
   }
+}
