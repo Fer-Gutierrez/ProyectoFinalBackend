@@ -24,8 +24,9 @@ export const createHash = (password) =>
   bcrypt.hashSync(password, genSaltSync(10));
 
 //Metodo para validar el HASH
-export const isValidPassword = (user, password) =>
-  bcrypt.compareSync(password, user.password);
+export const isValidPassword = (user, password) => {
+  return bcrypt.compare(password, user.password);
+};
 
 //Metodo para generar JWT
 export const generateToken = (user) => {
@@ -110,8 +111,8 @@ export const StatusCodes = {
   Unauthorized: 401,
   Forbidden: 403,
   NotFound: 404,
-  InternalServerError:500
-}
+  InternalServerError: 500,
+};
 
 export default __dirname;
 export const uploader = multer({ storage });

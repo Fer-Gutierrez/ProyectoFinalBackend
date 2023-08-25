@@ -1,11 +1,11 @@
 import express from "express";
-import productDbManager from "../dao/products/products.mongo.js";
-import cartDbManager from "../dao/carts/carts.mongo.js";
+import productService from "../services/product.service.js";
+import cartService from "../services/cart.service.js";
 import { userCookieExtractor } from "../utils.js";
 
 const router = express.Router();
-// const productDbManager = new ProductDbManager();
-// const cartDbManager = new CartDbManager();
+// const productService = new ProductDbManager();
+// const cartService = new CartDbManager();
 
 //HOME:
 router.get("/", userCookieExtractor, (req, res) => {
@@ -51,7 +51,7 @@ router.get("/products", userCookieExtractor, (req, res) => {
 //PRODUCT DETAIL
 router.get("/product/:pid", userCookieExtractor, async (req, res) => {
   let id = req.params.pid;
-  let product = await productDbManager.getProductById(id);
+  let product = await productService.getProductById(id);
   product = { ...product._doc, _id: product._id.toString() };
   res.render("productDetail", {
     title: "Product Detail",
@@ -65,7 +65,7 @@ router.get("/product/:pid", userCookieExtractor, async (req, res) => {
 router.get("/carts/:cid", userCookieExtractor, async (req, res) => {
   let cartId = req.params.cid;
 
-  let cart = await cartDbManager.getCartById(cartId);
+  let cart = await cartService.getCartById(cartId);
   cart = { ...cart._doc, _id: cart._id.toString() };
 
   let newListProductsInCart = [];

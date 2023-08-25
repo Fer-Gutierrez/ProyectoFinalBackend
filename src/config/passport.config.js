@@ -23,6 +23,7 @@ const initializedPassport = () => {
           // let user = await userModel.findOne({ email: username });
           let user = await userService.getUser(email);
           if (user) return done(`El usuario ${username} ya existe`);
+          console.log(password);
           const newUser = {
             first_name,
             last_name,
@@ -51,6 +52,7 @@ const initializedPassport = () => {
       },
       async (req, username, password, done) => {
         try {
+          console.log(username, password);
           if (
             username.toString().toLowerCase() === CONFIG.ADMIN_EMAIL &&
             password === CONFIG.ADMIN_PASSWORD
@@ -65,15 +67,16 @@ const initializedPassport = () => {
             return done(null, adminUser);
           }
 
-          // const user = await userModel.findOne({ email: username });
-          const user = await userService.getUser(username);
+          const user = await userModel.findOne({ email: username });
+          //const user = await userService.getUser(username);
 
           if (!user)
             return done(null, false, {
               message: `User ${username} not found`,
             });
-          if (!isValidPassword(user, password))
+          if (!isValidPassword(user, password)) {
             return done(null, false, { message: `Incorrect credentials` });
+          }
 
           return done(null, user);
         } catch (error) {
@@ -100,8 +103,8 @@ const initializedPassport = () => {
             email = `GitHubUser-${profile._json.login}`;
           }
 
-          // let user = await userModel.findOne({ email });
-          let user = await userService.getUser(email);
+          let user = await userModel.findOne({ email });
+          //let user = await userService.getUser(email);
           console.log(user);
           if (!user) {
             let newUser = {
@@ -111,8 +114,8 @@ const initializedPassport = () => {
               age: "",
               password: "",
             };
-            // let result = await userModel.create(newUser);
-            let result = await userService.createUser(newUser);
+            let result = await userModel.create(newUser);
+            //let result = await userService.createUser(newUser);
             return done(null, result);
           } else {
             return done(null, user);

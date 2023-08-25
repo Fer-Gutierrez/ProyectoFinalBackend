@@ -12,6 +12,7 @@ form.addEventListener("submit", async (e) => {
     headers: { "Content-Type": "application/json" },
   });
 
+
   if (result.status !== 200) {
     result = await result.json();
     alert(`${result.status}: ${result.error.message}`);
