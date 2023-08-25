@@ -1,11 +1,12 @@
 import productModel from "../dao/models/products.model.js";
 import fs from "fs";
 import __dirname from "../utils.js";
+import ProductIndexDao from "../dao/products/product.index.dao.js";
+
+const productIndexDAO = ProductIndexDao.getManager();
 
 class ProductService {
-  constructor(path) {
-    this.__path = path;
-  }
+  constructor() {}
 
   getProducts = async (
     title = "",
@@ -20,28 +21,19 @@ class ProductService {
     sort
   ) => {
     try {
-      let queryFilter = {
-        title: { $regex: title, $options: "i" },
-        description: { $regex: description, $options: "i" },
-        code: { $regex: code, $options: "i" },
-        category: { $regex: category, $options: "i" },
-      };
-      if (price) queryFilter.price = price;
-      if (stock) queryFilter.stock = stock;
-      if (status) queryFilter.status = Boolean(Number(status));
-
-      let sortOptions = {};
-      if (sort)
-        sort === "desc" ? (sortOptions.price = -1) : (sortOptions.price = 1);
-
-      let result = await productModel.paginate(queryFilter, {
+      let products = await productIndexDAO.getProducts(
+        title,
+        code,
+        description,
+        category,
+        price,
+        stock,
+        status,
         page,
         limit,
-        lean: true,
-        sort: sortOptions,
-      });
-
-      return result;
+        sort
+      );
+      return products;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -49,8 +41,7 @@ class ProductService {
 
   getProductById = async (id) => {
     try {
-      let product = await productModel.findOne({ _id: id });
-      return product;
+      return await productIndexDAO.getProductById(id);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -58,8 +49,7 @@ class ProductService {
 
   addProduct = async (newProduct) => {
     try {
-      let result = await productModel.create(newProduct);
-      return result;
+      return await productIndexDAO.addProduct(newProduct);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -67,10 +57,7 @@ class ProductService {
 
   updateProduct = async (id, productToUpdate) => {
     try {
-      let result = await productModel.updateOne({ _id: id }, productToUpdate, {
-        runValidators: true,
-      });
-      return result;
+      return await productIndexDAO.updateProduct(id, productToUpdate);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -78,8 +65,7 @@ class ProductService {
 
   deleteProduct = async (id) => {
     try {
-      let result = await productModel.deleteOne({ _id: id });
-      return result;
+      return await productIndexDAO.deleteProduct(id);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -87,8 +73,7 @@ class ProductService {
 
   existProduct = async (id) => {
     try {
-      let result = await productModel.findOne({ _id: id });
-      return result;
+      return await productIndexDAO.getProductById(id);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -271,7 +256,7 @@ class ProductService {
   };
 }
 
-export default new ProductService(`${__dirname}/data/products.json`);
+export default new ProductService();
 
 class Product {
   constructor(

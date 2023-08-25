@@ -179,7 +179,6 @@ class ProductController {
       sendProductsSocket();
       res.sendSuccess({ message: "Product was updated.", data: result });
     } catch (error) {
-      console.log(error);
       res.sendError({ message: error.message });
     }
   }
@@ -204,7 +203,6 @@ export default new ProductController();
 
 const sendProductsSocket = async () => {
   const result = await productService.getProducts();
-  console.log(result);
   socketServer.emit(
     "refreshListProducts",
     JSON.stringify(await productService.getProducts(), null, "\t")

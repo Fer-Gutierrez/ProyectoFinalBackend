@@ -17,33 +17,41 @@ export default class ProductDbManager {
     limit = 10,
     sort
   ) => {
-    let queryFilter = {
-      title: { $regex: title, $options: "i" },
-      description: { $regex: description, $options: "i" },
-      code: { $regex: code, $options: "i" },
-      category: { $regex: category, $options: "i" },
-    };
-    if (price) queryFilter.price = price;
-    if (stock) queryFilter.stock = stock;
-    if (status) queryFilter.status = Boolean(Number(status));
+    try {
+      let queryFilter = {
+        title: { $regex: title, $options: "i" },
+        description: { $regex: description, $options: "i" },
+        code: { $regex: code, $options: "i" },
+        category: { $regex: category, $options: "i" },
+      };
+      if (price) queryFilter.price = price;
+      if (stock) queryFilter.stock = stock;
+      if (status) queryFilter.status = Boolean(Number(status));
 
-    let sortOptions = {};
-    if (sort)
-      sort === "desc" ? (sortOptions.price = -1) : (sortOptions.price = 1);
+      let sortOptions = {};
+      if (sort)
+        sort === "desc" ? (sortOptions.price = -1) : (sortOptions.price = 1);
 
-    let result = await productModel.paginate(queryFilter, {
-      page,
-      limit,
-      lean: true,
-      sort: sortOptions,
-    });
+      let result = await productModel.paginate(queryFilter, {
+        page,
+        limit,
+        lean: true,
+        sort: sortOptions,
+      });
 
-    return result;
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   };
 
   getProductById = async (id) => {
-    let product = await productModel.findOne({ _id: id });
-    return product;
+    try {
+      let product = await productModel.findOne({ _id: id });
+      return product;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   };
 
   addProduct = async (newProduct) => {
@@ -51,7 +59,7 @@ export default class ProductDbManager {
       let result = await productModel.create(newProduct);
       return result;
     } catch (error) {
-      return error;
+      throw new Error(error.message);
     }
   };
 
@@ -62,7 +70,7 @@ export default class ProductDbManager {
       });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(error.message);
     }
   };
 
@@ -71,7 +79,7 @@ export default class ProductDbManager {
       let result = await productModel.deleteOne({ _id: id });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(error.message);
     }
   };
 
@@ -80,7 +88,7 @@ export default class ProductDbManager {
       let result = await productModel.findOne({ _id: id });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(error.message);
     }
   };
 }

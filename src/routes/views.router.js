@@ -1,11 +1,11 @@
 import express from "express";
-import ProductDbManager from "../dao/dbManager/products.js";
-import CartDbManager from "../dao/dbManager/carts.js";
+import productDbManager from "../dao/products/products.mongo.js";
+import cartDbManager from "../dao/carts/carts.mongo.js";
 import { userCookieExtractor } from "../utils.js";
 
 const router = express.Router();
-const productDbManager = new ProductDbManager();
-const cartDbManager = new CartDbManager();
+// const productDbManager = new ProductDbManager();
+// const cartDbManager = new CartDbManager();
 
 //HOME:
 router.get("/", userCookieExtractor, (req, res) => {

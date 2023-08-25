@@ -4,14 +4,9 @@ import userModel from "../dao/models/user.model.js";
 import userService from "../services/user.service.js";
 import { createHash, isValidPassword } from "../utils.js";
 import GitHubStrategy from "passport-github2";
-import {
-  gitHub_clientId,
-  gitHub_clientSectret,
-  tokenKey,
-} from "../dbConfig.js";
+import { CONFIG } from "./config.js";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { cookieExtractor } from "../utils.js";
-import { adminEmail, adminPassword } from "../dbConfig.js";
 
 const LocalStrategy = local.Strategy;
 const initializedPassport = () => {
@@ -57,13 +52,13 @@ const initializedPassport = () => {
       async (req, username, password, done) => {
         try {
           if (
-            username.toString().toLowerCase() === adminEmail &&
-            password === adminPassword
+            username.toString().toLowerCase() === CONFIG.ADMIN_EMAIL &&
+            password === CONFIG.ADMIN_PASSWORD
           ) {
             const adminUser = {
               first_name: `Usuario`,
               last_name: "Coder",
-              email: adminEmail,
+              email: CONFIG.ADMIN_EMAIL,
               age: 20,
               role: "admin",
             };
@@ -92,8 +87,8 @@ const initializedPassport = () => {
     "github",
     new GitHubStrategy(
       {
-        clientID: gitHub_clientId,
-        clientSecret: gitHub_clientSectret,
+        clientID: CONFIG.GITHUB_CLIENTID,
+        clientSecret: CONFIG.GITHUB_CLIENTSECRET,
         callbackURL: "http://localhost:8080/api/sessions/githubcallback",
       },
       async (accessToken, refreshToken, profile, done) => {
@@ -134,7 +129,7 @@ const initializedPassport = () => {
     new JwtStrategy(
       {
         jwtFromRequest: cookieExtractor,
-        secretOrKey: tokenKey,
+        secretOrKey: CONFIG.TOKEN_KEY,
       },
       async (payload, done) => {
         try {

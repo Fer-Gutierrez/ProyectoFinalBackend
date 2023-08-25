@@ -1,16 +1,14 @@
 import express from "express";
-import productsFileRouter from "./routes/productsFile.router.js";
-import cartsFileRouter from "./routes/cartsFile.router.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import viewsRouter from "./routes/views.router.js";
 import { Server } from "socket.io";
-import Database from "./dbConfig.js";
-import ProductDbManager from "./dao/dbManager/products.js";
-import MessageDbManager from "./dao/dbManager/messages.js";
+import ConexionDB from "./config/dbConfig.js";
+import ProductDbManager from "./dao/products/products.mongo.js";
+import MessageDbManager from "./dao/messages/messages.js";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-import { user, password, secretWord } from "./dbConfig.js";
+import { CONFIG } from "./config/config.js";
 import initializedPassport from "./config/passport.config.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
@@ -19,14 +17,14 @@ import cartRouter from "./routes/cart.router.js";
 import sessionRouter from "./routes/session.router.js";
 
 //CONEXION BD
-const db = new Database();
+const DBInstance = new ConexionDB();
 
 //CONFIGURACION DE EXPRESS
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`)); //ruta estatica
-app.use(cookieParser(secretWord));
+app.use(cookieParser(CONFIG.SECRETWORD));
 
 //CONFIGURACION DE HANDLEBARS - VISTAS
 app.engine("handlebars", handlebars.engine()); //Creo el motor de vistas
@@ -37,12 +35,12 @@ app.set("view engine", "handlebars"); //Defino el motor crear para correr las vi
 app.use(
   session({
     store: MongoStore.create({
-      mongoUrl: `mongodb+srv://${user}:${password}@ecommerce-pfbackend.c4du6ot.mongodb.net/?retryWrites=true&w=majority`,
-      dbName: "e-commerce",
+      mongoUrl: `mongodb+srv://${CONFIG.USER}:${CONFIG.PASSWORD}@ecommerce-pfbackend.c4du6ot.mongodb.net/?retryWrites=true&w=majority`,
+      dbName: CONFIG.DBNAME,
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
       ttl: 3000,
     }),
-    secret: secretWord,
+    secret: CONFIG.SECRETWORD,
     resave: false,
     saveUninitialized: false,
   })
@@ -51,7 +49,7 @@ app.use(
 //INIT PASSPORT
 initializedPassport();
 app.use(passport.initialize());
-app.use(passport.session({ secret: secretWord }));
+app.use(passport.session({ secret: CONFIG.SECRETWORD }));
 
 //ROUTES VIEWS
 app.use("/", viewsRouter);
@@ -59,8 +57,6 @@ app.use("/", viewsRouter);
 //ROUTES API
 app.use("/api/products/", productRouter.getRouter());
 app.use("/api/carts/", cartRouter.getRouter());
-app.use("/api/products/file", productsFileRouter);
-app.use("/api/carts/file", cartsFileRouter);
 app.use("/api/sessions", sessionRouter.getRouter());
 
 //CONFIGURACION DE HTTP SERVER

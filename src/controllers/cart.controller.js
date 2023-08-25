@@ -29,7 +29,9 @@ class CartController {
       if (!cart) return res.sendError({ message: "Cart not found" }, 404);
       res.sendSuccess(cart);
     } catch (error) {
-      res.sendError({ message: error.message });
+      console.log(error);
+      console.log(`Estamos  en el error:  ${error.message} - ${error.status}`);
+      res.sendError({ message: error.message }, error.status);
     }
   }
 

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import passport from "passport";
 import { generateToken } from "../utils.js";
-import { logValidationType } from "../dbConfig.js";
 import { userSessionExtractor, generateCustomResponses } from "../utils.js";
+import { CONFIG } from "../config/config.js";
 
 // const router = Router();
 // router.post("/register", (req, res, next) => {
@@ -157,7 +157,7 @@ class SessionRouter {
       if (error) return res.sendError({ message: error.message }, 500);
       if (!user) return res.sendError({ message: info.message }, 400);
 
-      if (logValidationType === "JWT") {
+      if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
         const serialUser = {
           id: user._id,
           name: `${user.first_name} ${user.last_name}`,
@@ -169,7 +169,7 @@ class SessionRouter {
         res
           .cookie("user", token, { maxAge: 36000000, signed: true })
           .sendSuccess(serialUser);
-      } else if (logValidationType === "SESSIONS") {
+      } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
         req.session.user = {
           id: user._id,
           name: `${user.first_name} ${user.last_name}`,
@@ -194,13 +194,13 @@ class SessionRouter {
             message: `No fue posible cerrar la sesión: ${err}`,
           });
       });
-    } else if (logValidationType === "JWT") {
+    } else if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
       if (req.signedCookies["user"])
         return res
           .clearCookie("user")
           .sendSuccess({ message: "Se cerró la session" });
       else return res.sendError({ message: "No existe cookie" });
-    } else if (logValidationType === "SESSIONS") {
+    } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
       req.session.destroy((err) => {
         if (!err) return res.sendSuccess({ message: "Se cerró la session" });
         else

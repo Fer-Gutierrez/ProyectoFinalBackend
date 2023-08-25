@@ -2,8 +2,8 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import multer from "multer";
 import bcrypt, { genSaltSync } from "bcrypt";
-import { logValidationType, tokenKey } from "./dbConfig.js";
 import jwt from "jsonwebtoken";
+import { CONFIG } from "./config/config.js";
 
 //Ruta Absoluta:
 const __filename = fileURLToPath(import.meta.url);
@@ -29,7 +29,7 @@ export const isValidPassword = (user, password) =>
 
 //Metodo para generar JWT
 export const generateToken = (user) => {
-  const token = jwt.sign({ user }, tokenKey, { expiresIn: "2h" });
+  const token = jwt.sign({ user }, CONFIG.TOKEN_KEY, { expiresIn: "2h" });
   return token;
 };
 
@@ -44,7 +44,7 @@ export const authToken = (req, res, next) => {
 
   const token = headerAuth.split(" ")[1];
 
-  jwt.verify(token, tokenKey, (err, credentials) => {
+  jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
     console.log(`error: ${err}`);
     console.log(`credentials: ${credentials}`);
 
@@ -55,7 +55,7 @@ export const authToken = (req, res, next) => {
 
 //Middelware para devovler el session.user
 export const userSessionExtractor = (req, res, next) => {
-  if (logValidationType === "SESSIONS") {
+  if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
     res.send({
       status: "success",
       user: req.session.user,
@@ -78,7 +78,7 @@ export const cookieExtractor = (req) => {
 export const userCookieExtractor = (req, res, next) => {
   let token = req.signedCookies["user"];
   if (!token) return next();
-  jwt.verify(token, tokenKey, (err, credentials) => {
+  jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
     req.user = credentials.user;
     next();
   });
@@ -93,6 +93,25 @@ export const generateCustomResponses = (req, res, next) => {
     res.status(status).send({ status: "error", error });
   next();
 };
+
+export class HttpError {
+  constructor(message, status = 500, details = null) {
+    this.message = message;
+    this.status = status;
+    this.details = details;
+  }
+}
+
+export const StatusCodes = {
+  Success: 200,
+  Created: 201,
+  NoContent: 204,
+  BadRequest: 400,
+  Unauthorized: 401,
+  Forbidden: 403,
+  NotFound: 404,
+  InternalServerError:500
+}
 
 export default __dirname;
 export const uploader = multer({ storage });

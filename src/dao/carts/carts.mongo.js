@@ -67,7 +67,7 @@ export default class CartDbManager {
     }
   };
 
-  deleteProductInCart = async (cartId, productId) => {
+  removeProductInCart = async (cartId, productId) => {
     try {
       let cart = await cartModel.findOne({ _id: cartId });
       let newListProducts = cart.products.filter(
@@ -115,7 +115,7 @@ export default class CartDbManager {
     }
   };
 
-  removeProductsInCart = async (cartId) => {
+  removeAllProductsInCart = async (cartId) => {
     try {
       let cart = await cartModel.findOne({ _id: cartId });
       cart.products = [];
