@@ -23,7 +23,7 @@ const initializedPassport = () => {
           // let user = await userModel.findOne({ email: username });
           let user = await userService.getUser(email);
           if (user) return done(`El usuario ${username} ya existe`);
-          console.log(password);
+
           const newUser = {
             first_name,
             last_name,
@@ -52,7 +52,6 @@ const initializedPassport = () => {
       },
       async (req, username, password, done) => {
         try {
-          console.log(username, password);
           if (
             username.toString().toLowerCase() === CONFIG.ADMIN_EMAIL &&
             password === CONFIG.ADMIN_PASSWORD
@@ -105,7 +104,7 @@ const initializedPassport = () => {
 
           let user = await userModel.findOne({ email });
           //let user = await userService.getUser(email);
-          console.log(user);
+
           if (!user) {
             let newUser = {
               first_name: profile._json.name || "",
