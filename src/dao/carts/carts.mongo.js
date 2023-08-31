@@ -2,7 +2,7 @@ import cartModel from "../models/carts.model.js";
 
 export default class CartDbManager {
   constructor() {
-    console.log("Estamos trabajando con BDMongo (carts)");
+
   }
 
   getCarts = async () => {

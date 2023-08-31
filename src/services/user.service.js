@@ -1,34 +1,67 @@
-import { createHash } from "../utils.js";
-import userModel from "../dao/models/user.model.js";
+import { HttpError, StatusCodes } from "../utils.js";
+import FactoryDAO from "../dao/daoFactory.js";
 
 class UserService {
-  constructor() {}
+  constructor() {
+    this.userManagerDAO = FactoryDAO.getUserManager();
+  }
 
   async createUser(user) {
     try {
-      user.password = createHash(user.password);
-      const result = await userModel.create(user);
-      if (Object.keys(result).includes("error"))
-        throw new Error(`Error: ${Object.values(result)[0]}`);
+      if (!user)
+        throw new HttpError(
+          "User must be a object with properties",
+          StatusCodes.BadRequest
+        );
+      if (!user.first_name)
+        throw new HttpError(
+          "User must have first_name property",
+          StatusCodes.BadRequest
+        );
+      if (!user.last_name)
+        throw new HttpError(
+          "User must have last_name property",
+          StatusCodes.BadRequest
+        );
+      if (!user.email)
+        throw new HttpError(
+          "User must have email property",
+          StatusCodes.BadRequest
+        );
+      if (!user.age)
+        throw new HttpError(
+          "User must have age property",
+          StatusCodes.BadRequest
+        );
+      if (!user.password)
+        throw new HttpError(
+          "User must have password property",
+          StatusCodes.BadRequest
+        );
+      console.log(user);
+
+      const result = await this.userManagerDAO.create(user);
       return result;
     } catch (error) {
-      throw new Error(error.message);
+      throw new HttpError(error.message, error.status);
     }
   }
 
   async getUser(email) {
     try {
-      const user = await userModel.findOne({ email });
-      return user;
+      if (!email)
+        throw new HttpError("email must have value", StatusCodes.BadRequest);
+      return await this.userManagerDAO.getByEmail(email);
     } catch (error) {
-      throw new Error(error.message);
+      throw new HttpError(error.message, error.status);
     }
   }
 
-  async getUserById(id){
+  async getUserById(id) {
     try {
-      const user = await userModel.findOne({ _id: id });
-      return user;
+      if (!id)
+        throw new HttpError("id must have value", StatusCodes.BadRequest);
+      return await this.userManagerDAO.getById(id);
     } catch (error) {
       throw new Error(error.message);
     }

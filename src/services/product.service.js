@@ -1,10 +1,10 @@
 import { HttpError, StatusCodes } from "../utils.js";
-import ProductIndexDao from "../dao/products/product.index.dao.js";
-
-const productManagerDAO = ProductIndexDao.getManager();
+import FactoryDAO from "../dao/daoFactory.js";
 
 class ProductService {
-  constructor() {}
+  constructor() {
+    this.productManagerDAO = FactoryDAO.getProductManager();
+  }
 
   getProducts = async (
     title = "",
@@ -59,7 +59,7 @@ class ProductService {
           StatusCodes.BadRequest
         );
 
-      let products = await productManagerDAO.getProducts(
+      let products = await this.productManagerDAO.getProducts(
         title,
         code,
         description,
@@ -82,7 +82,7 @@ class ProductService {
     try {
       if (!id)
         throw new HttpError("id must have a value", StatusCodes.BadRequest);
-      const product = await productManagerDAO.getProductById(id);
+      const product = await this.productManagerDAO.getProductById(id);
       if (!product)
         throw new HttpError("product not found", StatusCodes.NotFound);
       return product;
@@ -105,7 +105,7 @@ class ProductService {
           "Some required params are missing or incorrect",
           StatusCodes.BadRequest
         );
-      return await productManagerDAO.addProduct(newProduct);
+      return await this.productManagerDAO.addProduct(newProduct);
     } catch (error) {
       throw new HttpError(error.message, error.status || 500);
     }
@@ -132,7 +132,7 @@ class ProductService {
           "Some params in Product to update are missing or incorrect",
           StatusCodes.BadRequest
         );
-      return await productManagerDAO.updateProduct(id, productToUpdate);
+      return await this.productManagerDAO.updateProduct(id, productToUpdate);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -146,7 +146,7 @@ class ProductService {
           `Product with id= ${id} not found.`,
           StatusCodes.NotFound
         );
-      return await productManagerDAO.deleteProduct(id);
+      return await this.productManagerDAO.deleteProduct(id);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -154,13 +154,11 @@ class ProductService {
 
   existProduct = async (id) => {
     try {
-      return await productManagerDAO.getProductById(id);
+      return await this.productManagerDAO.getProductById(id);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
   };
-
 }
 
 export default new ProductService();
-

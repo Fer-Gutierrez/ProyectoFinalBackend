@@ -1,9 +1,7 @@
 import productModel from "../models/products.model.js";
 
 export default class ProductDbManager {
-  constructor() {
-    console.log("Estamos trabajando con BDMongo (products)");
-  }
+  constructor() {}
 
   getProducts = async (
     title = "",

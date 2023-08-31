@@ -18,9 +18,9 @@ const initializedPassport = () => {
         usernameField: "email",
       },
       async (req, username, password, done) => {
-        const { first_name, last_name, email, age } = req.body;
         try {
-          // let user = await userModel.findOne({ email: username });
+          const { first_name, last_name, email, age } = req.body;
+
           let user = await userService.getUser(email);
           if (user) return done(`El usuario ${username} ya existe`);
 
@@ -31,10 +31,8 @@ const initializedPassport = () => {
             age,
             password: createHash(password),
           };
-          // let result = await userModel.create(newUser);
+
           let result = await userService.createUser(newUser);
-          // if (Object.keys(result).includes("error"))
-          //   return done(`Error: ${Object.values(result)[0]}`);
           return done(null, result);
         } catch (error) {
           return done(`Error: ${error}`);
@@ -67,7 +65,6 @@ const initializedPassport = () => {
           }
 
           const user = await userModel.findOne({ email: username });
-          //const user = await userService.getUser(username);
 
           if (!user)
             return done(null, false, {
@@ -103,7 +100,6 @@ const initializedPassport = () => {
           }
 
           let user = await userModel.findOne({ email });
-          //let user = await userService.getUser(email);
 
           if (!user) {
             let newUser = {
@@ -114,7 +110,6 @@ const initializedPassport = () => {
               password: "",
             };
             let result = await userModel.create(newUser);
-            //let result = await userService.createUser(newUser);
             return done(null, result);
           } else {
             return done(null, user);
@@ -135,7 +130,6 @@ const initializedPassport = () => {
       },
       async (payload, done) => {
         try {
-          // const user = await userModel.findOne({ _id: payload.user.id });
           const user = await userService.getUserById(payload.user.id);
           if (!user) return done(null, false, { message: `User not found` });
           done(null, user);
@@ -152,7 +146,6 @@ const initializedPassport = () => {
 
   passport.deserializeUser(async (id, done) => {
     try {
-      // let user = await userModel.findById(id);
       let user = await userService.getUserById(id);
       done(null, user);
     } catch (error) {

@@ -1,0 +1,44 @@
+import { CONFIG } from "../config/config.js";
+import CartFileManager from "./carts/carts.file.js";
+import CartDbManager from "./carts/carts.mongo.js";
+import ProductDbManager from "./products/products.mongo.js";
+import ProductFileManager from "./products/products.file.js";
+import UserDbManager from "./users/users.mongo.js";
+import __dirname from "../utils.js";
+
+class FactoryDAO {
+  constructor() {
+    switch (CONFIG.PERSISTENCE_TYPE) {
+      case "file": {
+        this._cartManager = new CartFileManager(`${__dirname}/data/carts.json`);
+        this._productManager = new ProductFileManager(
+          `${__dirname}/data/products.json`
+        );
+        break;
+      }
+      case "mongo": {
+        this._cartManager = new CartDbManager();
+        this._productManager = new ProductDbManager();
+        break;
+      }
+      default: {
+        throw new Error("No digitaste una persistencia valida");
+      }
+    }
+    this._userManager = new UserDbManager();
+  }
+
+  getCartManager() {
+    return this._cartManager;
+  }
+
+  getProductManager() {
+    return this._productManager;
+  }
+
+  getUserManager() {
+    return this._userManager;
+  }
+}
+
+export default new FactoryDAO();

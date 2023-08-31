@@ -1,16 +1,15 @@
 import __dirname, { HttpError, StatusCodes } from "../utils.js";
-import CartIndexDao from "../dao/carts/cart.index.dao.js";
-import ProductIndexDao from "../dao/products/product.index.dao.js";
-
-const cartManagerDAO = CartIndexDao.getManager();
-const productManagerDAO = ProductIndexDao.getManager();
+import FactoryDAO from "../dao/daoFactory.js";
 
 class CartService {
-  constructor() {}
+  constructor() {
+    this.cartManagerDAO = FactoryDAO.getCartManager();
+    this.productManagerDAO = FactoryDAO.getProductManager();
+  }
 
   getCarts = async () => {
     try {
-      return await cartManagerDAO.getCarts();
+      return await this.cartManagerDAO.getCarts();
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -23,7 +22,7 @@ class CartService {
           "The new Cart must have a array property called 'products'",
           StatusCodes.BadRequest
         );
-      return await cartManagerDAO.addCart(newCart);
+      return await this.cartManagerDAO.addCart(newCart);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -31,7 +30,7 @@ class CartService {
 
   getCartById = async (id) => {
     try {
-      let cart = await cartManagerDAO.getCartById(id);
+      let cart = await this.cartManagerDAO.getCartById(id);
       if (!cart)
         throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
       return cart;
@@ -42,16 +41,18 @@ class CartService {
 
   addProductToCart = async (cartId, productId) => {
     try {
-      const cartExists = await cartManagerDAO.getCartById(cartId);
+      const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists)
         throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
-      const productExists = await productManagerDAO.getProductById(productId);
+      const productExists = await this.productManagerDAO.getProductById(
+        productId
+      );
       if (!productExists)
         throw new HttpError(
           `Product (${productId}) not fountd`,
           StatusCodes.NotFound
         );
-      return await cartManagerDAO.addProductToCart(cartId, productId);
+      return await this.cartManagerDAO.addProductToCart(cartId, productId);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -59,7 +60,7 @@ class CartService {
 
   existProductInCart = async (cartId, productId) => {
     try {
-      return await cartManagerDAO.existProductInCart(cartId, productId);
+      return await this.cartManagerDAO.existProductInCart(cartId, productId);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -67,11 +68,11 @@ class CartService {
 
   removeProductInCart = async (cartId, productId) => {
     try {
-      const cartExists = await cartManagerDAO.getCartById(cartId);
+      const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists)
         throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
 
-      const existProductInCart = await cartManagerDAO.existProductInCart(
+      const existProductInCart = await this.cartManagerDAO.existProductInCart(
         cartId,
         productId
       );
@@ -81,7 +82,7 @@ class CartService {
           StatusCodes.NotFound
         );
 
-      return await cartManagerDAO.removeProductInCart(cartId, productId);
+      return await this.cartManagerDAO.removeProductInCart(cartId, productId);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -89,7 +90,7 @@ class CartService {
 
   updateProductsInCart = async (cartId, products) => {
     try {
-      const cartExists = await cartManagerDAO.getCartById(cartId);
+      const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists)
         throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
 
@@ -99,13 +100,13 @@ class CartService {
           StatusCodes.BadRequest
         );
 
-      if (await productManagerDAO.validateProductsArray(products)) {
+      if (!(await this.productManagerDAO.validateProductsArray(products))) {
         throw new HttpError(
           "One o more products in the body objet doesn't exist.",
           StatusCodes.BadRequest
         );
       }
-      return await cartManagerDAO.updateProductsInCart(cartId, products);
+      return await this.cartManagerDAO.updateProductsInCart(cartId, products);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
@@ -119,14 +120,14 @@ class CartService {
           StatusCodes.BadRequest
         );
 
-      const cartExists = await cartManagerDAO.getCartById(cartId);
+      const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists)
         throw new HttpError(
           `Cartid (${cartId}) not found`,
           StatusCodes.NotFound
         );
 
-      const productExists = await cartManagerDAO.existProductInCart(
+      const productExists = await this.cartManagerDAO.existProductInCart(
         cartId,
         productId
       );
@@ -136,7 +137,7 @@ class CartService {
           StatusCodes.NotFound
         );
 
-      return await cartManagerDAO.updateQuantityProductInCart(
+      return await this.cartManagerDAO.updateQuantityProductInCart(
         cartId,
         productId,
         quantity
@@ -148,9 +149,9 @@ class CartService {
 
   removeAllProductsInCart = async (cartId) => {
     try {
-      const cartExists = await cartManagerDAO.getCartById(cartId);
+      const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists) throw new HttpError(`Cartid (${cartId}) not found`, 404);
-      return await cartManagerDAO.removeAllProductsInCart(cartId);
+      return await this.cartManagerDAO.removeAllProductsInCart(cartId);
     } catch (error) {
       throw new HttpError(error.message, error.status);
     }
