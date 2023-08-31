@@ -4,10 +4,10 @@
 		"title": "producto 1",
 		"description": "descripcion 1",
 		"code": "cod1",
-		"price": 1000,
+		"price": 15000,
 		"status": true,
-		"stock": 11,
-		"category": "Velas",
+		"stock": 15,
+		"category": "Vehiculo",
 		"thumbnails": []
 	},
 	{
@@ -15,10 +15,10 @@
 		"title": "producto 2",
 		"description": "descripcion 2",
 		"code": "cod2",
-		"price": 2000,
+		"price": 15000,
 		"status": true,
-		"stock": 12,
-		"category": "Mates",
+		"stock": 15,
+		"category": "Vehiculo",
 		"thumbnails": []
 	},
 	{
@@ -26,10 +26,10 @@
 		"title": "producto 3",
 		"description": "descripcion 3",
 		"code": "cod3",
-		"price": 3000,
+		"price": 15000,
 		"status": true,
-		"stock": 13,
-		"category": "Saumerios",
+		"stock": 15,
+		"category": "Vehiculo",
 		"thumbnails": []
 	},
 	{
@@ -37,10 +37,10 @@
 		"title": "producto 4",
 		"description": "descripcion 4",
 		"code": "cod4",
-		"price": 4000,
+		"price": 15000,
 		"status": true,
-		"stock": 14,
-		"category": "Ruedas",
+		"stock": 15,
+		"category": "Vehiculo",
 		"thumbnails": []
 	},
 	{
@@ -53,20 +53,5 @@
 		"stock": 15,
 		"category": "Vehiculo",
 		"thumbnails": []
-	},
-	{
-		"id": 6,
-		"title": "producto 6",
-		"description": "descripcion 6",
-		"code": "cod6",
-		"price": "16000",
-		"status": "true",
-		"stock": "66",
-		"category": "Velas",
-		"thumbnails": [
-			"C:\\Users\\ferna\\Desktop\\Developer\\1.Coder\\4.Backend\\Proyecto-Final\\src\\public\\images\\markus-spiske-vdHWDgUTcIk-unsplash.jpg",
-			"C:\\Users\\ferna\\Desktop\\Developer\\1.Coder\\4.Backend\\Proyecto-Final\\src\\public\\images\\WhatsApp Image 2023-04-01 at 16.48.47.jpeg",
-			"C:\\Users\\ferna\\Desktop\\Developer\\1.Coder\\4.Backend\\Proyecto-Final\\src\\public\\images\\WhatsApp Image 2023-04-01 at 18.44.44.jpeg"
-		]
 	}
 ]

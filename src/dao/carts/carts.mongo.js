@@ -6,16 +6,14 @@ export default class CartDbManager {
   }
 
   getCarts = async () => {
-    let carts = await cartModel.find().populate("products.product").lean();
-    return carts;
-  };
-
-  getCartById = async (id) => {
-    let cart = await cartModel
-      .findOne({ _id: id })
-      .populate("products.product");
-
-    return cart;
+    try {
+      let carts = await cartModel.find().populate("products.product").lean();
+      return carts;
+    } catch (error) {
+      throw new Error(
+        `Error to try getCarts (Mongo persistence): ${error.message}`
+      );
+    }
   };
 
   addCart = async (newCart) => {
@@ -23,18 +21,33 @@ export default class CartDbManager {
       let result = await cartModel.create(newCart);
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try addCart (Mongo persistence): ${error.message}`
+      );
+    }
+  };
+
+  getCartById = async (id) => {
+    try {
+      let cart = await cartModel
+        .findOne({ _id: id })
+        .populate("products.product");
+      return cart;
+    } catch (error) {
+      throw new Error(
+        `Error to try getCartById (Mongo persistence): ${error.message}`
+      );
     }
   };
 
   addProductToCart = async (cartId, productId) => {
     try {
       let existProductInCart = await this.existProductInCart(cartId, productId);
-      if (existProductInCart) {
+      if (existProductInCart)
         return await this.updateQuantityProductInCart(cartId, productId, 1);
-      }
 
       let cart = await cartModel.findOne({ _id: cartId });
+
       cart.products.push({ product: productId });
 
       let result = await cartModel.updateOne({ _id: cartId }, cart, {
@@ -42,7 +55,9 @@ export default class CartDbManager {
       });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try addProductToCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 
@@ -51,19 +66,23 @@ export default class CartDbManager {
       let result = await cartModel.findOne({ _id: cartId });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try existCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 
   existProductInCart = async (cartId, productId) => {
     try {
-      let cart = await cartModel.findOne({ _id: cartId });
-      let result = cart.products.some(
-        (p) => p.product.toString() === productId
+      let cart = await this.getCartById(cartId);
+      let result = cart?.products.some(
+        (p) => p.product._id.toString() === productId
       );
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try existProductInCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 
@@ -81,7 +100,9 @@ export default class CartDbManager {
       });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try removeProductInCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 
@@ -94,7 +115,9 @@ export default class CartDbManager {
       });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try updateProductsInCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 
@@ -111,7 +134,9 @@ export default class CartDbManager {
       });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try updateQuantityProductInCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 
@@ -124,7 +149,9 @@ export default class CartDbManager {
       });
       return result;
     } catch (error) {
-      return error;
+      throw new Error(
+        `Error to try removeAllProductsInCart (Mongo persistence): ${error.message}`
+      );
     }
   };
 }

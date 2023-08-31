@@ -15,9 +15,9 @@ export class Product {
     this.title = title;
     this.description = description;
     this.code = code;
-    this.price = price;
-    this.status = status;
-    this.stock = stock;
+    this.price = +price;
+    this.status = Boolean(status);
+    this.stock = +stock;
     this.category = category;
     this.thumbnails = thumbnails;
   }
@@ -28,23 +28,77 @@ export default class ProductFileManager {
     this.__path = path;
   }
 
-  getProducts = async () => {
+  getProducts = async (
+    title = "",
+    code = "",
+    description = "",
+    category = "",
+    price,
+    stock,
+    status,
+    page = 1,
+    limit = 10,
+    sort
+  ) => {
     if (!fs.existsSync(this.__path))
       await fs.promises.writeFile(this.__path, "[]");
     if (fs.existsSync(this.__path)) {
-      const products = await fs.promises.readFile(this.__path, "utf-8");
-      return JSON.parse(products);
+      const products = JSON.parse(
+        await fs.promises.readFile(this.__path, "utf-8")
+      );
+
+      //Filter:
+      let filteredProducts = products.filter((product) => {
+        return (
+          product.title.includes(title) &&
+          product.code.includes(code) &&
+          product.description.includes(description) &&
+          product.category.includes(category) &&
+          (price === undefined || !isNaN(price) || product.price === +price) &&
+          (stock === undefined || !isNaN(stock) || product.stock === +stock) &&
+          (status === undefined ||
+            !status ||
+            product.status === Boolean(status))
+        );
+      });
+
+      //Sort
+      if (sort === "desc") {
+        filteredProducts.sort((a, b) => b.price - a.price);
+      } else {
+        filteredProducts.sort((a, b) => a.price - b.price);
+      }
+
+      //Paginate
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+      const totalPages = Math.ceil(filteredProducts.length / limit);
+
+      let response = {
+        docs: paginatedProducts,
+        totalDocs: filteredProducts.length,
+        limit,
+        totalPages,
+        page,
+        hasPrevPage: page === 1 ? false : true,
+        hasNextPage: page >= totalPages ? false : true,
+        prevPage: page === 0 ? false : page - 1,
+        nextPage: page >= totalPages ? false : page + 1,
+      };
+      return response;
     }
   };
 
   getProductById = async (id) => {
     if (isNaN(id) || (!isNaN(id) && id < 1)) {
-      return { error: "Debe especificar un id numérico" };
+      throw new Error("Debe especificar un id numérico");
     }
 
-    const products = await this.getProducts();
-    let product = products.find((p) => p?.id === id);
-    return product || { error: "Not found" };
+    const paginateProducts = await this.getProducts();
+    const products = paginateProducts.docs;
+    let product = products.find((p) => p?.id === +id);
+    return product;
   };
 
   productWithAllProperties = (product) => {
@@ -74,31 +128,38 @@ export default class ProductFileManager {
   };
 
   addProduct = async (newProduct) => {
+    newProduct = new Product(
+      newProduct.code,
+      newProduct.title,
+      newProduct.description,
+      newProduct.price,
+      newProduct.status,
+      newProduct.stock,
+      newProduct.category,
+      newProduct.thumbnails
+    );
     //Verificamos si el producto tenga todas la propiedades
     let missingProps = this.productWithAllProperties(newProduct);
-    if (missingProps) {
-      return {
-        error: `The produsct doesn't have all properties. The following properties are missing: ${missingProps.join(
+    if (missingProps)
+      throw new Error(
+        `The produsct doesn't have all properties. The following properties are missing: ${missingProps.join(
           ", "
-        )}`,
-      };
-    }
+        )}`
+      );
 
     //Verificar que las propiedades requeridas tengan valor
     let propSinValor = this.productHaveRequiredProps(newProduct);
-    if (propSinValor) {
-      return {
-        error: `The following properties can't be empty: ${propSinValor.join(
-          ", "
-        )}`,
-      };
-    }
+    if (propSinValor)
+      throw new Error(
+        `The following properties can't be empty: ${propSinValor.join(", ")}`
+      );
 
-    let products = await this.getProducts();
+    let paginateProducts = await this.getProducts();
+    let products = paginateProducts.docs;
 
     //Verificamos que no se repita el codigo
     let repeatedCode = products?.some((p) => p?.code === newProduct?.code);
-    if (repeatedCode) return { error: "Repeted Code" };
+    if (repeatedCode) throw new Error("Repeated Code");
 
     //Asignamos el id
     products.length === 0
@@ -107,6 +168,7 @@ export default class ProductFileManager {
 
     //Agregamos el producto
     products.push(newProduct);
+
     await fs.promises.writeFile(
       this.__path,
       JSON.stringify(products, null, "\t")
@@ -115,37 +177,46 @@ export default class ProductFileManager {
   };
 
   updateProduct = async (id, productToUpdate) => {
-    let products = await this.getProducts();
+    id = +id;
+    let paginateProducts = await this.getProducts();
+    let products = paginateProducts.docs;
 
     //Verificar si id es numerico
-    if (isNaN(id)) return { error: "id must be positive number" };
-    else if (!products.some((p) => p?.id === id)) return { error: "Not Found" };
+    if (id === undefined || isNaN(id))
+      throw new Error("id must be positive number");
+    else if (!products.some((p) => p?.id === id)) throw new Error("Not found");
 
     //Verificar cada propiedad de productToUpdate conincida
+    productToUpdate = new Product(
+      productToUpdate.code,
+      productToUpdate.title,
+      productToUpdate.description,
+      productToUpdate.price,
+      productToUpdate.status,
+      productToUpdate.stock,
+      productToUpdate.category,
+      productToUpdate.thumbnails
+    );
     let missingProps = this.productWithAllProperties(productToUpdate);
-    if (missingProps) {
-      return {
-        error: `The produsct doesn't have all properties. The following properties are missing: ${missingProps.join(
+    if (missingProps)
+      throw new Error(
+        `The produsct doesn't have all properties. The following properties are missing: ${missingProps.join(
           ", "
-        )}`,
-      };
-    }
+        )}`
+      );
 
     //Verificar existencias de las prop obligatorias
     let propSinValor = this.productHaveRequiredProps(productToUpdate);
-    if (propSinValor) {
-      return {
-        error: `The following properties can't be empty: ${propSinValor.join(
-          ", "
-        )}`,
-      };
-    }
+    if (propSinValor)
+      throw new Error(
+        `The following properties can't be empty: ${propSinValor.join(", ")}`
+      );
 
     //Verificar que no se repita el code
     let repeatedCode = products.some(
       (p) => p.id !== id && p.code === productToUpdate.code
     );
-    if (repeatedCode) return { error: "Repeated Code" };
+    if (repeatedCode) throw new Error("Repeated Code");
 
     //Editamos
     let newListProducts = products.map((p) => {
@@ -164,11 +235,13 @@ export default class ProductFileManager {
   };
 
   deleteProduct = async (id) => {
-    let products = await this.getProducts();
+    id = +id;
+    let paginateProducts = await this.getProducts();
+    let products = paginateProducts.docs;
 
     //Verificar si id es numerico
-    if (isNaN(id)) return { error: "El id deber ser numérico" };
-    else if (!products.some((p) => p?.id === id)) return { error: "Not Found" };
+    if (isNaN(id)) throw new Error("El id deber ser numérico");
+    else if (!products.some((p) => p?.id === id)) throw new Error("Not found");
 
     //Eliminamos
     let deletedProduct = products.find((p) => p?.id === id);
@@ -179,6 +252,14 @@ export default class ProductFileManager {
     );
 
     return deletedProduct;
+  };
+
+  validateProductsArray = async (products) => {
+    let result = true;
+    for (const p of products) {
+      if (!(await this.getProductById(p.productId))) result = false;
+    }
+    return result
   };
 }
 

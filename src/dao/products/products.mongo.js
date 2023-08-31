@@ -91,4 +91,14 @@ export default class ProductDbManager {
       throw new Error(error.message);
     }
   };
+
+  validateProductsArray = async (products) => {
+    let result = true;
+    for (const p of products) {
+      let productExists = await productModel.findOne({ _id: p.product });
+      if (!productExists) result = false;
+    }
+
+    return result;
+  };
 }

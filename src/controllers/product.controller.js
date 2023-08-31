@@ -1,5 +1,6 @@
 import { socketServer } from "../app.js";
 import productService from "../services/product.service.js";
+import { HttpError } from "../utils.js";
 
 class ProductController {
   async createProduct(req, res) {
@@ -29,15 +30,15 @@ class ProductController {
       await sendProductsSocket();
       res.sendSuccess({ message: "Product was added.", data: result });
     } catch (error) {
-      res.sendError({ message: error.message });
+      res.sendError({ message: error.message }, error.status);
     }
   }
 
   async getProducts(req, res) {
     try {
       const {
-        limit = 10,
-        page = 1,
+        limit,
+        page,
         sort,
         title,
         code,
@@ -48,46 +49,6 @@ class ProductController {
         category,
       } = req.query;
 
-      if (isNaN(limit) || (!isNaN(limit) && +limit <= 0))
-        return res.sendError(
-          { message: "limit must be a positive number" },
-          400
-        );
-
-      if (isNaN(page) || (!isNaN(page) && +page <= 0))
-        return res.sendError(
-          { message: "page must be a positive number" },
-          400
-        );
-
-      if (
-        sort !== undefined &&
-        sort.toLowerCase() !== "asc" &&
-        sort.toLowerCase() !== "desc"
-      )
-        return res.sendError(
-          { message: "sort must be a 'asc' or 'desc'" },
-          400
-        );
-
-      if (status !== undefined && Number(status) !== 1 && Number(status) !== 0)
-        return res.sendError(
-          { message: "status must be a 1(true) or 0(false)" },
-          400
-        );
-
-      if (price !== undefined && !isNaN(Number(price)) && Number(price) < 0)
-        return res.sendError(
-          { message: "price must be 0 or a positive number" },
-          400
-        );
-
-      if (stock !== undefined && !isNaN(Number(stock)) && Number(stock) < 0)
-        return res.sendError(
-          { message: "stock must be 0 or a positive number" },
-          400
-        );
-
       let result = await productService.getProducts(
         title,
         code,
@@ -96,8 +57,8 @@ class ProductController {
         price && Number(price),
         stock && Number(stock),
         status,
-        page,
-        limit,
+        page || 1,
+        limit || 10,
         sort
       );
 
@@ -129,10 +90,9 @@ class ProductController {
         nextLink,
         data: result.docs,
       };
-
       res.sendSuccess(response);
     } catch (error) {
-      res.sendError({ message: error.message });
+      res.sendError({ message: error.message }, error.status);
     }
   }
 
@@ -140,10 +100,9 @@ class ProductController {
     try {
       let id = req.params.pid;
       let product = await productService.getProductById(id);
-      if (!product) return res.sendError({ message: "pid doesn't found" }, 404);
       res.sendSuccess(product);
     } catch (error) {
-      res.sendError({ message: error.message });
+      res.sendError({ message: error.message }, error.status);
     }
   }
 
@@ -159,11 +118,7 @@ class ProductController {
         category,
         files,
       } = req.body;
-
       let id = req.params.pid;
-      let existProduct = await productService.getProductById(id);
-      if (!existProduct)
-        return res.sendError({ message: "pid doesn't found" }, 404);
 
       let result = await productService.updateProduct(id, {
         code,
@@ -176,25 +131,21 @@ class ProductController {
         thumbnails: files ? files.map((f) => f.path) : [],
       });
 
-      sendProductsSocket();
+      await sendProductsSocket();
       res.sendSuccess({ message: "Product was updated.", data: result });
     } catch (error) {
-      res.sendError({ message: error.message });
+      res.sendError({ message: error.message }, error.status);
     }
   }
 
   async deleteProduct(req, res) {
     try {
       let id = req.params.pid;
-      let existProduct = await productService.existProduct(id);
-      if (!existProduct || existProduct.reason)
-        return res.sendError({ message: "Id doesn't exist." }, 404);
-
       let result = await productService.deleteProduct(id);
       await sendProductsSocket();
       res.sendSuccess({ message: "Product was deleted", data: result });
     } catch (error) {
-      res.sendError({ message: error.message });
+      res.sendError({ message: error.message }, error.status);
     }
   }
 }
@@ -202,9 +153,13 @@ class ProductController {
 export default new ProductController();
 
 const sendProductsSocket = async () => {
-  const result = await productService.getProducts();
-  socketServer.emit(
-    "refreshListProducts",
-    JSON.stringify(await productService.getProducts(), null, "\t")
-  );
+  try {
+    const result = await productService.getProducts();
+    socketServer.emit(
+      "refreshListProducts",
+      JSON.stringify(result, null, "\t")
+    );
+  } catch (error) {
+    throw new HttpError(error.message, error.status);
+  }
 };

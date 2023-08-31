@@ -18,6 +18,5 @@ class ProductIndexDAO{
         return this._productManager;
     }
     
-
 }
 export default new ProductIndexDAO();

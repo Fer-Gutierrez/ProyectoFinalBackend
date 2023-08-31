@@ -17,7 +17,7 @@ import cartRouter from "./routes/cart.router.js";
 import sessionRouter from "./routes/session.router.js";
 
 //CONEXION BD
-const DBInstance = new ConexionDB();
+if (CONFIG.PERSISTENCE_TYPE === "mongo") new ConexionDB();
 
 //CONFIGURACION DE EXPRESS
 const app = express();
@@ -55,8 +55,8 @@ app.use(passport.session({ secret: CONFIG.SECRETWORD }));
 app.use("/", viewsRouter);
 
 //ROUTES API
-app.use("/api/products/", productRouter.getRouter());
-app.use("/api/carts/", cartRouter.getRouter());
+app.use("/api/products", productRouter.getRouter());
+app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
 
 //CONFIGURACION DE HTTP SERVER

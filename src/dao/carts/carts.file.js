@@ -15,184 +15,241 @@ export default class CartFileManager {
   }
 
   getCarts = async () => {
-    if (!fs.existsSync(this.__path))
-      await fs.promises.writeFile(this.__path, "[]");
-    if (fs.existsSync(this.__path)) {
-      let carts = await fs.promises.readFile(this.__path, "utf-8");
-      return JSON.parse(carts);
+    try {
+      if (!fs.existsSync(this.__path))
+        await fs.promises.writeFile(this.__path, "[]");
+      if (fs.existsSync(this.__path)) {
+        let carts = await fs.promises.readFile(this.__path, "utf-8");
+        return JSON.parse(carts);
+      }
+    } catch (error) {
+      throw new Error(
+        `Error to try getCarts (File persistence): ${error.message}`
+      );
     }
   };
 
   getCartById = async (id) => {
-    //Verificamos si el id es numerico
-    if (isNaN(id) || (!isNaN(id) && id < 1)) {
-      throw new Error("El  id del carrito debe ser numérico");
-    }
+    try {
+      //Verificamos si el id es numerico
+      if (isNaN(id) || (!isNaN(id) && id < 1)) {
+        throw new Error("El  id del carrito debe ser numérico");
+      }
 
-    let carts = await this.getCarts();
-    let selectedCart = carts.find((c) => c.id === +id);
-    return selectedCart ? selectedCart : { error: "Not found" };
+      let carts = await this.getCarts();
+      let selectedCart = carts.find((c) => c.id === +id);
+      if (!selectedCart) throw new Error(`Cart (${id}) not found.`);
+      return selectedCart;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   };
 
   cartWithAllProperties = (cart) => {
-    let properties = Object.keys(new Cart());
-    let cartProperties = Object.keys(cart);
-    let missingProperties = [];
-    properties.forEach(
-      (p) => cartProperties.includes(p) || missingProperties.push(p)
-    );
+    try {
+      let properties = Object.keys(new Cart());
+      let cartProperties = Object.keys(cart);
+      let missingProperties = [];
+      properties.forEach(
+        (p) => cartProperties.includes(p) || missingProperties.push(p)
+      );
 
-    return missingProperties.length > 0 && missingProperties;
+      return missingProperties.length > 0 && missingProperties;
+    } catch (error) {
+      throw new Error(
+        `Error to try cartWithAllProperties (File persistence): ${error.message}`
+      );
+    }
   };
 
   addCart = async (newCart) => {
-    newCart = new Cart();
+    try {
+      newCart = new Cart();
+      //Asignamos el id
+      let carts = await this.getCarts();
+      carts.length === 0
+        ? (newCart.id = 1)
+        : (newCart.id = carts[carts?.length - 1].id + 1);
 
-    //Asignamos el id
-    let carts = await this.getCarts();
-    carts.length === 0
-      ? (newCart.id = 1)
-      : (newCart.id = carts[carts?.length - 1].id + 1);
-
-    //Agregamos cart
-    carts.push(newCart);
-    fs.promises.writeFile(this.__path, JSON.stringify(carts, null, "\t"));
-    return newCart;
+      //Agregamos cart
+      carts.push(newCart);
+      fs.promises.writeFile(this.__path, JSON.stringify(carts, null, "\t"));
+      return newCart;
+    } catch (error) {
+      throw new Error(
+        `Error to try addCart (File persistence): ${error.message}`
+      );
+    }
   };
 
   addProductToCart = async (cartId, productId) => {
-    //Verificamos si los id son numericos y positivos
-    if (isNaN(cartId) || (!isNaN(cartId) && cartId <= 0))
-      return { error: "Cart id property must be a positive number" };
-    if (isNaN(productId) || (!isNaN(productId) && productId <= 0))
-      return { error: "Product Id property must be a positive number" };
+    try {
+      //Verificamos si los id son numericos y positivos
+      if (isNaN(cartId) || (!isNaN(cartId) && cartId <= 0))
+        return { error: "Cart id property must be a positive number" };
+      if (isNaN(productId) || (!isNaN(productId) && productId <= 0))
+        return { error: "Product Id property must be a positive number" };
 
-    //Verificamos si existe carrito
-    let cartToEdit = await this.getCartById(+cartId);
-    if (!cartToEdit) throw new Error("Cart not found");
+      //Verificamos si existe carrito
+      let cartToEdit = await this.getCartById(+cartId);
+      if (!cartToEdit) throw new Error("Cart not found");
 
-    //Verificamos si existe producto
-    let mp = new ProductFileManager(`${__dirname}/data/products.json`);
-    let product = await mp.getProductById(+productId);
-    if (!product) throw new Error("Product not found");
+      //Verificamos si existe producto
+      let mp = new ProductFileManager(`${__dirname}/data/products.json`);
+      let product = await mp.getProductById(+productId);
+      if (!product) throw new Error("Product not found");
 
-    //Agregamos el producto al carrito
-    let productExistInCart = cartToEdit?.products.some(
-      (p) => p?.productId === +productId
-    );
-    if (productExistInCart) {
-      cartToEdit.products = cartToEdit.products.map((p) =>
-        p?.productId === +productId ? { ...p, quantity: p?.quantity + 1 } : p
+      //Agregamos el producto al carrito
+      let productExistInCart = cartToEdit?.products.some(
+        (p) => p?.productId === +productId
       );
-    } else {
-      cartToEdit.products.push({ productId: product.id, quantity: 1 });
+      if (productExistInCart) {
+        cartToEdit.products = cartToEdit.products.map((p) =>
+          p?.productId === +productId ? { ...p, quantity: p?.quantity + 1 } : p
+        );
+      } else {
+        cartToEdit.products.push({ productId: product.id, quantity: 1 });
+      }
+
+      //Actualizamos la lista de carritos
+      let carts = await this.getCarts();
+      let newCarts = carts.map((c) =>
+        c.id === cartToEdit.id ? cartToEdit : c
+      );
+
+      //Actualizamos el archivo
+      fs.promises.writeFile(this.__path, JSON.stringify(newCarts, null, "\t"));
+      return cartToEdit;
+    } catch (error) {
+      throw new Error(
+        `Error to try addProductToCart (File persistence): ${error.message}`
+      );
     }
-
-    //Actualizamos la lista de carritos
-    let carts = await this.getCarts();
-    let newCarts = carts.map((c) => (c.id === cartToEdit.id ? cartToEdit : c));
-
-    //Actualizamos el archivo
-    fs.promises.writeFile(this.__path, JSON.stringify(newCarts, null, "\t"));
-    return cartToEdit;
   };
 
   existCart = async (cartId) => {
-    return await this.getCartById(cartId);
+    try {
+      return await this.getCartById(cartId);
+    } catch (error) {
+      throw new Error(
+        `Error to try existCart (File persistence): ${error.message}`
+      );
+    }
   };
 
   existProductInCart = async (cartId, productId) => {
-    let cart = await this.getCartById(cartId);
-    return cart.products.forEach((p) =>
-      p.productId === productId ? true : false
-    );
+    try {
+      let cart = await this.getCartById(cartId);
+      return cart.products.some((p) => p.productId === +productId);
+    } catch (error) {
+      throw new Error(
+        `Error to try existProductInCart (File persistence): ${error.message}`
+      );
+    }
   };
 
   removeProductInCart = async (cartId, productId) => {
-    if (!(await this.existCart(cartId))) throw new Error("Carrito no existe");
+    try {
+      if (!(await this.existCart(cartId))) throw new Error("Carrito no existe");
 
-    let newListCarts = [];
-    let listCarts = await this.getCarts();
-    listCarts.forEach((c) => {
-      console.log(`cart: ${cartId}`);
-      console.log(`prod: ${productId}`);
-      console.log(c);
-      if (c.id === +cartId) {
-        console.log(c);
-        let newListProducts = c.products.filter(
-          (p) => p.productId !== +productId
-        );
-        c.products = newListProducts;
-      }
-      newListCarts.push(c);
-    });
+      let newListCarts = [];
+      let listCarts = await this.getCarts();
+      listCarts.forEach((c) => {
+        if (c.id === +cartId) {
+          let newListProducts = c.products.filter(
+            (p) => p.productId !== +productId
+          );
+          c.products = newListProducts;
+        }
+        newListCarts.push(c);
+      });
 
-    fs.promises.writeFile(
-      this.__path,
-      JSON.stringify(newListCarts, null, "\t")
-    );
-    return newListCarts;
+      fs.promises.writeFile(
+        this.__path,
+        JSON.stringify(newListCarts, null, "\t")
+      );
+      return newListCarts;
+    } catch (error) {
+      throw new Error(
+        `Error to try removeProductInCart (File persistence): ${error.message}`
+      );
+    }
   };
 
   updateProductsInCart = async (cartId, products) => {
-    if (!(await this.existCart(+cartId))) throw new Error("Carrito no existe");
+    try {
+      let newListCarts = [];
+      let listCarts = await this.getCarts();
+      listCarts.forEach((c) => {
+        if (c.id === +cartId) {
+          c.products = products;
+        }
+        newListCarts.push(c);
+      });
 
-    let newListCarts = [];
-    let listCarts = await this.getCarts();
-    listCarts.forEach((c) => {
-      if (c.id === +cartId) {
-        c.products = products;
-      }
-      newListCarts.push(c);
-    });
-
-    fs.promises.writeFile(
-      this.__path,
-      JSON.stringify(newListCarts, null, "\t")
-    );
-    return newListCarts;
+      fs.promises.writeFile(
+        this.__path,
+        JSON.stringify(newListCarts, null, "\t")
+      );
+      return newListCarts;
+    } catch (error) {
+      throw new Error(
+        `Error to try updateProductsInCart (File persistence): ${error.message}`
+      );
+    }
   };
 
   updateQuantityProductInCart = async (cartId, productId, quantity) => {
-    if (!(await this.existCart(+cartId))) throw new Error("Carrito no existe");
+    try {
+      let newListCarts = [];
+      let listCarts = await this.getCarts();
+      listCarts.forEach((c) => {
+        if (c.id === +cartId) {
+          c.products.forEach((p) => {
+            if (p.productId === +productId) {
+              p.quantity += +quantity;
+            }
+          });
+        }
+        newListCarts.push(c);
+      });
 
-    let newListCarts;
-    let listCarts = await this.getCarts();
-    listCarts.forEach((c) => {
-      if (c.id === +cartId) {
-        c.products.forEach((p) => {
-          if (p.productId === +productId) {
-            p.quantity += quantity;
-          }
-        });
-      }
-      newListCarts.push(c);
-    });
-
-    fs.promises.writeFile(
-      this.__path,
-      JSON.stringify(newListCarts, null, "\t")
-    );
-    return newListCarts;
+      fs.promises.writeFile(
+        this.__path,
+        JSON.stringify(newListCarts, null, "\t")
+      );
+      return newListCarts;
+    } catch (error) {
+      throw new Error(
+        `Error to try updateQuantityProductInCart (File persistence): ${error.message}`
+      );
+    }
   };
 
   removeAllProductsInCart = async (cartId) => {
-    if (!(await this.existCart(+cartId))) throw new Error("Carrito no existe");
+    try {
+      if (!(await this.existCart(+cartId)))
+        throw new Error("Carrito no existe");
 
-    let newListCarts = [];
-    let listCarts = await this.getCarts();
-    listCarts.forEach((c) => {
-      if (c.id === +cartId) {
-        c.products = [];
-      }
-      newListCarts.push(c);
-    });
+      let newListCarts = [];
+      let listCarts = await this.getCarts();
+      listCarts.forEach((c) => {
+        if (c.id === +cartId) {
+          c.products = [];
+        }
+        newListCarts.push(c);
+      });
 
-    fs.promises.writeFile(
-      this.__path,
-      JSON.stringify(newListCarts, null, "\t")
-    );
-    return newListCarts;
+      fs.promises.writeFile(
+        this.__path,
+        JSON.stringify(newListCarts, null, "\t")
+      );
+      return newListCarts;
+    } catch (error) {
+      throw new Error(
+        `Error to try removeAllProductsInCart (File persistence): ${error.message}`
+      );
+    }
   };
 }
 
