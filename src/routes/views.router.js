@@ -1,7 +1,7 @@
 import express from "express";
 import productService from "../services/product.service.js";
 import cartService from "../services/cart.service.js";
-import { userCookieExtractor } from "../utils.js";
+import { userCookieExtractor } from "../middlewares/middlewares.js";
 
 const router = express.Router();
 // const productService = new ProductDbManager();

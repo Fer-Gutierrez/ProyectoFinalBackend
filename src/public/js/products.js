@@ -21,42 +21,42 @@ realizarConsulta = async (url) => {
   }
 };
 
-actualizarDatosEnPantalle = ({ data }) => {
+actualizarDatosEnPantalle = (payload) => {
   let btnAnterior = document.getElementById("btnAnterior");
   let btnSiguiente = document.getElementById("btnSiguiente");
-  if (data.hasPrevPage) {
+  if (payload.hasPrevPage) {
     btnAnterior.disabled = false;
-    urlPrevPage = data.prevLink;
+    urlPrevPage = payload.prevLink;
   } else {
     btnAnterior.disabled = true;
     urlPrevPage = "";
   }
 
-  if (data.hasNextPage) {
+  if (payload.hasNextPage) {
     btnSiguiente.disabled = false;
-    urlNextPage = data.nextLink;
+    urlNextPage = payload.nextLink;
   } else {
     btnSiguiente.disabled = true;
     urlNextPage = "";
   }
 
   let page = document.getElementById("pageNumber");
-  page.innerText = data.page;
+  page.innerText = payload.page;
 
   let totalRecords = document.getElementById("totalRecords");
-  totalRecords.innerText = data.totalRecords;
+  totalRecords.innerText = payload.totalRecords;
 
   let totalPages = document.getElementById("totalPages");
-  totalPages.innerText = data.totalPages;
+  totalPages.innerText = payload.totalPages;
 
   let panelDatos = document.getElementById("panelDatos");
   panelDatos.innerHTML = "";
-  if (data.length <= 0) {
+  if (payload.data.length <= 0) {
     let parrInfo = document.createElement("p");
     parrInfo.innerText = "Ningun producto con el filtro aplicado";
     panelDatos.append(parrInfo);
   } else {
-    data.forEach((p) => {
+    payload.data.forEach((p) => {
       let div = document.createElement("div");
       div.className = "itemContenedor";
       div.innerHTML = `
@@ -137,12 +137,10 @@ agregarProductoAlCarrito = async (cartId, productId) => {
       }
     );
     let res = await response.json();
-    if (res.status === "Ok" || res.status === "OK") {
+    if (response.status === 200) {
       return `producto agregado al carrito id: ${cartId} `;
-    } else if (res.status === "errors") {
-      return `No fue posible agregar el producto al carrito: ${res.error}`;
     } else {
-      return `Error: No fue posible agregar el producto al carrito`;
+      return `Error: No fue posible agregar el producto al carrito: ${res.error}`;
     }
   } catch (error) {
     alert(`Error al intentar agregar el carrito: ${error}`);

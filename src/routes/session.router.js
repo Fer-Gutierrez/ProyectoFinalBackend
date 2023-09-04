@@ -1,8 +1,11 @@
 import { Router } from "express";
 import passport from "passport";
-import { generateToken } from "../utils.js";
-import { userSessionExtractor, generateCustomResponses } from "../utils.js";
+import { StatusCodes, generateToken } from "../utils.js";
 import { CONFIG } from "../config/config.js";
+import {
+  userSessionExtractor,
+  generateCustomResponses,
+} from "../middlewares/middlewares.js";
 
 class SessionRouter {
   constructor() {
@@ -46,7 +49,7 @@ class SessionRouter {
   register(req, res, next) {
     passport.authenticate("register", (error, user, info) => {
       if (error) return res.sendError({ message: error.message }, 500);
-      console.log("Estamos");
+
       if (!user) return res.sendError({ message: info.message }, 400);
       return res.sendSuccess({
         message: "Usuario registrado correctamente",
@@ -57,33 +60,22 @@ class SessionRouter {
 
   login(req, res, next) {
     passport.authenticate("login", (error, user, info) => {
-      if (error) return res.sendError({ message: error.message }, 500);
-      if (!user) return res.sendError({ message: info.message }, 400);
+      if (error)
+        return res.sendError(
+          { message: error.message },
+          StatusCodes.InternalServerError
+        );
+      if (!user)
+        return res.sendError({ message: info.message }, StatusCodes.BadRequest);
 
       if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
-        const serialUser = {
-          id: user._id,
-          name: `${user.first_name} ${user.last_name}`,
-          age: user.age,
-          role: user.role,
-          email: user.email,
-        };
-        const token = generateToken(serialUser);
+        const token = generateToken(user);
         res
           .cookie("user", token, { maxAge: 36000000, signed: true })
-          .sendSuccess(serialUser);
+          .sendSuccess(user);
       } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
-        req.session.user = {
-          id: user._id,
-          name: `${user.first_name} ${user.last_name}`,
-          email: user.email,
-          age: user.age,
-          role: user.role,
-        };
-        res.sendSuccess({
-          message: "El usuario se logueo con exito.",
-          data: req.session.user,
-        });
+        req.session.user = user;
+        res.sendSuccess(req.session.user);
       }
     })(req, res, next);
   }

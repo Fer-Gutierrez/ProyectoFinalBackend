@@ -19,7 +19,7 @@ form.addEventListener("submit", async (e) => {
   }
   if (result.status === 200) {
     result = await result.json();
-    alert(`Te damos la Bienvenida ${result.payload.name}!`);
+    alert(`Te damos la Bienvenida ${result.payload.first_name} ${result.payload.first_name}!`);
     window.location.replace("/products");
   }
 });

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import cartController from "../controllers/cart.controller.js";
-import { generateCustomResponses } from "../utils.js";
+import { generateCustomResponses, authRole} from "../middlewares/middlewares.js";
 
 class CartRouter {
   constructor() {
@@ -14,7 +14,7 @@ class CartRouter {
     );
     this.inicioCart.post(
       "/:cid/products/:pid",
-      generateCustomResponses,
+      generateCustomResponses, authRole(["anyone","usuario"]),
       cartController.addProductToCart
     );
     this.inicioCart.delete(

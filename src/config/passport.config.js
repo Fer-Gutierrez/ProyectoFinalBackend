@@ -7,6 +7,7 @@ import GitHubStrategy from "passport-github2";
 import { CONFIG } from "./config.js";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { cookieExtractor } from "../utils.js";
+import { UserDTO } from "../dao/Dtos/user.dto.js";
 
 const LocalStrategy = local.Strategy;
 const initializedPassport = () => {
@@ -54,13 +55,12 @@ const initializedPassport = () => {
             username.toString().toLowerCase() === CONFIG.ADMIN_EMAIL &&
             password === CONFIG.ADMIN_PASSWORD
           ) {
-            const adminUser = {
+            const adminUser = new UserDTO({
               first_name: `Usuario`,
               last_name: "Coder",
               email: CONFIG.ADMIN_EMAIL,
-              age: 20,
               role: "admin",
-            };
+            });
             return done(null, adminUser);
           }
 
@@ -74,7 +74,9 @@ const initializedPassport = () => {
             return done(null, false, { message: `Incorrect credentials` });
           }
 
-          return done(null, user);
+          const userDto = new UserDTO(user);
+
+          return done(null, userDto);
         } catch (error) {
           return done(`Error: ${error}`);
         }
@@ -106,7 +108,6 @@ const initializedPassport = () => {
               first_name: profile._json.name || "",
               last_name: "",
               email,
-              age: "",
               password: "",
             };
             let result = await userModel.create(newUser);
@@ -130,9 +131,10 @@ const initializedPassport = () => {
       },
       async (payload, done) => {
         try {
-          const user = await userService.getUserById(payload.user.id);
+          const user = await userService.getUser(payload.user.email);
           if (!user) return done(null, false, { message: `User not found` });
-          done(null, user);
+          const userDto = new UserDTO(user);
+          done(null, userDto);
         } catch (error) {
           done(`Error: ${error}`, false);
         }

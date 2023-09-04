@@ -38,7 +38,6 @@ class UserService {
           "User must have password property",
           StatusCodes.BadRequest
         );
-      console.log(user);
 
       const result = await this.userManagerDAO.create(user);
       return result;

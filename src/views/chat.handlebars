@@ -6,7 +6,7 @@
         <a href="http://localhost:8080/realtimeProducts"><button>Ir a RealTimeProducts</button></a>
         <div style="margin-left: auto;">
             {{#if user}}
-                <p>{{user.role}}: {{user.name}} / {{user.email}}</p>
+                <p>{{user.role}}: {{user.first_name}} {{user.last_name}} / {{user.email}}</p>
                 <button style=" float: right;" id="logout-btn">Log Out</button>
             {{else}}
                 <a href="http://localhost:8080/login"><button>Log In</button></a>

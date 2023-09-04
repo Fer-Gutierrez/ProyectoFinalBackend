@@ -11,7 +11,7 @@ btnViewCart.addEventListener("click", () => {
 
 //AddProducts
 let addProductForm = document.getElementById("addProductForm");
-addProductForm.addEventListener("submit", (e) => {
+addProductForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   //Convertimos el objeto en array:
@@ -35,14 +35,13 @@ addProductForm.addEventListener("submit", (e) => {
     body: formData,
   };
 
-  fetch("http://localhost:8080/api/products/", options)
-    .then((res) => res.json())
-    .then((res) => {
-      res.status === "OK"
-        ? alert(res.message)
-        : alert(JSON.stringify(res.error, null, "\t"));
-    })
-    .catch((err) => console.log("error:", err));
+  const result = await fetch("http://localhost:8080/api/products/", options);
+  Inforesult = await result.json();
+  if (result.status !== 200) {
+    alert(Inforesult.error);
+  } else {
+    alert(Inforesult.payload.message);
+  }
 
   addProductForm.reset();
 });

@@ -34,36 +34,20 @@ export const generateToken = (user) => {
   return token;
 };
 
-//Metodo para obtener JWT
+//Middleware para obtener JWT
 export const authToken = (req, res, next) => {
   const headerAuth = req.headers.authorization;
-  console.log(headerAuth);
   if (!headerAuth)
-    return res
-      .status(401)
-      .send({ status: "error", error: "No esta autorizado" });
+    return res.sendError("Token doesnt exist", StatusCodes.Unauthorized);
 
   const token = headerAuth.split(" ")[1];
 
   jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
-    console.log(`error: ${err}`);
-    console.log(`credentials: ${credentials}`);
+    if (err) return res.sendError("Invalid Token", StatusCodes.Unauthorized);
 
     req.user = credentials.user;
     next();
   });
-};
-
-//Middelware para devovler el session.user
-export const userSessionExtractor = (req, res, next) => {
-  if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
-    res.send({
-      status: "success",
-      user: req.session.user,
-      message: "El usuario se logueo con exito.",
-    });
-  }
-  next();
 };
 
 //Metodo para extraer el Token JWT de una cookie:
@@ -75,25 +59,6 @@ export const cookieExtractor = (req) => {
   return token;
 };
 
-//Metodo para extraer el user del TOKEN de la cookie:
-export const userCookieExtractor = (req, res, next) => {
-  let token = req.signedCookies["user"];
-  if (!token) return next();
-  jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
-    req.user = credentials.user;
-    next();
-  });
-};
-
-//Custom Responses:
-export const generateCustomResponses = (req, res, next) => {
-  res.sendSuccess = (payload, status = 200) =>
-    res.status(status).send({ status: "success", payload });
-
-  res.sendError = (error, status = 500) =>
-    res.status(status).send({ status: "error", error });
-  next();
-};
 
 export class HttpError {
   constructor(message, status = 500, details = null) {
