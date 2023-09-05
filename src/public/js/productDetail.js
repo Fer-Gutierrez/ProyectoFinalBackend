@@ -33,8 +33,9 @@ crearCarrito = async () => {
     });
     let res = await response.json();
 
-    if (res.status === "Ok" || res.status === "OK") {
-      localStorage.setItem("carritoId", res.data._id);
+    if (response.status === 200) {
+      console.log(res);
+      localStorage.setItem("carritoId", res.payload.data._id);
       return localStorage.getItem("carritoId");
     } else if (res.status === "errors") {
       alert(`Error: ${res.error}`);

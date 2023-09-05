@@ -1,0 +1,29 @@
+<div>
+    <div style="display: flex; flex-direction:row; align-items: center;">
+         <a href="http://localhost:8080/chat"><button>Ir al Chat</button></a>
+        <div style="margin-left: auto;">
+            {{#if user}}
+                <p>{{user.role}}: {{user.first_name}} {{user.last_name}} / {{user.email}}</p>
+                <button style=" float: right;" id="logout-btn">Log Out</button>
+            {{else}}
+                <a href="http://localhost:8080/login"><button>Log In</button></a>
+                <a href="http://localhost:8080/register"><button>Register</button></a>
+            {{/if}}
+        </div>
+    </div>
+    
+    <h1 style="text-align: center;">Ticket Detail</h1>
+    {{#if ticket}}
+        <h3>{{ticket.code}} - {{ ticket._id }}</h3>
+        <p id="productId">{{product._id}}</p>
+        <p><strong>Fecha de Creacion:</strong> {{ticket.purchase_datetime}}</p>
+        <p><strong>Amount:</strong> {{ ticket.amount }}</p>
+        <p><strong>Usuario:</strong> {{ ticket.purchaser }}</p>
+  {{else}}
+    <p>El ticket no fue encontrado.</p>
+  {{/if}}
+  <button id="ViewCart">Ver Mi Carrito</button>
+  <a href="http://localhost:8080/products"><button>Ver todos los productos</button></a>
+</div>
+<script src="../js/logout.js"></script>
+<script src="../js/ticketDetail.js"></script>

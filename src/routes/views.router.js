@@ -2,6 +2,7 @@ import express from "express";
 import productService from "../services/product.service.js";
 import cartService from "../services/cart.service.js";
 import { userCookieExtractor } from "../middlewares/middlewares.js";
+import ticketService from "../services/ticket.service.js";
 
 const router = express.Router();
 // const productService = new ProductDbManager();
@@ -82,6 +83,21 @@ router.get("/carts/:cid", userCookieExtractor, async (req, res) => {
     title: "Product Detail",
     styles: "css/productsDetailStyles.css",
     cart,
+    user: req.session?.user || req.user,
+  });
+});
+
+//TICKET DETAIL
+router.get("/ticket/:tid", userCookieExtractor, async (req, res) => {
+  let ticketId = req.params.tid;
+
+  let ticket = await ticketService.getTicketByID(ticketId);
+  ticket = { ...ticket._doc, _id: ticket._id.toString() };
+
+  res.render("ticketDetail", {
+    title: "Ticket Detail",
+    styles: "css/productsDetailStyles.css",
+    ticket,
     user: req.session?.user || req.user,
   });
 });

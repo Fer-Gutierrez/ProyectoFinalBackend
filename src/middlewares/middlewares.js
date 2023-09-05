@@ -16,7 +16,7 @@ export const generateCustomResponses = (req, res, next) => {
 export const authRole = (allowedRoles) => {
   return (req, res, next) => {
     const token = cookieExtractor(req);
-    if (!token){
+    if (!token) {
       if (allowedRoles.includes("anyone")) return next();
       return res.sendError("Token doesnt exists", StatusCodes.Unauthorized);
     }

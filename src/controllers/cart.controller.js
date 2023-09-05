@@ -115,9 +115,16 @@ class CartController {
   purchaseCart = async (req, res) => {
     try {
       const cartId = req.params.cid;
-      const email = req.user.email;
-      const result = await ticketService.createTicket(email, cartId);
-      return res.sendSuccess({ message: "Ticket created", data: result });
+      const user = req.session?.user || req.user;
+      const result = await ticketService.createTicket(user, cartId);
+      if (result.ticket) {
+        return res.sendSuccess({ message: "Ticket created", data: result });
+      } else {
+        return res.sendSuccess({
+          message: "Ticket not created",
+          data: result,
+        });
+      }
     } catch (error) {
       return res.sendError({ message: error.message });
     }

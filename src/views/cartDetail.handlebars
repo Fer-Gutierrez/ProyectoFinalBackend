@@ -14,7 +14,7 @@
 
     <h1 style="text-align: center;">Cart Detail</h1>
     {{#if cart}}
-        <strong>Carrito Id:{{cart._id}}</strong>
+        <strong>Carrito Id: <strong id="cartid">{{cart._id}}</strong></strong>
         <p>Estas llevando:</p>
         <ul style="list-style: none;">
         {{#each cart.products}}
@@ -25,5 +25,7 @@
         <p>El carrito no fue encontrado.</p>
     {{/if}}
     <a href="http://localhost:8080/products"><button>Ver todos los productos</button></a>
+    <button id="purchaseCart">Finalizar Compra</button>
 </dir>
 <script src="../js/logout.js"></script>
+<script src="../js/cartDetail.js"></script>

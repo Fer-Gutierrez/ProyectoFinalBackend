@@ -30,6 +30,12 @@ export default class TicketFileManager {
     try {
       const newTicket = new Ticket(email, amountProduct);
       const tickets = await this.getTickets();
+
+      //Asignamos el id
+      tickets.length === 0
+        ? (newTicket.id = 1)
+        : (newTicket.id = tickets[tickets.length - 1].id + 1);
+
       tickets.push(newTicket);
       await fs.promises.writeFile(
         this.__path,

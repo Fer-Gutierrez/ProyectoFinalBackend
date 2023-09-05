@@ -15,6 +15,7 @@ import cookieParser from "cookie-parser";
 import productRouter from "./routes/product.router.js";
 import cartRouter from "./routes/cart.router.js";
 import sessionRouter from "./routes/session.router.js";
+import { generateCustomResponses } from "./middlewares/middlewares.js";
 
 //CONEXION BD
 if (CONFIG.PERSISTENCE_TYPE === "mongo") new ConexionDB();
@@ -50,6 +51,7 @@ app.use(
 initializedPassport();
 app.use(passport.initialize());
 app.use(passport.session({ secret: CONFIG.SECRETWORD }));
+
 
 //ROUTES VIEWS
 app.use("/", viewsRouter);

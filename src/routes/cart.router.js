@@ -1,6 +1,10 @@
 import { Router } from "express";
 import cartController from "../controllers/cart.controller.js";
-import { generateCustomResponses, authRole} from "../middlewares/middlewares.js";
+import {
+  generateCustomResponses,
+  authRole,
+  userCookieExtractor,
+} from "../middlewares/middlewares.js";
 
 class CartRouter {
   constructor() {
@@ -14,7 +18,8 @@ class CartRouter {
     );
     this.inicioCart.post(
       "/:cid/products/:pid",
-      generateCustomResponses, authRole(["anyone","usuario"]),
+      generateCustomResponses,
+      authRole(["anyone", "usuario"]),
       cartController.addProductToCart
     );
     this.inicioCart.delete(
@@ -40,6 +45,7 @@ class CartRouter {
     this.inicioCart.post(
       "/:cid/purchase",
       generateCustomResponses,
+      userCookieExtractor,
       cartController.purchaseCart
     );
   }
