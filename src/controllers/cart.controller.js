@@ -1,6 +1,5 @@
 import cartService from "../services/cart.service.js";
-import productService from "../services/product.service.js";
-
+import ticketService from "../services/ticket.service.js";
 class CartController {
   constructor() {}
 
@@ -112,6 +111,17 @@ class CartController {
       res.sendError({ message: error.message });
     }
   }
+
+  purchaseCart = async (req, res) => {
+    try {
+      const cartId = req.params.cid;
+      const email = req.user.email;
+      const result = await ticketService.createTicket(email, cartId);
+      return res.sendSuccess({ message: "Ticket created", data: result });
+    } catch (error) {
+      return res.sendError({ message: error.message });
+    }
+  };
 }
 
 export default new CartController();

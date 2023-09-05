@@ -37,6 +37,11 @@ class CartRouter {
       generateCustomResponses,
       cartController.removeAllProductInCart
     );
+    this.inicioCart.post(
+      "/:cid/purchase",
+      generateCustomResponses,
+      cartController.purchaseCart
+    );
   }
 
   getRouter() {
