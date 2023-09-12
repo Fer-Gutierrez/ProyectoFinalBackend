@@ -17,23 +17,6 @@ const validarUsuario = async () => {
     } else {
       alert("You must to login with a role'usuario' to send messages.");
       window.location.href = "/";
-      // user = prompt("Ingrese su correo");
-      // while (user === "" || !emailRegex.test(user)) {
-      //   if (user !== "") {
-      //     alert("El email no es valido");
-      //     user = "";
-      //   }
-      //   user = prompt("Ingrese su correo");
-      // }
-
-      // if (!user || !emailRegex.test(user)) {
-      //   let container = document.getElementById("container");
-      //   container.innerHTML = "";
-      //   let titleFinal = document.createElement("h1");
-      //   titleFinal.innerText =
-      //     "Favor de refrescar la página y colocar su correo.";
-      //   container.append(titleFinal);
-      // }
     }
   } catch (error) {
     alert(error)

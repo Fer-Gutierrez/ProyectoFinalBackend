@@ -1,6 +1,10 @@
-import { cookieExtractor, StatusCodes } from "../utils.js";
+import { cookieExtractor } from "../utils.js";
 import jwt from "jsonwebtoken";
 import { CONFIG } from "../config/config.js";
+import {
+  AuthenticationError,
+  AuthorizationError,
+} from "../exceptions/exceptions.js";
 
 //Middlewares para Custom Responses:
 export const generateCustomResponses = (req, res, next) => {
@@ -18,14 +22,14 @@ export const authRole = (allowedRoles) => {
     const token = cookieExtractor(req);
     if (!token) {
       if (allowedRoles.includes("anyone")) return next();
-      return res.sendError("Token doesnt exists", StatusCodes.Unauthorized);
+      throw new AuthenticationError("Token doesnt exists");
     }
 
     jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
-      if (err) return res.sendError("Invalid Token", StatusCodes.Unauthorized);
+      if (err) throw new AuthenticationError("Invalid Token");
       const userRole = credentials.user.role;
       if (!allowedRoles.includes(userRole))
-        return res.sendError("Acceso denegado", StatusCodes.Forbidden);
+        throw new AuthorizationError("Acceso denegado");
       next();
     });
   };
@@ -45,11 +49,15 @@ export const userSessionExtractor = (req, res, next) => {
 
 //Middleware para extraer el user del TOKEN de la cookie:
 export const userCookieExtractor = (req, res, next) => {
-  let token = cookieExtractor(req);
-  if (!token) return next();
-  jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
-    if (err) return res.sendError("Invalid Token", StatusCodes.Unauthorized);
-    req.user = credentials.user;
-    next();
-  });
+  try {
+    let token = cookieExtractor(req);
+    if (!token) return next();
+    jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
+      if (err) throw new AuthenticationError("Invalid Token");
+      req.user = credentials.user;
+      next();
+    });
+  } catch (error) {
+    throw error;
+  }
 };

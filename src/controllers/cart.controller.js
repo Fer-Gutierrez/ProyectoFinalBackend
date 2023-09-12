@@ -3,35 +3,35 @@ import ticketService from "../services/ticket.service.js";
 class CartController {
   constructor() {}
 
-  async getCarts(req, res) {
+  async getCarts(req, res, next) {
     try {
       let carts = await cartService.getCarts();
       res.sendSuccess(carts);
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async addCart(req, res) {
+  async addCart(req, res, next) {
     try {
       let result = await cartService.addCart({ products: [] });
       res.sendSuccess({ message: "Cart added.", data: result });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async getCartById(req, res) {
+  async getCartById(req, res, next) {
     try {
       const cartId = req.params.cid;
       let cart = await cartService.getCartById(cartId);
       res.sendSuccess(cart);
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async addProductToCart(req, res) {
+  async addProductToCart(req, res, next) {
     try {
       const cartId = req.params.cid;
       const productId = req.params.pid;
@@ -42,11 +42,11 @@ class CartController {
         data: result,
       });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async removeProductInCart(req, res) {
+  async removeProductInCart(req, res, next) {
     try {
       const cartId = req.params.cid;
       const productId = req.params.pid;
@@ -56,11 +56,11 @@ class CartController {
         data: result,
       });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async updateProductsInCart(req, res) {
+  async updateProductsInCart(req, res, next) {
     try {
       const cartId = req.params.cid;
       const arrayOfIdProducts = req.body;
@@ -74,11 +74,11 @@ class CartController {
         data: result,
       });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async updateQuantityProductInCart(req, res) {
+  async updateQuantityProductInCart(req, res, next) {
     try {
       const cartId = req.params.cid;
       const productId = req.params.pid;
@@ -94,11 +94,11 @@ class CartController {
         data: result,
       });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async removeAllProductInCart(req, res) {
+  async removeAllProductInCart(req, res, next) {
     try {
       const cartId = req.params.cid;
 
@@ -108,11 +108,11 @@ class CartController {
         data: result,
       });
     } catch (error) {
-      res.sendError({ message: error.message });
+      next(error);
     }
   }
 
-  purchaseCart = async (req, res) => {
+  purchaseCart = async (req, res, next) => {
     try {
       const cartId = req.params.cid;
       const user = req.session?.user || req.user;
@@ -126,7 +126,7 @@ class CartController {
         });
       }
     } catch (error) {
-      return res.sendError({ message: error.message });
+      next(error);
     }
   };
 }

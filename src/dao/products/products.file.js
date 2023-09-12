@@ -1,4 +1,5 @@
 import fs from "fs";
+import { BadRequestError, NotFoundError } from "../../exceptions/exceptions.js";
 
 export class Product {
   constructor(
@@ -92,7 +93,7 @@ export default class ProductFileManager {
 
   getProductById = async (id) => {
     if (isNaN(id) || (!isNaN(id) && id < 1)) {
-      throw new Error("Debe especificar un id numérico");
+      throw new BadRequestError("Debe especificar un id numérico");
     }
 
     const paginateProducts = await this.getProducts();
@@ -141,7 +142,7 @@ export default class ProductFileManager {
     //Verificamos si el producto tenga todas la propiedades
     let missingProps = this.productWithAllProperties(newProduct);
     if (missingProps)
-      throw new Error(
+      throw new BadRequestError(
         `The produsct doesn't have all properties. The following properties are missing: ${missingProps.join(
           ", "
         )}`
@@ -150,7 +151,7 @@ export default class ProductFileManager {
     //Verificar que las propiedades requeridas tengan valor
     let propSinValor = this.productHaveRequiredProps(newProduct);
     if (propSinValor)
-      throw new Error(
+      throw new BadRequestError(
         `The following properties can't be empty: ${propSinValor.join(", ")}`
       );
 
@@ -159,7 +160,7 @@ export default class ProductFileManager {
 
     //Verificamos que no se repita el codigo
     let repeatedCode = products?.some((p) => p?.code === newProduct?.code);
-    if (repeatedCode) throw new Error("Repeated Code");
+    if (repeatedCode) throw new BadRequestError("Repeated Code");
 
     //Asignamos el id
     products.length === 0
@@ -183,8 +184,9 @@ export default class ProductFileManager {
 
     //Verificar si id es numerico
     if (id === undefined || isNaN(id))
-      throw new Error("id must be positive number");
-    else if (!products.some((p) => p?.id === id)) throw new Error("Not found");
+      throw new BadRequestError("id must be positive number");
+    else if (!products.some((p) => p?.id === id))
+      throw new NotFoundError("Not found");
 
     //Verificar cada propiedad de productToUpdate conincida
     productToUpdate = new Product(
@@ -199,7 +201,7 @@ export default class ProductFileManager {
     );
     let missingProps = this.productWithAllProperties(productToUpdate);
     if (missingProps)
-      throw new Error(
+      throw new BadRequestError(
         `The produsct doesn't have all properties. The following properties are missing: ${missingProps.join(
           ", "
         )}`
@@ -208,7 +210,7 @@ export default class ProductFileManager {
     //Verificar existencias de las prop obligatorias
     let propSinValor = this.productHaveRequiredProps(productToUpdate);
     if (propSinValor)
-      throw new Error(
+      throw new BadRequestError(
         `The following properties can't be empty: ${propSinValor.join(", ")}`
       );
 
@@ -216,7 +218,7 @@ export default class ProductFileManager {
     let repeatedCode = products.some(
       (p) => p.id !== id && p.code === productToUpdate.code
     );
-    if (repeatedCode) throw new Error("Repeated Code");
+    if (repeatedCode) throw new BadRequestError("Repeated Code");
 
     //Editamos
     let newListProducts = products.map((p) => {
@@ -240,8 +242,9 @@ export default class ProductFileManager {
     let products = paginateProducts.docs;
 
     //Verificar si id es numerico
-    if (isNaN(id)) throw new Error("El id deber ser numérico");
-    else if (!products.some((p) => p?.id === id)) throw new Error("Not found");
+    if (isNaN(id)) throw new BadRequestError("El id deber ser numérico");
+    else if (!products.some((p) => p?.id === id))
+      throw new NotFoundError("Not found");
 
     //Eliminamos
     let deletedProduct = products.find((p) => p?.id === id);
@@ -259,7 +262,7 @@ export default class ProductFileManager {
     for (const p of products) {
       if (!(await this.getProductById(p.productId))) result = false;
     }
-    return result
+    return result;
   };
 }
 

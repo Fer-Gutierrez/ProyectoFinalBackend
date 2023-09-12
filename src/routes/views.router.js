@@ -5,8 +5,6 @@ import { userCookieExtractor } from "../middlewares/middlewares.js";
 import ticketService from "../services/ticket.service.js";
 
 const router = express.Router();
-// const productService = new ProductDbManager();
-// const cartService = new CartDbManager();
 
 //HOME:
 router.get("/", userCookieExtractor, (req, res) => {

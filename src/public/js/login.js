@@ -12,14 +12,15 @@ form.addEventListener("submit", async (e) => {
     headers: { "Content-Type": "application/json" },
   });
 
-
   if (result.status !== 200) {
     result = await result.json();
-    alert(`${result.status}: ${result.error.message}`);
+    alert(`${result.errorCause}: ${result.message}`);
   }
   if (result.status === 200) {
     result = await result.json();
-    alert(`Te damos la Bienvenida ${result.payload.first_name} ${result.payload.first_name}!`);
+    alert(
+      `Te damos la Bienvenida ${result.payload.first_name} ${result.payload.first_name}!`
+    );
     window.location.replace("/products");
   }
 });

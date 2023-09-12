@@ -13,9 +13,11 @@ import initializedPassport from "./config/passport.config.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import productRouter from "./routes/product.router.js";
+import mockRouter from "./mock/mock.router.js";
 import cartRouter from "./routes/cart.router.js";
 import sessionRouter from "./routes/session.router.js";
 import { generateCustomResponses } from "./middlewares/middlewares.js";
+import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
 
 //CONEXION BD
 if (CONFIG.PERSISTENCE_TYPE === "mongo") new ConexionDB();
@@ -52,14 +54,18 @@ initializedPassport();
 app.use(passport.initialize());
 app.use(passport.session({ secret: CONFIG.SECRETWORD }));
 
-
 //ROUTES VIEWS
 app.use("/", viewsRouter);
 
 //ROUTES API
+app.use(generateCustomResponses);
 app.use("/api/products", productRouter.getRouter());
 app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
+app.use("/mockingproducts", mockRouter.getRouter());
+
+//ERROR HANDLER
+app.use(errorHandlerMiddleware);
 
 //CONFIGURACION DE HTTP SERVER
 export const httpServer = app.listen(8080, () =>
@@ -73,7 +79,6 @@ socketServer.on("connection", async (socket) => {
   console.log("Cliente conectado");
 
   //ENVIO LOS PRODUCTOS POR PRIMERA VEZ:
-  // const pm = new ProductFileManager(`${__dirname}/data/products.json`);
   const pm = new ProductDbManager();
   let products = await pm.getProducts();
   socket.emit("refreshListProducts", JSON.stringify(products, null, "\t"));

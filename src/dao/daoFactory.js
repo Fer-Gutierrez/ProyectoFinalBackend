@@ -28,7 +28,7 @@ class FactoryDAO {
         break;
       }
       default: {
-        throw new Error("No digitaste una persistencia valida");
+        throw new Error("No se estableció una persistencia valida");
       }
     }
     this._userManager = new UserDbManager();

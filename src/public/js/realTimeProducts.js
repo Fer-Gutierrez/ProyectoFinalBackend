@@ -37,8 +37,9 @@ addProductForm.addEventListener("submit", async (e) => {
 
   const result = await fetch("http://localhost:8080/api/products/", options);
   Inforesult = await result.json();
+  console.log(Inforesult);
   if (result.status !== 200) {
-    alert(Inforesult.error);
+    alert(Inforesult.error.message);
   } else {
     alert(Inforesult.payload.message);
   }

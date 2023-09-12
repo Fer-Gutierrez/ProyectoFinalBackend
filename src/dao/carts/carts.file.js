@@ -1,6 +1,7 @@
 import fs from "fs";
 import ProductFileManager from "../products/products.file.js";
 import __dirname from "../../utils.js";
+import { BadRequestError, NotFoundError } from "../../exceptions/exceptions.js";
 
 export class Cart {
   constructor() {
@@ -33,15 +34,15 @@ export default class CartFileManager {
     try {
       //Verificamos si el id es numerico
       if (isNaN(id) || (!isNaN(id) && id < 1)) {
-        throw new Error("El  id del carrito debe ser numérico");
+        throw new BadRequestError("El  id del carrito debe ser numérico");
       }
 
       let carts = await this.getCarts();
       let selectedCart = carts.find((c) => c.id === +id);
-      if (!selectedCart) throw new Error(`Cart (${id}) not found.`);
+      if (!selectedCart) throw new NotFoundError(`Cart (${id}) not found.`);
       return selectedCart;
     } catch (error) {
-      throw new Error(error.message);
+      throw error;
     }
   };
 
@@ -92,12 +93,12 @@ export default class CartFileManager {
 
       //Verificamos si existe carrito
       let cartToEdit = await this.getCartById(+cartId);
-      if (!cartToEdit) throw new Error("Cart not found");
+      if (!cartToEdit) throw new NotFoundError("Cart not found");
 
       //Verificamos si existe producto
       let mp = new ProductFileManager(`${__dirname}/data/products.json`);
       let product = await mp.getProductById(+productId);
-      if (!product) throw new Error("Product not found");
+      if (!product) throw new NotFoundError("Product not found");
 
       //Agregamos el producto al carrito
       let productExistInCart = cartToEdit?.products.some(
@@ -121,9 +122,7 @@ export default class CartFileManager {
       fs.promises.writeFile(this.__path, JSON.stringify(newCarts, null, "\t"));
       return cartToEdit;
     } catch (error) {
-      throw new Error(
-        `Error to try addProductToCart (File persistence): ${error.message}`
-      );
+      throw error;
     }
   };
 
@@ -150,7 +149,8 @@ export default class CartFileManager {
 
   removeProductInCart = async (cartId, productId) => {
     try {
-      if (!(await this.existCart(cartId))) throw new Error("Carrito no existe");
+      if (!(await this.existCart(cartId)))
+        throw new NotFoundError("Carrito no existe");
 
       let newListCarts = [];
       let listCarts = await this.getCarts();
@@ -170,9 +170,7 @@ export default class CartFileManager {
       );
       return newListCarts;
     } catch (error) {
-      throw new Error(
-        `Error to try removeProductInCart (File persistence): ${error.message}`
-      );
+      throw error;
     }
   };
 
@@ -229,7 +227,7 @@ export default class CartFileManager {
   removeAllProductsInCart = async (cartId) => {
     try {
       if (!(await this.existCart(+cartId)))
-        throw new Error("Carrito no existe");
+        throw new NotFoundError("Carrito no existe");
 
       let newListCarts = [];
       let listCarts = await this.getCarts();
@@ -246,9 +244,7 @@ export default class CartFileManager {
       );
       return newListCarts;
     } catch (error) {
-      throw new Error(
-        `Error to try removeAllProductsInCart (File persistence): ${error.message}`
-      );
+      throw error;
     }
   };
 }

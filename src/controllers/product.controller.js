@@ -1,6 +1,5 @@
 import { socketServer } from "../app.js";
 import productService from "../services/product.service.js";
-import { HttpError } from "../utils.js";
 
 class ProductController {
   async createProduct(req, res) {
@@ -34,7 +33,7 @@ class ProductController {
     }
   }
 
-  async getProducts(req, res) {
+  async getProducts(req, res, next) {
     try {
       const {
         limit,
@@ -92,21 +91,22 @@ class ProductController {
       };
       res.sendSuccess(response);
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
+      // res.sendError({ message: error.message }, error.status);
     }
   }
 
-  async getProductById(req, res) {
+  async getProductById(req, res, next) {
     try {
       let id = req.params.pid;
       let product = await productService.getProductById(id);
       res.sendSuccess(product);
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async updateProduct(req, res) {
+  async updateProduct(req, res, next) {
     try {
       const {
         code,
@@ -134,18 +134,20 @@ class ProductController {
       await sendProductsSocket();
       res.sendSuccess({ message: "Product was updated.", data: result });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      // res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 
-  async deleteProduct(req, res) {
+  async deleteProduct(req, res, next) {
     try {
       let id = req.params.pid;
       let result = await productService.deleteProduct(id);
       await sendProductsSocket();
       res.sendSuccess({ message: "Product was deleted", data: result });
     } catch (error) {
-      res.sendError({ message: error.message }, error.status);
+      // res.sendError({ message: error.message }, error.status);
+      next(error);
     }
   }
 }
@@ -160,6 +162,7 @@ const sendProductsSocket = async () => {
       JSON.stringify(result, null, "\t")
     );
   } catch (error) {
-    throw new HttpError(error.message, error.status);
+    throw error;
+    // throw new HttpError(error.message, error.status);
   }
 };

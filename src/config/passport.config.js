@@ -8,6 +8,7 @@ import { CONFIG } from "./config.js";
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { cookieExtractor } from "../utils.js";
 import { UserDTO } from "../dao/Dtos/user.dto.js";
+import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
 
 const LocalStrategy = local.Strategy;
 const initializedPassport = () => {
@@ -23,7 +24,8 @@ const initializedPassport = () => {
           const { first_name, last_name, email, age } = req.body;
 
           let user = await userService.getUser(email);
-          if (user) return done(`El usuario ${username} ya existe`);
+          if (user)
+            throw new BadRequestError(`El usuario ${username} ya existe`);
 
           const newUser = {
             first_name,
@@ -36,7 +38,7 @@ const initializedPassport = () => {
           let result = await userService.createUser(newUser);
           return done(null, result);
         } catch (error) {
-          return done(`Error: ${error}`);
+          return done(error);
         }
       }
     )
@@ -66,19 +68,15 @@ const initializedPassport = () => {
 
           const user = await userModel.findOne({ email: username });
 
-          if (!user)
-            return done(null, false, {
-              message: `User ${username} not found`,
-            });
-          if (!isValidPassword(user, password)) {
-            return done(null, false, { message: `Incorrect credentials` });
-          }
+          if (!user) throw new NotFoundError(`User ${username} not found`);
+          if (!isValidPassword(user, password))
+            throw new BadRequestError(`Incorrect credentials`);
 
           const userDto = new UserDTO(user);
 
           return done(null, userDto);
         } catch (error) {
-          return done(`Error: ${error}`);
+          return done(error);
         }
       }
     )
@@ -116,7 +114,7 @@ const initializedPassport = () => {
             return done(null, user);
           }
         } catch (error) {
-          done(`No fue posible loguearse con GitHub: ${error}`);
+          done(error);
         }
       }
     )
@@ -132,11 +130,11 @@ const initializedPassport = () => {
       async (payload, done) => {
         try {
           const user = await userService.getUser(payload.user.email);
-          if (!user) return done(null, false, { message: `User not found` });
+          if (!user) throw new NotFoundError(`User not found`);
           const userDto = new UserDTO(user);
           done(null, userDto);
         } catch (error) {
-          done(`Error: ${error}`, false);
+          done(error);
         }
       }
     )
@@ -151,7 +149,7 @@ const initializedPassport = () => {
       let user = await userService.getUserById(id);
       done(null, user);
     } catch (error) {
-      done(`Error: ${error}`);
+      done(error);
     }
   });
 };

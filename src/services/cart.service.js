@@ -1,5 +1,6 @@
-import __dirname, { HttpError, StatusCodes } from "../utils.js";
+import __dirname from "../utils.js";
 import FactoryDAO from "../dao/daoFactory.js";
+import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
 
 class CartService {
   constructor() {
@@ -11,50 +12,44 @@ class CartService {
     try {
       return await this.cartManagerDAO.getCarts();
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   addCart = async (newCart) => {
     try {
       if (!Array.isArray(newCart.products))
-        throw new HttpError(
-          "The new Cart must have a array property called 'products'",
-          StatusCodes.BadRequest
+        throw new BadRequestError(
+          "The new Cart must have a array property called 'products'"
         );
       return await this.cartManagerDAO.addCart(newCart);
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   getCartById = async (id) => {
     try {
       let cart = await this.cartManagerDAO.getCartById(id);
-      if (!cart)
-        throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
+      if (!cart) throw new NotFoundError(`Cart (${id}) not found`);
       return cart;
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   addProductToCart = async (cartId, productId) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
-      if (!cartExists)
-        throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
+      if (!cartExists) throw new NotFoundError(`Cart (${id}) not found`);
       const productExists = await this.productManagerDAO.getProductById(
         productId
       );
       if (!productExists)
-        throw new HttpError(
-          `Product (${productId}) not fountd`,
-          StatusCodes.NotFound
-        );
+        throw new NotFoundError(`Product (${productId}) not fountd`);
       return await this.cartManagerDAO.addProductToCart(cartId, productId);
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
@@ -62,79 +57,64 @@ class CartService {
     try {
       return await this.cartManagerDAO.existProductInCart(cartId, productId);
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   removeProductInCart = async (cartId, productId) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
-      if (!cartExists)
-        throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
+      if (!cartExists) throw new NotFoundError(`Cart (${id}) not found`);
 
       const existProductInCart = await this.cartManagerDAO.existProductInCart(
         cartId,
         productId
       );
       if (!existProductInCart)
-        throw new HttpError(
-          `ProductId (${productId}) not found in Cart (${cartId})`,
-          StatusCodes.NotFound
+        throw new NotFoundError(
+          `ProductId (${productId}) not found in Cart (${cartId})`
         );
 
       return await this.cartManagerDAO.removeProductInCart(cartId, productId);
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   updateProductsInCart = async (cartId, products) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
-      if (!cartExists)
-        throw new HttpError(`Cart (${id}) not found`, StatusCodes.NotFound);
+      if (!cartExists) throw new NotFoundError(`Cart (${id}) not found`);
 
       if (!Array.isArray(products))
-        throw new HttpError(
-          "The param Body must be a Array object.",
-          StatusCodes.BadRequest
-        );
+        throw new BadRequestError("The param Body must be a Array object.");
 
       if (!(await this.productManagerDAO.validateProductsArray(products))) {
-        throw new HttpError(
-          "One o more products in the body objet doesn't exist.",
-          StatusCodes.BadRequest
+        throw new BadRequestError(
+          "One o more products in the body objet doesn't exist."
         );
       }
       return await this.cartManagerDAO.updateProductsInCart(cartId, products);
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   updateQuantityProductInCart = async (cartId, productId, quantity) => {
     try {
       if (isNaN(quantity))
-        throw new HttpError(
-          "Quantity body param must be a number",
-          StatusCodes.BadRequest
-        );
+        throw new BadRequestError("Quantity body param must be a number");
 
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
-      if (!cartExists)
-        throw new HttpError(
-          `Cartid (${cartId}) not found`,
-          StatusCodes.NotFound
-        );
+      if (!cartExists) throw new NotFoundError(`Cartid (${cartId}) not found`);
 
       const productExists = await this.cartManagerDAO.existProductInCart(
         cartId,
         productId
       );
       if (!productExists)
-        throw new HttpError(
-          `ProductId (${productId}) not found in Cart (${cartId})`,
-          StatusCodes.NotFound
+        throw new NotFoundError(
+          `ProductId (${productId}) not found in Cart (${cartId})`
         );
 
       return await this.cartManagerDAO.updateQuantityProductInCart(
@@ -143,17 +123,17 @@ class CartService {
         quantity
       );
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 
   removeAllProductsInCart = async (cartId) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
-      if (!cartExists) throw new HttpError(`Cartid (${cartId}) not found`, 404);
+      if (!cartExists) throw new NotFoundError(`Cartid (${cartId}) not found`);
       return await this.cartManagerDAO.removeAllProductsInCart(cartId);
     } catch (error) {
-      throw new HttpError(error.message, error.status);
+      throw error;
     }
   };
 }
