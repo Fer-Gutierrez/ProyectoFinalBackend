@@ -32,7 +32,7 @@ function errorHandlerMiddleware(err, req, res, next) {
   }
 
   // Registrar el error
-  console.error(err);
+  req.logger.error(err.message);
 
   // Responder con el error
   res

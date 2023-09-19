@@ -11,15 +11,16 @@ form.addEventListener("submit", async (e) => {
     body: JSON.stringify(infoLog),
     headers: { "Content-Type": "application/json" },
   });
+  let algo = await result.json();
 
+  console.log(result.status);
   if (result.status !== 200) {
-    result = await result.json();
-    alert(`${result.errorCause}: ${result.message}`);
+    console.log("estamos");
+    alert(`${algo.errorCause}: ${algo.message}`);
   }
   if (result.status === 200) {
-    result = await result.json();
     alert(
-      `Te damos la Bienvenida ${result.payload.first_name} ${result.payload.first_name}!`
+      `Te damos la Bienvenida ${algo.payload.first_name} ${algo.payload.first_name}!`
     );
     window.location.replace("/products");
   }

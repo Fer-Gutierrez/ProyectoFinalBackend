@@ -64,11 +64,15 @@ class SessionRouter {
         if (!user) throw new NotFoundError(info.message); //return res.sendError({ message: info.message }, StatusCodes.BadRequest);
 
         if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
+          req.logger.debug(
+            `Session.router-Loggin: Generacion de Token con: JWT`
+          );
           const token = generateToken(user);
           res
             .cookie("user", token, { maxAge: 36000000, signed: true })
             .sendSuccess(user);
         } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
+          req.logger.debug(`Session.router-Loggin: Usuario guadado en SESSION`);
           req.session.user = user;
           res.sendSuccess(req.session.user);
         }
@@ -81,17 +85,20 @@ class SessionRouter {
   async logout(req, res, next) {
     try {
       if (req.session.user?.email.toString().includes("GitHubUser-")) {
+        req.logger.debug(`Session.router-Logout: Logout de GitHubUser`);
         req.session.destroy((err) => {
           if (!err) return res.sendSuccess({ message: "Se cerró la session" });
           else throw new Error(`No fue posible cerrar la sesión: ${err}`);
         });
       } else if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
+        req.logger.debug(`Session.router-Logout: Logout de JWT`);
         if (req.signedCookies["user"])
           return res
             .clearCookie("user")
             .sendSuccess({ message: "Se cerró la session" });
         else throw new AuthenticationError("No existe cookie");
       } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
+        req.logger.debug(`Session.router-Logout: Logout de SESSIONS`);
         req.session.destroy((err) => {
           if (!err) return res.sendSuccess({ message: "Se cerró la session" });
           else throw new Error(`No fue posible cerrar la sesión: ${err}`);

@@ -39,7 +39,7 @@ addProductForm.addEventListener("submit", async (e) => {
   Inforesult = await result.json();
   console.log(Inforesult);
   if (result.status !== 200) {
-    alert(Inforesult.error.message);
+    alert(`${Inforesult.errorCause}: ${Inforesult.message}`);
   } else {
     alert(Inforesult.payload.message);
   }

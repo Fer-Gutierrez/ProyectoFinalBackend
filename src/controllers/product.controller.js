@@ -25,8 +25,9 @@ class ProductController {
         category,
         thumbnails: files ? files.map((f) => f.path) : [],
       });
-
+      req.logger.info(`Producto con code: ${code} agregado con éxito.`);
       await sendProductsSocket();
+      req.logger.info(`Se envió el producto a traves del socket.`);
       res.sendSuccess({ message: "Product was added.", data: result });
     } catch (error) {
       res.sendError({ message: error.message }, error.status);
@@ -60,7 +61,9 @@ class ProductController {
         limit || 10,
         sort
       );
-
+      req.logger.info(
+        `Se obtuvo la lista de productos desde la base de datos.`
+      );
       let prevLink = "";
       if (result.hasPrevPage) {
         let posInitialPage = req.url.indexOf("&page=");
@@ -89,10 +92,11 @@ class ProductController {
         nextLink,
         data: result.docs,
       };
+      req.logger.info(`Se responde la lista de productos paginada.`);
+
       res.sendSuccess(response);
     } catch (error) {
       next(error);
-      // res.sendError({ message: error.message }, error.status);
     }
   }
 
@@ -100,6 +104,8 @@ class ProductController {
     try {
       let id = req.params.pid;
       let product = await productService.getProductById(id);
+      req.logger.info(`Se obtuvo el producto con id ${id}.`);
+      req.logger.info(`Se responde el producto con id ${id}.`);
       res.sendSuccess(product);
     } catch (error) {
       next(error);
@@ -130,11 +136,13 @@ class ProductController {
         category,
         thumbnails: files ? files.map((f) => f.path) : [],
       });
-
+      req.logger.info(`Se actualiozó el producto con id ${id}.`);
       await sendProductsSocket();
+      req.logger.info(
+        `Se envio la lista actualizada de productos a traves del socket.`
+      );
       res.sendSuccess({ message: "Product was updated.", data: result });
     } catch (error) {
-      // res.sendError({ message: error.message }, error.status);
       next(error);
     }
   }
@@ -143,10 +151,13 @@ class ProductController {
     try {
       let id = req.params.pid;
       let result = await productService.deleteProduct(id);
+      req.logger.info(`Se eliminó el producto con id ${id}.`);
       await sendProductsSocket();
+      req.logger.info(
+        `Se envio la lista de productos actualizada a traves del socket.`
+      );
       res.sendSuccess({ message: "Product was deleted", data: result });
     } catch (error) {
-      // res.sendError({ message: error.message }, error.status);
       next(error);
     }
   }
@@ -163,6 +174,5 @@ const sendProductsSocket = async () => {
     );
   } catch (error) {
     throw error;
-    // throw new HttpError(error.message, error.status);
   }
 };

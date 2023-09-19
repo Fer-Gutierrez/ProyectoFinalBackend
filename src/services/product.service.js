@@ -98,7 +98,6 @@ class ProductService {
 
       return await this.productManagerDAO.addProduct(newProduct);
     } catch (error) {
-      console.log(error);
       throw error;
     }
   };

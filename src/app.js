@@ -18,6 +18,7 @@ import cartRouter from "./routes/cart.router.js";
 import sessionRouter from "./routes/session.router.js";
 import { generateCustomResponses } from "./middlewares/middlewares.js";
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
+import { addLogger } from "./middlewares/loggerMiddleware.js";
 
 //CONEXION BD
 if (CONFIG.PERSISTENCE_TYPE === "mongo") new ConexionDB();
@@ -28,6 +29,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`)); //ruta estatica
 app.use(cookieParser(CONFIG.SECRETWORD));
+
+//LOGGER
+app.use(addLogger);
 
 //CONFIGURACION DE HANDLEBARS - VISTAS
 app.engine("handlebars", handlebars.engine()); //Creo el motor de vistas

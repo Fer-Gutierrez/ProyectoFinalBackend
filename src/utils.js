@@ -24,8 +24,9 @@ export const createHash = (password) =>
   bcrypt.hashSync(password, genSaltSync(10));
 
 //Metodo para validar el HASH
-export const isValidPassword = (user, password) => {
-  return bcrypt.compare(password, user.password);
+export const isValidPassword = async (user, password) => {
+  const resultado = await bcrypt.compare(password, user.password);
+  return resultado;
 };
 
 //Metodo para generar JWT
@@ -58,7 +59,6 @@ export const cookieExtractor = (req) => {
   }
   return token;
 };
-
 
 export class HttpError {
   constructor(message, status = 500, details = null) {

@@ -22,7 +22,6 @@ const initializedPassport = () => {
       async (req, username, password, done) => {
         try {
           const { first_name, last_name, email, age } = req.body;
-
           let user = await userService.getUser(email);
           if (user)
             throw new BadRequestError(`El usuario ${username} ya existe`);
@@ -36,6 +35,9 @@ const initializedPassport = () => {
           };
 
           let result = await userService.createUser(newUser);
+          req.logger.debug(
+            `Passport-Register: Registro exitoso de usuario ${newUser.email}`
+          );
           return done(null, result);
         } catch (error) {
           return done(error);
@@ -53,6 +55,7 @@ const initializedPassport = () => {
       },
       async (req, username, password, done) => {
         try {
+          req.logger.debug(`PassportLogin: Intento de loging de ${username}`);
           if (
             username.toString().toLowerCase() === CONFIG.ADMIN_EMAIL &&
             password === CONFIG.ADMIN_PASSWORD
@@ -67,13 +70,19 @@ const initializedPassport = () => {
           }
 
           const user = await userModel.findOne({ email: username });
-
           if (!user) throw new NotFoundError(`User ${username} not found`);
-          if (!isValidPassword(user, password))
-            throw new BadRequestError(`Incorrect credentials`);
+          req.logger.debug(
+            `PassportLogin: El usuario ${username} existe en la base de datos.`
+          );
+          if (!(await isValidPassword(user, password)))
+            throw new BadRequestError(
+              `La contraseña de ${username} es incorrecta`
+            );
 
           const userDto = new UserDTO(user);
-
+          req.logger.debug(
+            `PassportLogin: El usuario ${username} se registró con éxito.`
+          );
           return done(null, userDto);
         } catch (error) {
           return done(error);
@@ -131,6 +140,9 @@ const initializedPassport = () => {
         try {
           const user = await userService.getUser(payload.user.email);
           if (!user) throw new NotFoundError(`User not found`);
+          req.logger.debug(
+            `Passport-Current: Validacion de credenciales de ${payload.user.email}`
+          );
           const userDto = new UserDTO(user);
           done(null, userDto);
         } catch (error) {
