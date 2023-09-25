@@ -140,7 +140,7 @@ agregarProductoAlCarrito = async (cartId, productId) => {
     if (response.status === 200) {
       return `producto agregado al carrito id: ${cartId} `;
     } else {
-      return `Error: No fue posible agregar el producto al carrito: ${res.error}`;
+      return `Error: No fue posible agregar el producto al carrito: ${res.message}`;
     }
   } catch (error) {
     alert(`Error al intentar agregar el carrito: ${error}`);

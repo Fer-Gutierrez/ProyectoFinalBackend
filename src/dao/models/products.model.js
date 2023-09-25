@@ -36,6 +36,10 @@ const productSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  owner:{
+    type: String,
+    default: "admin"
+  }
 });
 
 productSchema.plugin(mongoosePaginate);

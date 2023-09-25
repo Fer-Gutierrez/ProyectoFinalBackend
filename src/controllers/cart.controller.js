@@ -35,8 +35,13 @@ class CartController {
     try {
       const cartId = req.params.cid;
       const productId = req.params.pid;
+      const user = req.user;
 
-      const result = await cartService.addProductToCart(cartId, productId);
+      const result = await cartService.addProductToCart(
+        cartId,
+        productId,
+        user
+      );
       res.sendSuccess({
         message: "The product was added in cart",
         data: result,
@@ -64,10 +69,12 @@ class CartController {
     try {
       const cartId = req.params.cid;
       const arrayOfIdProducts = req.body;
+      const user = req.user;
 
       const result = await cartService.updateProductsInCart(
         cartId,
-        arrayOfIdProducts
+        arrayOfIdProducts,
+        user
       );
       res.sendSuccess({
         message: `The List Products was updated in the cart (${cartId})`,

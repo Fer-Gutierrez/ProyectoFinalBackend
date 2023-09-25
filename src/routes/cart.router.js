@@ -10,16 +10,17 @@ class CartRouter {
     this.inicioCart.get("/:cid", cartController.getCartById);
     this.inicioCart.post(
       "/:cid/products/:pid",
-      authRole(["anyone", "usuario"]),
+      authRole(["anyone", "usuario", "premium"]),
       cartController.addProductToCart
     );
     this.inicioCart.delete(
       "/:cid/products/:pid",
       cartController.removeProductInCart
     );
-    this.inicioCart.put("/:cid", cartController.updateProductsInCart);
+    this.inicioCart.put("/:cid",  authRole(["anyone", "usuario", "premium"]), cartController.updateProductsInCart);
     this.inicioCart.put(
       "/:cid/products/:pid",
+      authRole(["anyone", "usuario", "premium"]),
       cartController.updateQuantityProductInCart
     );
     this.inicioCart.delete("/:cid", cartController.removeAllProductInCart);

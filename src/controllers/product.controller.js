@@ -24,6 +24,7 @@ class ProductController {
         stock,
         category,
         thumbnails: files ? files.map((f) => f.path) : [],
+        owner: req.user?.id
       });
       req.logger.info(`Producto con code: ${code} agregado con éxito.`);
       await sendProductsSocket();
@@ -135,6 +136,7 @@ class ProductController {
         stock,
         category,
         thumbnails: files ? files.map((f) => f.path) : [],
+        owner: req.user?.id
       });
       req.logger.info(`Se actualiozó el producto con id ${id}.`);
       await sendProductsSocket();
@@ -150,7 +152,8 @@ class ProductController {
   async deleteProduct(req, res, next) {
     try {
       let id = req.params.pid;
-      let result = await productService.deleteProduct(id);
+      let user = req.user;
+      let result = await productService.deleteProduct(id, user);
       req.logger.info(`Se eliminó el producto con id ${id}.`);
       await sendProductsSocket();
       req.logger.info(

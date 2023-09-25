@@ -1,4 +1,5 @@
 import productModel from "../models/products.model.js";
+import userModel from "../models/user.model.js";
 
 export default class ProductDbManager {
   constructor() {}
@@ -95,6 +96,16 @@ export default class ProductDbManager {
     for (const p of products) {
       let productExists = await productModel.findOne({ _id: p.product });
       if (!productExists) result = false;
+    }
+
+    return result;
+  };
+
+  validateOwnerOfProductsArray = async (products, user) => {
+    let result = true;
+    for (const p of products) {
+      let productExists = await productModel.findOne({ _id: p.product });
+      if (!productExists || productExists.owner === user.id) result = false;
     }
 
     return result;

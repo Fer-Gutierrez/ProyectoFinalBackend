@@ -27,4 +27,7 @@ export const CONFIG = {
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
   PERSISTENCE_TYPE: process.env.PERSISTENCE_TYPE,
   NODE_ENV: process.env.NODE_ENV,
+  MAIL_SERVICE: process.env.MAIL_SERVICE,
+  MAIL_USER: process.env.MAIL_USER,
+  MAIL_PASSWORD: process.env.MAIL_PASSWORD,
 };

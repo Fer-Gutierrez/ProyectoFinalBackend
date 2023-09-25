@@ -1,6 +1,7 @@
 import { HttpError, StatusCodes } from "../utils.js";
 import FactoryDAO from "../dao/daoFactory.js";
-import { BadRequestError } from "../exceptions/exceptions.js";
+import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
+import mailService from "./mail.service.js";
 
 class UserService {
   constructor() {
@@ -40,10 +41,42 @@ class UserService {
   async getUserById(id) {
     try {
       if (!id) throw new BadRequestError("id must have value");
-      return await this.userManagerDAO.getById(id);
+      let user = await this.userManagerDAO.getById(id);
+      if (!user) throw new NotFoundError(`User wwith id ${id} not found.`);
+      return user;
     } catch (error) {
       throw error;
     }
+  }
+
+  async DoOrUndoPremiumRole(id) {
+    try {
+      let user = await this.getUserById(id);
+      user.role === "premium"
+        ? (user.role = "usuario")
+        : (user.role = "premium");
+      let result = await this.userManagerDAO.update(id, user);
+      return {
+        message: `The user with id ${id} have '${user.role}' role.`,
+        result,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async SendMailToRestorePassword(email) {
+    const userExist = await this.getUser(email);
+    if (!userExist)
+      throw new NotFoundError(`The user with email: ${email} not found.`);
+    mailService.sendSimpleMail({
+      from: "",
+      to: email,
+      subject: "Recupero de contraseña",
+      html: `<div>
+      <p>Este correo fue enviado para recuperar una contraseña. Favor de dirigirse al siguiente link:</p>
+      </div>`,
+    });
   }
 }
 

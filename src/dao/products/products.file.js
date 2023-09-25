@@ -10,7 +10,8 @@ export class Product {
     status,
     stock,
     category,
-    thumbnails = []
+    thumbnails = [],
+    owner = "admin"
   ) {
     this.id = undefined;
     this.title = title;
@@ -21,6 +22,7 @@ export class Product {
     this.stock = +stock;
     this.category = category;
     this.thumbnails = thumbnails;
+    this.owner = owner;
   }
 }
 
@@ -91,7 +93,8 @@ export default class ProductFileManager {
     }
   };
 
-  getProductById = async (id) => {
+  getProductById = async (pid) => {
+    const id = +pid;
     if (isNaN(id) || (!isNaN(id) && id < 1)) {
       throw new BadRequestError("Debe especificar un id numérico");
     }
@@ -137,7 +140,8 @@ export default class ProductFileManager {
       newProduct.status,
       newProduct.stock,
       newProduct.category,
-      newProduct.thumbnails
+      newProduct.thumbnails,
+      newProduct.owner
     );
     //Verificamos si el producto tenga todas la propiedades
     let missingProps = this.productWithAllProperties(newProduct);
@@ -197,7 +201,8 @@ export default class ProductFileManager {
       productToUpdate.status,
       productToUpdate.stock,
       productToUpdate.category,
-      productToUpdate.thumbnails
+      productToUpdate.thumbnails,
+      productToUpdate.owner
     );
     let missingProps = this.productWithAllProperties(productToUpdate);
     if (missingProps)
@@ -260,8 +265,18 @@ export default class ProductFileManager {
   validateProductsArray = async (products) => {
     let result = true;
     for (const p of products) {
-      if (!(await this.getProductById(p.productId))) result = false;
+      if (!(await this.getProductById(p.product))) result = false;
     }
+    return result;
+  };
+
+  validateOwnerOfProductsArray = async (products, user) => {
+    let result = true;
+    for (const p of products) {
+      let productExists = await this.getProductById(p.product);
+      if (!productExists || productExists.owner === user.id) result = false;
+    }
+
     return result;
   };
 }

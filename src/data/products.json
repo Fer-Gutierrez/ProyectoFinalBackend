@@ -1,57 +1,38 @@
 [
 	{
 		"id": 1,
-		"title": "producto 1",
-		"description": "descripcion 1",
+		"title": "producto 1 editado",
+		"description": "descripcion 1 editada",
 		"code": "cod1",
-		"price": 15000,
-		"status": true,
-		"stock": 15,
-		"category": "Vehiculo",
-		"thumbnails": []
+		"price": 2000,
+		"status": false,
+		"stock": 22,
+		"category": "Camionetas",
+		"thumbnails": [],
+		"owner": "admin"
 	},
 	{
 		"id": 2,
 		"title": "producto 2",
 		"description": "descripcion 2",
 		"code": "cod2",
-		"price": 15000,
+		"price": 5000,
 		"status": true,
 		"stock": 15,
-		"category": "Vehiculo",
-		"thumbnails": []
+		"category": "Accesorios",
+		"thumbnails": [],
+		"owner": "64cab2d191c62d6747aad068"
 	},
 	{
 		"id": 3,
 		"title": "producto 3",
 		"description": "descripcion 3",
 		"code": "cod3",
-		"price": 15000,
+		"price": 2000,
 		"status": true,
 		"stock": 15,
-		"category": "Vehiculo",
-		"thumbnails": []
-	},
-	{
-		"id": 4,
-		"title": "producto 4",
-		"description": "descripcion 4",
-		"code": "cod4",
-		"price": 15000,
-		"status": true,
-		"stock": 15,
-		"category": "Vehiculo",
-		"thumbnails": []
-	},
-	{
-		"id": 5,
-		"title": "producto 5",
-		"description": "descripcion 5",
-		"code": "cod5",
-		"price": 15000,
-		"status": true,
-		"stock": 15,
-		"category": "Vehiculo",
-		"thumbnails": []
+		"category": "Tecnologia",
+		"thumbnails": [],
+		"owner": "admin"
 	}
 ]

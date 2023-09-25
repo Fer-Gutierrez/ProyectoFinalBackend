@@ -10,19 +10,19 @@ class ProductRouter {
     this.inicioProduct.get("/:pid", productController.getProductById);
     this.inicioProduct.post(
       "/",
-      authRole(["admin"]),
+      authRole(["admin", "premium"]),
       uploader.array("thumbnails", 10),
       productController.createProduct
     );
     this.inicioProduct.put(
       "/:pid",
-      authRole(["admin"]),
+      authRole(["admin", "premium"]),
       uploader.array("thumbnails", 10),
       productController.updateProduct
     );
     this.inicioProduct.delete(
       "/:pid",
-      authRole(["admin"]),
+      authRole(["admin", "premium"]),
       productController.deleteProduct
     );
   }

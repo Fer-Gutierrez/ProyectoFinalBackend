@@ -16,12 +16,13 @@ import productRouter from "./routes/product.router.js";
 import mockRouter from "./mock/mock.router.js";
 import cartRouter from "./routes/cart.router.js";
 import sessionRouter from "./routes/session.router.js";
+import userRouter from "./routes/user.router.js";
 import { generateCustomResponses } from "./middlewares/middlewares.js";
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
 import { addLogger } from "./middlewares/loggerMiddleware.js";
 
 //CONEXION BD
-if (CONFIG.PERSISTENCE_TYPE === "mongo") new ConexionDB();
+new ConexionDB();
 
 //CONFIGURACION DE EXPRESS
 const app = express();
@@ -66,6 +67,7 @@ app.use(generateCustomResponses);
 app.use("/api/products", productRouter.getRouter());
 app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
+app.use("/api/users", userRouter.getRouter());
 app.use("/mockingproducts", mockRouter.getRouter());
 
 //ERROR HANDLER

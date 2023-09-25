@@ -30,7 +30,8 @@ export default class CartFileManager {
     }
   };
 
-  getCartById = async (id) => {
+  getCartById = async (cid) => {
+    const id = +cid;
     try {
       //Verificamos si el id es numerico
       if (isNaN(id) || (!isNaN(id) && id < 1)) {

@@ -58,7 +58,7 @@ deleteProductForm.addEventListener("submit", (e) => {
     .then((res) => {
       res.status === "OK"
         ? alert(res.message)
-        : alert(JSON.stringify(res.error, null, "\t"));
+        : alert(JSON.stringify(res.message, null, "\t"));
     })
     .catch((err) => console.log("error", err));
   deleteProductForm.reset();

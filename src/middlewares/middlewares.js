@@ -28,6 +28,7 @@ export const authRole = (allowedRoles) => {
     jwt.verify(token, CONFIG.TOKEN_KEY, (err, credentials) => {
       if (err) throw new AuthenticationError("Invalid Token");
       const userRole = credentials.user.role;
+      req.user = credentials.user;
       if (!allowedRoles.includes(userRole))
         throw new AuthorizationError("Acceso denegado");
       next();

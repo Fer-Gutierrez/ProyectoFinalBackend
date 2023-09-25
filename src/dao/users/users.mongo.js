@@ -38,4 +38,15 @@ export default class UserDbManager {
       throw new Error(error.message);
     }
   };
+
+  update = async (id, userToUpdate) => {
+    try {
+      let result = await userModel.updateOne({ _id: id }, userToUpdate, {
+        runValidators: true,
+      });
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  };
 }

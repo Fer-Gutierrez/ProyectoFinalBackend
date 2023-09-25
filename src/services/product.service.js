@@ -1,5 +1,9 @@
 import FactoryDAO from "../dao/daoFactory.js";
-import { NotFoundError, BadRequestError } from "../exceptions/exceptions.js";
+import {
+  NotFoundError,
+  BadRequestError,
+  AuthorizationError,
+} from "../exceptions/exceptions.js";
 
 class ProductService {
   constructor() {
@@ -108,6 +112,12 @@ class ProductService {
       if (!existProduct)
         throw new NotFoundError(`Product with id= ${id} not found.`);
 
+      if (productToUpdate.owner && productToUpdate.owner !== existProduct.owner)
+        throw new AuthorizationError("Owner not authorized.");
+
+      //Actualizamos el owner para cuando el admin edita:
+      productToUpdate.owner = existProduct.owner;
+
       const errors = [];
       if (!productToUpdate.code)
         errors.push("Missing 'code' property: expected string");
@@ -137,11 +147,15 @@ class ProductService {
     }
   };
 
-  deleteProduct = async (id) => {
+  deleteProduct = async (id, user) => {
     try {
       let existProduct = await this.getProductById(id);
       if (!existProduct)
         throw new NotFoundError(`Product with id= ${id} not found.`);
+
+      if (user.role === "premium" && user.id !== existProduct.owner)
+        throw new AuthorizationError("Owner not authorized.");
+
       return await this.productManagerDAO.deleteProduct(id);
     } catch (error) {
       throw error;

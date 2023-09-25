@@ -1,0 +1,9 @@
+
+.invisible {
+  display: none;
+}
+
+.visible {
+  display: flex;
+  flex-direction: column;
+}

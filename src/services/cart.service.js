@@ -1,6 +1,10 @@
 import __dirname from "../utils.js";
 import FactoryDAO from "../dao/daoFactory.js";
-import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
+import {
+  AuthorizationError,
+  BadRequestError,
+  NotFoundError,
+} from "../exceptions/exceptions.js";
 
 class CartService {
   constructor() {
@@ -38,7 +42,7 @@ class CartService {
     }
   };
 
-  addProductToCart = async (cartId, productId) => {
+  addProductToCart = async (cartId, productId, user) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists) throw new NotFoundError(`Cart (${id}) not found`);
@@ -47,6 +51,8 @@ class CartService {
       );
       if (!productExists)
         throw new NotFoundError(`Product (${productId}) not fountd`);
+      if (user?.role === "premium" && productExists.owner === user?.id)
+        throw new BadRequestError("You can't add your own product.");
       return await this.cartManagerDAO.addProductToCart(cartId, productId);
     } catch (error) {
       throw error;
@@ -81,7 +87,7 @@ class CartService {
     }
   };
 
-  updateProductsInCart = async (cartId, products) => {
+  updateProductsInCart = async (cartId, products, user) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
       if (!cartExists) throw new NotFoundError(`Cart (${id}) not found`);
@@ -94,6 +100,18 @@ class CartService {
           "One o more products in the body objet doesn't exist."
         );
       }
+
+      if (
+        !(await this.productManagerDAO.validateOwnerOfProductsArray(
+          products,
+          user
+        ))
+      ) {
+        throw new BadRequestError(
+          "One o more products in the body objet belong to you. You can't add your own product to your cart."
+        );
+      }
+
       return await this.cartManagerDAO.updateProductsInCart(cartId, products);
     } catch (error) {
       throw error;
