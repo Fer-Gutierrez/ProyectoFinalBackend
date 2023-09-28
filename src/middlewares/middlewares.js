@@ -71,15 +71,13 @@ export const resetPasswordTokenValidate = (req, res, next) => {
   const token = req.query.token;
   jwt.verify(token, CONFIG.TOKEN_KEY, (err, credetials) => {
     if (err) {
-      req.logger.info(`Token not authenticated: ${err}`);
-      next();
-      //res.render("/login", {title:"Login", styles: "css/loginStyles.css",});
-      //throw new AuthenticationError("The token was expired.");
+      req.logger.error(`Token not authenticated: ${err}`);
+      return res.redirect("/sendMailToRestorePassword");
     }
     req.logger.debug("Token validado correctamente.");
     req.userId = credetials.userId;
     req.logger.debug(`userid del token: ${req.userId}`);
+    req.logger.debug("Salimos del middleware con exito.");
+    next();
   });
-  req.logger.debug("Salimos del middleware con exito.");
-  next();
 };

@@ -117,6 +117,13 @@ router.get("/login", (req, res) => {
   });
 });
 
+//SEND MAIL RESTORE PASSWORD:
+router.get("/sendMailToRestorePassword", (req, res) => {
+  res.render("sendMailRestorePassword", {
+    title: "Restore Password",
+  });
+});
+
 //RESET PASSWORD:
 router.get("/resetPassword", resetPasswordTokenValidate, async (req, res) => {
   const userId = req.userId;

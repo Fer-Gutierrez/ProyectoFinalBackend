@@ -6,3 +6,28 @@ error: the password cannot be the same as the previous one - Time: 2023-09-28T02
 error: the password cannot be the same as the previous one - Time: 2023-09-28T02:18:47.739Z
 error: The passwords are not equals - Time: 2023-09-28T02:19:01.784Z
 error: La contraseña de fernandoezequiel333@gmail.com es incorrecta - Time: 2023-09-28T02:19:32.180Z
+error: Failed to lookup view "/login" in views directory "C:\Users\ferna\Desktop\Developer\1.Coder\4.Backend\Proyecto-Final\src/views" - Time: 2023-09-28T03:33:25.874Z
+error: The token was expired. - Time: 2023-09-28T03:34:30.559Z
+error: The token was expired. - Time: 2023-09-28T03:35:03.276Z
+error: The token was expired. - Time: 2023-09-28T03:38:23.994Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:43:45.724Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:45:34.927Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:46:18.140Z
+error: Failed to lookup view "/login" in views directory "C:\Users\ferna\Desktop\Developer\1.Coder\4.Backend\Proyecto-Final\src/views" - Time: 2023-09-28T03:46:18.144Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:46:26.379Z
+error: Failed to lookup view "/login" in views directory "C:\Users\ferna\Desktop\Developer\1.Coder\4.Backend\Proyecto-Final\src/views" - Time: 2023-09-28T03:46:26.380Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:47:22.102Z
+error: Invalid status code: { title: 'Login', styles: 'css/loginStyles.css' } - Time: 2023-09-28T03:47:22.114Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:47:34.341Z
+error: Invalid status code: { title: 'Login', styles: 'css/loginStyles.css' } - Time: 2023-09-28T03:47:34.346Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:47:48.448Z
+error: Invalid status code: { title: 'Login', styles: 'css/loginStyles.css' } - Time: 2023-09-28T03:47:48.451Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:48:17.253Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:48:48.923Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T03:49:19.559Z
+error: The user with email: pepea@gmail.com not found. - Time: 2023-09-28T03:59:22.135Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:01:00.223Z
+error: the password cannot be the same as the previous one - Time: 2023-09-28T04:05:16.341Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:05:39.905Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:05:57.555Z
+error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:07:56.431Z

@@ -1,5 +1,5 @@
 <div>
-     <div style="display: flex; flex-direction:row; gap: .3rem; align-items: center;">
+    <div style="display: flex; flex-direction:row; gap: .3rem; align-items: center;">
         <a href="http://localhost:8080/products"><button>Buscar Productos</button></a>
         <a href="http://localhost:8080/"><button>Ir al Home</button></a>
         <a href="http://localhost:8080/realtimeProducts"><button>Ir a RealTimeProducts</button></a>
@@ -15,16 +15,7 @@
         <button type="submit">Ingresar</button>
     </form>
     <p>¿Ovidaste tu contraseña?</p>
-    <button id="btn-restorePass">Recuperar contraseña</button>
-    <form action="" id="form-restorePass" class="invisible">
-        <p>Enviaremos un correo electrónico a su casilla para recuperar su contraseña.</p>
-        <div>
-        <label for="email">Email:</label>
-        <input type="text" name="email" id="email-formRestorePass" style="width: 250px" required>
-        <button type="submit">Enviar</button>
-        </div>
-    </form>
-    
+    <a href="/sendMailToRestorePassword"><button>Recuperar contraseña</button></a> 
     <p>¿No tienes cuenta? Registrate gratis:</p>
     <a href="http://localhost:8080/register"><button>Registrarse</button></a>
 
