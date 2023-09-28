@@ -1,7 +1,14 @@
-import { HttpError, StatusCodes } from "../utils.js";
+import {
+  HttpError,
+  StatusCodes,
+  createHash,
+  isValidPassword,
+} from "../utils.js";
 import FactoryDAO from "../dao/daoFactory.js";
 import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
 import mailService from "./mail.service.js";
+import jwt from "jsonwebtoken";
+import { CONFIG } from "../config/config.js";
 
 class UserService {
   constructor() {
@@ -66,17 +73,49 @@ class UserService {
   }
 
   async SendMailToRestorePassword(email) {
-    const userExist = await this.getUser(email);
-    if (!userExist)
-      throw new NotFoundError(`The user with email: ${email} not found.`);
-    mailService.sendSimpleMail({
-      from: "",
-      to: email,
-      subject: "Recupero de contraseña",
-      html: `<div>
-      <p>Este correo fue enviado para recuperar una contraseña. Favor de dirigirse al siguiente link:</p>
-      </div>`,
-    });
+    try {
+      const userExist = await this.getUser(email);
+      if (!userExist)
+        throw new NotFoundError(`The user with email: ${email} not found.`);
+
+      const secretKey = CONFIG.TOKEN_KEY;
+      const expirationTime = "1h";
+      const token = jwt.sign({ userId: userExist._id }, secretKey, {
+        expiresIn: expirationTime,
+      });
+
+      let result = await mailService.sendSimpleMail({
+        from: "",
+        to: email,
+        subject: "Recupero de contraseña",
+        html: `
+        <div>
+          <p>Este correo fue enviado para recuperar una contraseña. Favor de dirigirse al siguiente link:</p>
+          <a href="http://localhost:8080/resetPassword?token=${token}">LINK</a>
+        </div>`,
+      });
+      return {
+        message: `The mail was sent.`,
+        result,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async restorePassword(userId, newPassword) {
+    try {
+      const user = await this.getUserById(userId);
+      if (await isValidPassword(user, newPassword))
+        throw new BadRequestError(
+          "the password cannot be the same as the previous one"
+        );
+      user.password = createHash(newPassword);
+      let result = await this.userManagerDAO.update(userId, user);
+      return { message: "Password was updated.", result };
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

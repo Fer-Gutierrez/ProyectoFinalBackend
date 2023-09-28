@@ -5,7 +5,8 @@ class UserRouter {
   constructor() {
     this.inicioUser = Router();
     this.inicioUser.put("/premium/:uid", userController.DoOrUndoPremiumRole);
-    this.inicioUser.get("/sendRestoreMail", userController.SendMailToRestorePassword)
+    this.inicioUser.post("/sendRestoreMail", userController.SendMailToRestorePassword)
+    this.inicioUser.post("/restorePassword", userController.restorePassword)
   }
 
   getRouter() {

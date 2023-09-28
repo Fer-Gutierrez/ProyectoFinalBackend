@@ -12,7 +12,7 @@ formRestorePass.addEventListener("submit", async (e) => {
   const infoLog = { email: e.target.email.value };
 
   let result = await fetch("/api/users/sendRestoreMail", {
-    method: "GET",
+    method: "POST",
     body: JSON.stringify(infoLog),
     headers: { "Content-Type": "application/json" },
   });

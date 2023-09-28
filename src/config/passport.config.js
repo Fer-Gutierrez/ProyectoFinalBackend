@@ -35,7 +35,7 @@ const initializedPassport = () => {
           };
 
           let result = await userService.createUser(newUser);
-          req.logger.debug(
+          req.logger.info(
             `Passport-Register: Registro exitoso de usuario ${newUser.email}`
           );
           return done(null, result);
@@ -80,8 +80,8 @@ const initializedPassport = () => {
             );
 
           const userDto = new UserDTO(user);
-          req.logger.debug(
-            `PassportLogin: El usuario ${username} se registró con éxito.`
+          req.logger.info(
+            `PassportLogin: Login exitoso del usuario: ${username}`
           );
           return done(null, userDto);
         } catch (error) {

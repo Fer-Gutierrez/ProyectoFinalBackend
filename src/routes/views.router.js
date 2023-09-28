@@ -1,8 +1,10 @@
 import express from "express";
 import productService from "../services/product.service.js";
 import cartService from "../services/cart.service.js";
+import userService from "../services/user.service.js";
 import { userCookieExtractor } from "../middlewares/middlewares.js";
 import ticketService from "../services/ticket.service.js";
+import { resetPasswordTokenValidate } from "../middlewares/middlewares.js";
 
 const router = express.Router();
 
@@ -112,6 +114,35 @@ router.get("/login", (req, res) => {
   res.render("login", {
     title: "Login",
     styles: "css/loginStyles.css",
+  });
+});
+
+//RESET PASSWORD:
+router.get("/resetPassword", resetPasswordTokenValidate, async (req, res) => {
+  const userId = req.userId;
+  if (!userId) {
+    res.render("login", {
+      title: "Login",
+      styles: "css/loginStyles.css",
+    });
+  }
+
+  const user = await userService.getUserById(userId);
+  req.logger.debug(
+    `Entramos en view.router: Obtuvimos informacion del usuario con id = ${userId}`
+  );
+  const userDto = {
+    name: user.first_name,
+    id: user._id.toString(),
+    email: user.email,
+  };
+  req.logger.info(
+    `Mostramos en pantalla la page para modificar la contraseña de ${userDto.email}`
+  );
+  res.render("resetPassword", {
+    title: "Restaurar contraseña",
+    user: userDto,
+    token: req.query.token,
   });
 });
 
