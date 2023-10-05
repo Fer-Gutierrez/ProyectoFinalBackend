@@ -1,0 +1,356 @@
+paths:
+  /api/products:
+    get:
+      summary: Devuelve la lista paginada de productos.
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron consultados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/GetPaginatedProductsResponse'
+        "500":
+          description: No se pudo entregar la informacion.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    post:
+      summary: Crea un nuevo producto.
+      tags:
+        - Products
+      requestBody:
+        description: Objeto producto que desea crear.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/CreateProductRequest'
+      responses:
+        "200":
+          description: El producto fue creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo crear el producto.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: No se pudo crear el producto.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No se pudo crear el producto.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: No se pudo crear el producto.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+  /api/products/{pid}:
+    get:
+      summary: Devuelve el producto con el id especificado.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto a consultar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto fue consultado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/GetProductResponse'
+        "500":
+          description: No se pudo entregar la informacion.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el producto con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    put:
+      summary: Actualiza el producto con el id especificado.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto a consultar.
+          schema:
+            type: string
+      requestBody:
+        description: Objeto producto que desea reemplazar.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Product'
+      responses:
+        "200":
+          description: El producto fue actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo actualizar el producto.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el producto con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: El request enviado tiene informacion incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    delete:
+      summary: Elimina el producto con el id especificado.
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto a consultar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto fue eliminado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo eliminar el producto.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el producto con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: El request enviado tiene informacion incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado de mongo
+          example: 6511a8c3bb72d3be5b7a4222
+        title:
+          type: String
+          description: Titulo del producto
+          example: Mouse Inalambrico
+        code:
+          type: String
+          description: Codigo del producto
+          example: PHI1120IN
+        description:
+          type: String
+          description: Descripcion del producto
+          example: Mouse inalambricon con conexion bluethoot a pila.
+        price:
+          type: Number
+          description: Precio del producto
+          example: 4000
+        status:
+          type: Boolean
+          description: Estado de habilitacion que tiene del producto
+          example: true
+        stock:
+          type: Number
+          description: Cantidad de productos en stock
+          example: 7
+        category:
+          type: String
+          description: Categoria a la que pertenece el producto
+          example: Accesorios de computación.
+        thumbnails:
+          type: Array
+          description: Array de url imagenes.
+          example: [ url1, url2, url3]
+        owner:
+          type: String
+          description: Propietario del producto pudiendo ser admin o id de usuario (90234234jdsfbkj345873945) 
+          example: admin
+    CreateProductRequest:
+      type: object
+      properties:
+        title:
+          type: String
+          description: Titulo del producto
+          example: Mouse Inalambrico
+        code:
+          type: String
+          description: Codigo del producto
+          example: PHI1120IN
+        description:
+          type: String
+          description: Descripcion del producto
+          example: Mouse inalambricon con conexion bluethoot a pila.
+        price:
+          type: Number
+          description: Precio del producto
+          example: 4000
+        status:
+          type: Boolean
+          description: Estado de habilitacion que tiene del producto
+          example: true
+        stock:
+          type: Number
+          description: Cantidad de productos en stock
+          example: 7
+        category:
+          type: String
+          description: Categoria a la que pertenece el producto
+          example: Accesorios de computación.
+        thumbnails:
+          type: Array
+          description: Array de url imagenes.
+          example: [ url1, url2, url3]
+    GetPaginatedProductsResponse:
+      type: object
+      properties:
+        status: 
+          type: String
+          description: Status Http de la respuesta
+          example: success
+        payload:
+          type: object
+          properties:
+            totalRecords:
+              type: Number
+              description: Cantidad total de registros.
+              example: 100
+            totalPages:
+              type: Number
+              description: Cantidad total de paginas
+              example: 10
+            prevPage:
+              type: Number
+              description: Numero de la pagina anterior
+              example: 0
+            nextPage:
+              type: Number
+              description: Numero de la pagina posterior
+              example: 2
+            page:
+              type: Number
+              description: Numero de la pagina actual
+              example: 1
+            hasPrevPage:
+              type: Boolean
+              description: Si existe pagina anterior
+              example: false
+            hasNextPage:
+              type: Boolean
+              description: Si existe pagina posterior
+              example: true
+            prevLink:
+              type: String
+              description: url de la pagina anterior
+              example: urlNextPage
+            nextLink:
+              type: String
+              description: url de la pagina posterior
+              example: urlNextPage
+            data:
+              type: array
+              items:
+                $ref: '#components/schemas/Product'
+    CUDResponse:
+      type: object
+      properties:
+        status: 
+          type: String
+          description: Status Http de la respuesta
+          example: success
+        payload:
+          type: object
+          properties:
+            message:
+              type: String
+              description: Mensaje de la respuesta.
+              example: Objeto creado/actualizado/eliminado con exito.
+            data:
+              type: object
+              description: Informacion detallada de la respuesta
+    GetProductResponse:
+      type: object
+      properties:
+        status: 
+          type: String
+          description: Status Http de la respuesta
+          example: success
+        payload:
+          type: object
+          $ref: '#components/schemas/Product'
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: String
+          description: Codigo Interno del error
+          example: TIPO_DE_ERROR
+        errorCause:
+          type: String
+          description: Causa del error
+          example: Causa del error.
+        message:
+          type: String
+          description: Mensaje del error
+          example: Mensaje del error.   

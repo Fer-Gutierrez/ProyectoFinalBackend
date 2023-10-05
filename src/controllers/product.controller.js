@@ -24,7 +24,7 @@ class ProductController {
         stock,
         category,
         thumbnails: files ? files.map((f) => f.path) : [],
-        owner: req.user?.id
+        owner: req.user?.id,
       });
       req.logger.info(`Producto con code: ${code} agregado con éxito.`);
       await sendProductsSocket();
@@ -136,7 +136,7 @@ class ProductController {
         stock,
         category,
         thumbnails: files ? files.map((f) => f.path) : [],
-        owner: req.user?.id
+        owner: req.user?.id,
       });
       req.logger.info(`Se actualiozó el producto con id ${id}.`);
       await sendProductsSocket();

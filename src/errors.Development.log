@@ -31,3 +31,10 @@ error: the password cannot be the same as the previous one - Time: 2023-09-28T04
 error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:05:39.905Z
 error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:05:57.555Z
 error: Token not authenticated: TokenExpiredError: jwt expired - Time: 2023-09-28T04:07:56.431Z
+error: Cast to ObjectId failed for value "{productId}" (type string) at path "_id" for model "products" - Time: 2023-09-29T02:20:44.313Z
+error: Cast to ObjectId failed for value "{productId}" (type string) at path "_id" for model "products" - Time: 2023-09-29T02:21:04.577Z
+error: Cast to ObjectId failed for value "{productId}" (type string) at path "_id" for model "products" - Time: 2023-09-29T02:21:19.995Z
+error: Cast to ObjectId failed for value "{productId}" (type string) at path "_id" for model "products" - Time: 2023-09-29T02:21:35.431Z
+error: Cast to ObjectId failed for value "{productId}" (type string) at path "_id" for model "products" - Time: 2023-09-29T02:28:42.640Z
+error: Cast to ObjectId failed for value "{productId}" (type string) at path "_id" for model "products" - Time: 2023-09-29T02:29:18.659Z
+error: Token doesnt exists - Time: 2023-09-29T02:49:35.543Z

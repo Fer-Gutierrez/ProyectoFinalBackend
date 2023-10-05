@@ -1,0 +1,470 @@
+paths:
+  /api/carts:
+    get:
+      summary: Devuelve la lista paginada de carritos.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Los carritos fueron consultados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/GetPaginatedCartsResponse'
+        "500":
+          description: No se pudo entregar la informacion.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    post:
+      summary: Crea un nuevo carrito.
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: El carrito fue creado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo crear el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: No se pudo crear el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No se pudo crear el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: No se pudo crear el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+  /api/carts/{cid}:
+    get:
+      summary: Devuelve el carrito con el id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito a consultar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El carrito fue consultado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/GetCartResponse'
+        "500":
+          description: No se pudo entregar la informacion.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el carrito con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    put:
+      summary: Actualiza la lista completa de productos en el carrito con el id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito a consultar.
+          schema:
+            type: string
+      requestBody:
+        description: Array de productos que desea reemplazar en el carrito.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#components/schemas/Product'
+      responses:
+        "200":
+          description: Los productos del carrito fueron actualizados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo actualizar el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el carrito con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: El request enviado tiene informacion incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    delete:
+      summary: Elimina la lista completa de productos en el carrito con el id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Los productos del carrito fueron eliminados correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudieron eliminar los productos del carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el carrito con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+  /api/carts/{cid}/products/{pid}:
+    post:
+      summary: Agrega un producto al carrito con id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito.
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto a agregar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto fue agregado correctamente al carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo agregar el producto al carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el producto o el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: NO autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    delete:
+      summary: Elimina un producto del carrito con id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito.
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto a agregar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El producto fue eliminado correctamente del carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo eliminar el producto al carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: La Informacion enviada es incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el producto en el carrito o no se encontró el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: NO autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+    put:
+      summary: Actualiza la cantidad de un producto en el carrito con id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito.
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          description: El id del producto a agregar.
+          schema:
+            type: string
+      requestBody:
+        description: Nuevo valor de cantidad del producto en el carrito.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: Number
+                  description: Cantidad a actualizar
+                  example: 4
+      responses:
+        "200":
+          description: La cantidad del producto fue actualizada correctamente en el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo actualizar la cantidad del producto en el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "400":
+          description: La informacion enviada es incorrecta.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el producto en el carrito o no se encontró el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: NO autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Compra el carrito con el id especificado.
+      tags:
+        - Carts
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          description: El id del carrito a comprar.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: El carrito fue comprado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/CUDResponse'
+        "500":
+          description: No se pudo comprar el carrito.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "404":
+          description: No se encontró el carrito con el Id especificado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "401":
+          description: No autenticado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+        "403":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Id autogenerado de mongo
+          example: 6511a8c3bb72d3be5b7a4222
+        products:
+          type: array
+          items:
+            $ref: '#components/schemas/Product'
+    GetPaginatedCartsResponse:
+      type: object
+      properties:
+        status: 
+          type: String
+          description: Status Http de la respuesta
+          example: success
+        payload:
+          type: object
+          properties:
+            totalRecords:
+              type: Number
+              description: Cantidad total de registros.
+              example: 100
+            totalPages:
+              type: Number
+              description: Cantidad total de paginas
+              example: 10
+            prevPage:
+              type: Number
+              description: Numero de la pagina anterior
+              example: 0
+            nextPage:
+              type: Number
+              description: Numero de la pagina posterior
+              example: 2
+            page:
+              type: Number
+              description: Numero de la pagina actual
+              example: 1
+            hasPrevPage:
+              type: Boolean
+              description: Si existe pagina anterior
+              example: false
+            hasNextPage:
+              type: Boolean
+              description: Si existe pagina posterior
+              example: true
+            prevLink:
+              type: String
+              description: url de la pagina anterior
+              example: urlNextPage
+            nextLink:
+              type: String
+              description: url de la pagina posterior
+              example: urlNextPage
+            data:
+              type: array
+              items:
+                $ref: '#components/schemas/Cart'
+    GetCartResponse:
+      type: object
+      properties:
+        status: 
+          type: String
+          description: Status Http de la respuesta
+          example: success
+        payload:
+          type: object
+          $ref: '#components/schemas/Cart'

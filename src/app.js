@@ -20,9 +20,29 @@ import userRouter from "./routes/user.router.js";
 import { generateCustomResponses } from "./middlewares/middlewares.js";
 import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.js";
 import { addLogger } from "./middlewares/loggerMiddleware.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUIExpress from "swagger-ui-express";
 
 //CONEXION BD
 new ConexionDB();
+
+//SWAGGER
+const swaggerOptions = {
+  definition: {
+    openapi: `3.0.0`,
+    info: {
+      title: "API ECOMMERCE CODERHOUSE",
+      description: "Proyecto final del curso de backend en CODERHOSE. Este proyecto re presenta el backend de un e-commerce donde es posible comprar productos como comprador, agregar productos como vendedor y administrar los carritos de compra como administrador o propietario.",
+      version: "1.0.0",
+      contact: {
+        name: "Fernando Gutierrez",
+        url: "https://www.linkedin.com/in/fgutierrez989/",
+      },
+    },
+  },
+  apis: [`./docs/*.yaml`],
+};
+const spec = swaggerJSDoc(swaggerOptions);
 
 //CONFIGURACION DE EXPRESS
 const app = express();
@@ -69,6 +89,9 @@ app.use("/api/carts", cartRouter.getRouter());
 app.use("/api/sessions", sessionRouter.getRouter());
 app.use("/api/users", userRouter.getRouter());
 app.use("/mockingproducts", mockRouter.getRouter());
+
+//USO DE SWAGGER
+app.use("/apidocs", swaggerUIExpress.serve, swaggerUIExpress.setup(spec));
 
 //ERROR HANDLER
 app.use(errorHandlerMiddleware);
