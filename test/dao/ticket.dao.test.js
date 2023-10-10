@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import TicketDbManager from "../../src/dao/tickets/tickets.mongo.js";
 
-describe("TicketDbManager", () => {
+describe("dao/ticket.mongo.js", () => {
   let mongoServer;
   let ticketDbManager;
   let ticketCreated;

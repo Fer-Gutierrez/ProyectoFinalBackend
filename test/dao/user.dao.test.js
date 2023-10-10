@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import UserDbManager from "../../src/dao/users/users.mongo.js";
 
-describe("UserDbManager", () => {
+describe("dao/user.mongo.js", () => {
   let mongoServer;
   let userDbManager;
   let userCreated;
@@ -59,7 +59,6 @@ describe("UserDbManager", () => {
     expect(user).to.exist;
   });
 
-  
   it("should update a user", async () => {
     const userId = userCreated;
     const userToUpdate = {

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import CartDbManager from "../../src/dao/carts/carts.mongo.js";
 import ProductDbManager from "../../src/dao/products/products.mongo.js";
-describe("CartDbManager", () => {
+describe("dao/cart.mongo.js", () => {
   let mongoServer;
   let cartDbManager;
   let productDbManager;

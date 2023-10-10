@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import ProductDbManager from "../../src/dao/products/products.mongo.js";
 
-describe("ProductDbManager", () => {
+describe("dao/product.mongo.js", () => {
   let mongoServer;
   let productDbManager;
   let productCreated;
