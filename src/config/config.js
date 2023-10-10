@@ -1,15 +1,20 @@
 import fs from "fs";
 import dotenv from "dotenv";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
-const rawdata = fs.readFileSync("config.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const rawdata = fs.readFileSync(path.resolve(__dirname, "..", "config.json"));
 const settings = JSON.parse(rawdata);
 console.log(`Ambiente: ${settings.NODE_ENV}`);
 
 dotenv.config({
   path:
     settings.NODE_ENV === "production"
-      ? "./.env.production"
-      : "./.env.development",
+      ? path.resolve(__dirname, "..", ".env.production")
+      : path.resolve(__dirname, "..", ".env.development"), //: "./.env.development",
 });
 
 export const CONFIG = {

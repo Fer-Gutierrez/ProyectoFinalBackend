@@ -32,7 +32,8 @@ const swaggerOptions = {
     openapi: `3.0.0`,
     info: {
       title: "API ECOMMERCE CODERHOUSE",
-      description: "Proyecto final del curso de backend en CODERHOSE. Este proyecto re presenta el backend de un e-commerce donde es posible comprar productos como comprador, agregar productos como vendedor y administrar los carritos de compra como administrador o propietario.",
+      description:
+        "Proyecto final del curso de backend en CODERHOSE. Este proyecto re presenta el backend de un e-commerce donde es posible comprar productos como comprador, agregar productos como vendedor y administrar los carritos de compra como administrador o propietario.",
       version: "1.0.0",
       contact: {
         name: "Fernando Gutierrez",
@@ -45,7 +46,7 @@ const swaggerOptions = {
 const spec = swaggerJSDoc(swaggerOptions);
 
 //CONFIGURACION DE EXPRESS
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`)); //ruta estatica
