@@ -140,9 +140,9 @@ const initializedPassport = () => {
         try {
           const user = await userService.getUser(payload.user.email);
           if (!user) throw new NotFoundError(`User not found`);
-          req.logger.debug(
-            `Passport-Current: Validacion de credenciales de ${payload.user.email}`
-          );
+          // req.logger.debug(
+          //   `Passport-Current: Validacion de credenciales de ${payload.user.email}`
+          // );
           const userDto = new UserDTO(user);
           done(null, userDto);
         } catch (error) {

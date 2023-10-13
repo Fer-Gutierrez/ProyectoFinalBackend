@@ -2,6 +2,8 @@ import { expect } from "chai";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import UserDbManager from "../../src/dao/users/users.mongo.js";
+import { dropUsers } from "../routes/setup.test.js";
+import { createHash } from "../../src/utils.js";
 
 describe("dao/user.mongo.js", () => {
   let mongoServer;
@@ -9,19 +11,8 @@ describe("dao/user.mongo.js", () => {
   let userCreated;
 
   before(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
+    await dropUsers();
     userDbManager = new UserDbManager();
-  });
-
-  after(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
   });
 
   it("should create a user", async () => {
@@ -30,7 +21,8 @@ describe("dao/user.mongo.js", () => {
       last_name: "Guti ejemplo",
       email: "fer@ejemplo.com",
       age: 32,
-      password: "Fer1234",
+      password: createHash("Fer1234"),
+      role: "admin",
     };
     const result = await userDbManager.create(user);
     userCreated = result._id.toString();
@@ -66,7 +58,8 @@ describe("dao/user.mongo.js", () => {
       last_name: "Guti editado",
       email: "fer@ejemploeditado.com",
       age: 22,
-      password: "Fer1234Edit",
+      password: createHash("Fer1234"),
+      role: "admin",
     };
     const result = await userDbManager.update(userId, userToUpdate);
 

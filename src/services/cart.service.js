@@ -90,7 +90,7 @@ class CartService {
   updateProductsInCart = async (cartId, products, user) => {
     try {
       const cartExists = await this.cartManagerDAO.getCartById(cartId);
-      if (!cartExists) throw new NotFoundError(`Cart (${id}) not found`);
+      if (!cartExists) throw new NotFoundError(`Cart (${cartId}) not found`);
 
       if (!Array.isArray(products))
         throw new BadRequestError("The param Body must be a Array object.");

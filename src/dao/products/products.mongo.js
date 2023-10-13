@@ -105,7 +105,7 @@ export default class ProductDbManager {
     let result = true;
     for (const p of products) {
       let productExists = await productModel.findOne({ _id: p.product });
-      if (!productExists || productExists.owner === user.id) result = false;
+      if (!productExists || productExists.owner === user?.id) result = false;
     }
 
     return result;

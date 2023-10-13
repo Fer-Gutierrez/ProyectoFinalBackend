@@ -1,27 +1,14 @@
 import { expect } from "chai";
-import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import ProductDbManager from "../../src/dao/products/products.mongo.js";
+import { dropProducts } from "../routes/setup.test.js";
 
 describe("dao/product.mongo.js", () => {
-  let mongoServer;
   let productDbManager;
   let productCreated;
 
-  before(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
+  before(async () => {  
+    await dropProducts();
     productDbManager = new ProductDbManager();
-  });
-
-  after(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
   });
 
   it("should create a product", async () => {

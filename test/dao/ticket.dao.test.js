@@ -2,6 +2,7 @@ import { expect } from "chai";
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import TicketDbManager from "../../src/dao/tickets/tickets.mongo.js";
+import { dropTickets } from "../routes/setup.test.js";
 
 describe("dao/ticket.mongo.js", () => {
   let mongoServer;
@@ -9,19 +10,8 @@ describe("dao/ticket.mongo.js", () => {
   let ticketCreated;
 
   before(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
+    await dropTickets();
     ticketDbManager = new TicketDbManager();
-  });
-
-  after(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
   });
 
   it("should create a ticket", async () => {

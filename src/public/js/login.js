@@ -6,7 +6,6 @@ form.addEventListener("submit", async (e) => {
   const data = new FormData(form);
   const infoLog = {};
   data.forEach((value, key) => (infoLog[key] = value));
-
   let result = await fetch("/api/sessions/login", {
     method: "POST",
     body: JSON.stringify(infoLog),

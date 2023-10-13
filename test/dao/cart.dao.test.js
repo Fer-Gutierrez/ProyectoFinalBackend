@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import CartDbManager from "../../src/dao/carts/carts.mongo.js";
 import ProductDbManager from "../../src/dao/products/products.mongo.js";
+import { dropCarts, dropProducts } from "../routes/setup.test.js";
 describe("dao/cart.mongo.js", () => {
   let mongoServer;
   let cartDbManager;
@@ -11,12 +12,8 @@ describe("dao/cart.mongo.js", () => {
   let arrayProducts = [];
 
   before(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await dropCarts();
+    await dropProducts();
 
     cartDbManager = new CartDbManager();
     productDbManager = new ProductDbManager();
@@ -35,11 +32,6 @@ describe("dao/cart.mongo.js", () => {
     }
     let result = await productDbManager.getProducts();
     arrayProducts = result.docs;
-  });
-
-  after(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
   });
 
   it("should create a cart", async () => {

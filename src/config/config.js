@@ -14,7 +14,9 @@ dotenv.config({
   path:
     settings.NODE_ENV === "production"
       ? path.resolve(__dirname, "..", ".env.production")
-      : path.resolve(__dirname, "..", ".env.development"), //: "./.env.development",
+      : settings.NODE_ENV === "development"
+      ? path.resolve(__dirname, "..", ".env.development")
+      : path.resolve(__dirname, "..", ".env.test"),
 });
 
 export const CONFIG = {
