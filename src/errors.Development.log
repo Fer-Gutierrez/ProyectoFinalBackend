@@ -334,3 +334,12 @@ error: Token doesnt exists - Time: 2023-10-13T01:48:48.022Z
 error: El usuario fer@prueba.com ya existe - Time: 2023-10-13T01:48:48.361Z
 error: La contraseña de fer@prueba.com es incorrecta - Time: 2023-10-13T01:48:48.600Z
 error: User ferIncorrect@prueba.com not found - Time: 2023-10-13T01:48:48.674Z
+error: Acceso denegado - Time: 2023-10-13T02:08:43.028Z
+error: Acceso denegado - Time: 2023-10-13T02:08:43.038Z
+error: Acceso denegado - Time: 2023-10-13T02:08:43.045Z
+error: Token doesnt exists - Time: 2023-10-13T02:08:43.685Z
+error: Token doesnt exists - Time: 2023-10-13T02:08:43.690Z
+error: Token doesnt exists - Time: 2023-10-13T02:08:43.696Z
+error: El usuario fer@prueba.com ya existe - Time: 2023-10-13T02:08:44.022Z
+error: La contraseña de fer@prueba.com es incorrecta - Time: 2023-10-13T02:08:44.246Z
+error: User ferIncorrect@prueba.com not found - Time: 2023-10-13T02:08:44.302Z

@@ -54,7 +54,7 @@ const productionLogger = winston.createLogger({
     new winston.transports.Console({
       level: "info",
       format: winston.format.combine(
-        winston.format.colorize({ all: true }), // Apply colorization
+        winston.format.colorize({ all: true }),
         logFormat
       ),
     }),
