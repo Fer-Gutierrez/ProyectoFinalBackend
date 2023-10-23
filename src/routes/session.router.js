@@ -2,7 +2,10 @@ import { Router } from "express";
 import passport from "passport";
 import { generateToken } from "../utils.js";
 import { CONFIG } from "../config/config.js";
-import { userSessionExtractor } from "../middlewares/middlewares.js";
+import {
+  userSessionExtractor,
+  userCookieExtractor,
+} from "../middlewares/middlewares.js";
 import {
   AuthenticationError,
   BadRequestError,
@@ -92,11 +95,12 @@ class SessionRouter {
         });
       } else if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
         req.logger.debug(`Session.router-Logout: Logout de JWT`);
-        if (req.signedCookies["user"])
+        if (req.signedCookies["user"]) {
+          console.log(req.user);
           return res
             .clearCookie("user")
             .sendSuccess({ message: "Se cerró la session" });
-        else throw new AuthenticationError("No existe cookie");
+        } else throw new AuthenticationError("No existe cookie");
       } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
         req.logger.debug(`Session.router-Logout: Logout de SESSIONS`);
         req.session.destroy((err) => {

@@ -59,6 +59,30 @@ class UserService {
   async DoOrUndoPremiumRole(id) {
     try {
       let user = await this.getUserById(id);
+
+      //VALIDAMOS SI TIENE LOS DOCUMENTOS NECESARIOS:
+      let missingReqs = [
+        "identificacion",
+        "comprobante de domicilio",
+        "comprobante de estado de cuenta",
+      ];
+      user.documents.forEach((doc) => {
+        missingReqs.forEach((rq) => {
+          if (doc.name.toLowerCase() === rq)
+            missingReqs = missingReqs.filter(
+              (r) => r !== doc.name.toLowerCase()
+            );
+        });
+      });
+
+      if (missingReqs.length > 0)
+        throw new BadRequestError(
+          `The user needs the following documents to be premium: ${missingReqs.join(
+            ", "
+          )}`
+        );
+
+      //CAMBIAMOS EL ROL DEL USUARIO:
       user.role === "premium"
         ? (user.role = "usuario")
         : (user.role = "premium");
@@ -113,6 +137,44 @@ class UserService {
       user.password = createHash(newPassword);
       let result = await this.userManagerDAO.update(userId, user);
       return { message: "Password was updated.", result };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateLastConnection(id) {
+    try {
+      if (!id) throw new BadRequestError("id must have value");
+      let userToUpdate = await this.userManagerDAO.getById(id);
+      if (!userToUpdate)
+        throw new NotFoundError(`User wwith id ${id} not found.`);
+      userToUpdate.last_connection = new Date();
+      let result = await this.userManagerDAO.update(id, userToUpdate);
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async addDocumentsToUser(id, fileName, filesPath) {
+    try {
+      console.log(id);
+      console.log(fileName);
+      console.log(filesPath);
+      if (!id) throw new BadRequestError("id must have value");
+      let user = await this.userManagerDAO.getById(id);
+      if (!user) throw new NotFoundError(`User wwith id ${id} not found.`);
+      filesPath.forEach((filePath) => {
+        if (!filePath)
+          throw new BadRequestError("The filePath must have a value");
+      });
+
+      filesPath.forEach((filePath) => {
+        user.documents.push({ name: fileName, reference: filePath });
+      });
+
+      let result = await this.userManagerDAO.update(id, user);
+      return result;
     } catch (error) {
       throw error;
     }

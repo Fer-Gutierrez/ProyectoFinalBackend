@@ -79,6 +79,8 @@ const initializedPassport = () => {
               `La contraseña de ${username} es incorrecta`
             );
 
+          await userService.updateLastConnection(user._id);
+
           const userDto = new UserDTO(user);
           req.logger.info(
             `PassportLogin: Login exitoso del usuario: ${username}`

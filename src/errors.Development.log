@@ -343,3 +343,28 @@ error: Token doesnt exists - Time: 2023-10-13T02:08:43.696Z
 error: El usuario fer@prueba.com ya existe - Time: 2023-10-13T02:08:44.022Z
 error: La contraseña de fer@prueba.com es incorrecta - Time: 2023-10-13T02:08:44.246Z
 error: User ferIncorrect@prueba.com not found - Time: 2023-10-13T02:08:44.302Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-22T23:11:57.334Z
+error: jwt is not defined - Time: 2023-10-22T23:26:35.614Z
+error: user is not defined - Time: 2023-10-22T23:27:14.487Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-22T23:35:35.656Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-22T23:37:05.876Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-22T23:37:43.502Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-22T23:44:29.767Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-22T23:53:56.411Z
+error: Token doesnt exists - Time: 2023-10-23T01:37:24.260Z
+error: ENOENT: no such file or directory, open 'C:\Users\ferna\Desktop\Developer\1.Coder\4.Backend\Proyecto-Final\src\public\products\f4b826e2-6779-4a1f-b5f8-0514e484a6be-dog-g8271ecfe9_1920.jpg' - Time: 2023-10-23T01:37:55.732Z
+error: uid is not defined - Time: 2023-10-23T03:02:08.131Z
+error: uid is not defined - Time: 2023-10-23T03:03:30.693Z
+error: id is not defined - Time: 2023-10-23T03:03:42.585Z
+error: The filePath must have a value - Time: 2023-10-23T03:16:42.869Z
+error: The filePath must have a value - Time: 2023-10-23T03:18:35.098Z
+error: uid is not defined - Time: 2023-10-23T03:35:03.771Z
+error: uid is not defined - Time: 2023-10-23T03:35:12.743Z
+error: Assignment to constant variable. - Time: 2023-10-23T03:35:35.246Z
+error: Assignment to constant variable. - Time: 2023-10-23T03:36:08.252Z
+error: Assignment to constant variable. - Time: 2023-10-23T03:37:16.795Z
+error: Assignment to constant variable. - Time: 2023-10-23T03:37:56.085Z
+error: Assignment to constant variable. - Time: 2023-10-23T03:39:18.870Z
+error: Assignment to constant variable. - Time: 2023-10-23T03:39:54.921Z
+error: The user needs the following documents to be premium: comprobante de domicilio, comprobante de estado de cuenta - Time: 2023-10-23T03:40:22.247Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-23T03:55:07.523Z

@@ -4,6 +4,8 @@ import multer from "multer";
 import bcrypt, { genSaltSync } from "bcrypt";
 import jwt from "jsonwebtoken";
 import { CONFIG } from "./config/config.js";
+import { BadRequestError } from "./exceptions/exceptions.js";
+import { v4 as uuidv4 } from "uuid";
 
 //Ruta Absoluta:
 const __filename = fileURLToPath(import.meta.url);
@@ -12,12 +14,37 @@ const __dirname = dirname(__filename);
 //Multer importar archivos:
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, `${__dirname}/public/images`);
+    const originalRoute = req.originalUrl;
+    const route = req.route.path;
+    let fileType;
+
+    if (originalRoute === "/api/products" && route === "/") {
+      fileType = "product";
+    } else if (originalRoute.includes("/api/users") && route.includes("/:uid/documents")) {
+      fileType = req.body.fileType || "document";
+    }
+    const destination = getDestination(fileType);
+    if (!destination) throw new BadRequestError("Tipo de archivo no válido");
+    cb(null, destination);
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    const uniqueFilename = `${uuidv4()}-${file.originalname}`;
+    cb(null, uniqueFilename);
   },
 });
+
+const getDestination = (type) => {
+  switch (type) {
+    case "profile":
+      return `${__dirname}/public/profiles`;
+    case "product":
+      return `${__dirname}/public/products`;
+    case "document":
+      return `${__dirname}/public/documents`;
+    default:
+      return undefined;
+  }
+};
 
 //Metodo para crear el HASH
 export const createHash = (password) =>

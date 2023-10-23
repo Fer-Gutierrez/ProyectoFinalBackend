@@ -4,16 +4,11 @@ import productService from "../services/product.service.js";
 class ProductController {
   async createProduct(req, res) {
     try {
-      const {
-        code,
-        title,
-        description,
-        price,
-        status,
-        stock,
-        category,
-        files,
-      } = req.body;
+      req.body?.status === "true"
+        ? (req.body.status = true)
+        : (req.body.status = false);
+      const { code, title, description, price, status, stock, category } =
+        req.body;
 
       let result = await productService.addProduct({
         code,
@@ -23,7 +18,7 @@ class ProductController {
         status,
         stock,
         category,
-        thumbnails: files ? files.map((f) => f.path) : [],
+        thumbnails: req.files ? req.files.map((f) => f.path) : [],
         owner: req.user?.id,
       });
       req.logger.info(`Producto con code: ${code} agregado con éxito.`);

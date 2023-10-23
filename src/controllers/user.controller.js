@@ -1,13 +1,32 @@
-import { Logger } from "winston";
 import userService from "../services/user.service.js";
 import { BadRequestError } from "../exceptions/exceptions.js";
-import { th } from "@faker-js/faker";
 
 class UserController {
+  async AddDocumentsToUser(req, res, next) {
+    try {
+      const fileName = req.body.fileName;
+      const filesPath = req.files ? req.files.map((f) => f.path) : [];
+      const userId = req.params.uid;
+      req.logger.debug(`tring to add documents from user with id ${userId}.`);
+
+      let result = await userService.addDocumentsToUser(
+        userId,
+        fileName,
+        filesPath
+      );
+      req.logger.info(
+        `The files of type:${fileName} was added from de user id: ${userId}.`
+      );
+      res.sendSuccess(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async DoOrUndoPremiumRole(req, res, next) {
     try {
       let id = req.params.uid;
-      req.logger.debug(`tring to change the role o user with id ${uid}.`);
+      req.logger.debug(`tring to change the role o user with id ${id}.`);
       let result = await userService.DoOrUndoPremiumRole(id);
       req.logger.info(`El  usuario con id ${id}  tiene role = premium.`);
       res.sendSuccess(result);
