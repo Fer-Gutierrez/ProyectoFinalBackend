@@ -20,7 +20,10 @@ const storage = multer.diskStorage({
 
     if (originalRoute === "/api/products" && route === "/") {
       fileType = "product";
-    } else if (originalRoute.includes("/api/users") && route.includes("/:uid/documents")) {
+    } else if (
+      originalRoute.includes("/api/users") &&
+      route.includes("/:uid/documents")
+    ) {
       fileType = req.body.fileType || "document";
     }
     const destination = getDestination(fileType);
@@ -36,11 +39,11 @@ const storage = multer.diskStorage({
 const getDestination = (type) => {
   switch (type) {
     case "profile":
-      return `${__dirname}/public/profiles`;
+      return `${__dirname}/public/assets/profiles`;
     case "product":
-      return `${__dirname}/public/products`;
+      return `${__dirname}/public/assets/products`;
     case "document":
-      return `${__dirname}/public/documents`;
+      return `${__dirname}/public/assets/documents`;
     default:
       return undefined;
   }

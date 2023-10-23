@@ -377,3 +377,7 @@ error: Cannot set headers after they are sent to the client - Time: 2023-10-23T0
 error: Cannot set headers after they are sent to the client - Time: 2023-10-23T05:02:35.251Z
 error: The user needs the following documents to be premium: identificacion, comprobante de domicilio, comprobante de estado de cuenta - Time: 2023-10-23T05:03:07.311Z
 error: ENOENT: no such file or directory, open 'C:\Users\ferna\Desktop\Proy2\ProyectoFinalBackend\src\public\documents\141305b7-a5b3-4177-bd02-81000e8e7aff-auto-vertical-amarillo.jpg' - Time: 2023-10-23T05:03:20.138Z
+error: Cannot set headers after they are sent to the client - Time: 2023-10-23T05:12:12.369Z
+error: No existe cookie - Time: 2023-10-23T05:12:12.700Z
+error: The user needs the following documents to be premium: identificacion, comprobante de domicilio - Time: 2023-10-23T05:16:01.276Z
+error: Invalid Token - Time: 2023-10-23T05:16:57.170Z
