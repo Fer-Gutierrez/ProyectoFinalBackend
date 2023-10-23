@@ -11,13 +11,14 @@ import {
   BadRequestError,
   NotFoundError,
 } from "../exceptions/exceptions.js";
+import userService from "../services/user.service.js";
 
 class SessionRouter {
   constructor() {
     this.inicioSession = Router();
     this.inicioSession.post("/register", this.register);
     this.inicioSession.post("/login", this.login);
-    this.inicioSession.get("/logout", this.logout);
+    this.inicioSession.get("/logout", userCookieExtractor, this.logout);
     this.inicioSession.get(
       "/current",
       userSessionExtractor,
@@ -96,16 +97,19 @@ class SessionRouter {
       } else if (CONFIG.LOG_VALIDATION_TYPE === "JWT") {
         req.logger.debug(`Session.router-Logout: Logout de JWT`);
         if (req.signedCookies["user"]) {
-          console.log(req.user);
+          userService.updateLastConnection(req.user.id);
           return res
             .clearCookie("user")
             .sendSuccess({ message: "Se cerró la session" });
         } else throw new AuthenticationError("No existe cookie");
       } else if (CONFIG.LOG_VALIDATION_TYPE === "SESSIONS") {
+        userService.updateLastConnection(req.session.user.id);
         req.logger.debug(`Session.router-Logout: Logout de SESSIONS`);
         req.session.destroy((err) => {
-          if (!err) return res.sendSuccess({ message: "Se cerró la session" });
-          else throw new Error(`No fue posible cerrar la sesión: ${err}`);
+          if (err) {
+            throw new Error(`No fue posible cerrar la sesión: ${err}`);
+          }
+          return res.sendSuccess({ message: "Se cerró la session" });
         });
       }
     } catch (error) {
