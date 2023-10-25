@@ -61,26 +61,28 @@ class UserService {
       let user = await this.getUserById(id);
 
       //VALIDAMOS SI TIENE LOS DOCUMENTOS NECESARIOS:
-      let missingReqs = [
-        "identificacion",
-        "comprobante de domicilio",
-        "comprobante de estado de cuenta",
-      ];
-      user.documents.forEach((doc) => {
-        missingReqs.forEach((rq) => {
-          if (doc.name.toLowerCase() === rq)
-            missingReqs = missingReqs.filter(
-              (r) => r !== doc.name.toLowerCase()
-            );
+      if (user.role === "usuario") {
+        let missingReqs = [
+          "identificacion",
+          "comprobante de domicilio",
+          "comprobante de estado de cuenta",
+        ];
+        user.documents.forEach((doc) => {
+          missingReqs.forEach((rq) => {
+            if (doc.name.toLowerCase() === rq)
+              missingReqs = missingReqs.filter(
+                (r) => r !== doc.name.toLowerCase()
+              );
+          });
         });
-      });
 
-      if (missingReqs.length > 0)
-        throw new BadRequestError(
-          `The user needs the following documents to be premium: ${missingReqs.join(
-            ", "
-          )}`
-        );
+        if (missingReqs.length > 0)
+          throw new BadRequestError(
+            `The user needs the following documents to be premium: ${missingReqs.join(
+              ", "
+            )}`
+          );
+      }
 
       //CAMBIAMOS EL ROL DEL USUARIO:
       user.role === "premium"
