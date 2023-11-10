@@ -159,7 +159,7 @@ class ProductService {
         throw new AuthorizationError("Owner not authorized.");
 
       let result = await this.productManagerDAO.deleteProduct(id);
-      console.log(result);
+
       if (existProduct.owner !== "admin") {
         let userOwner = await this.userManagerDAO.getById(existProduct.owner);
         if (userOwner && userOwner?.role === "premium") {
@@ -181,7 +181,6 @@ class ProductService {
               <p>Muchas Gracias!</p>
             </div>`,
           });
-          console.log(mailSent);
         }
       }
 
