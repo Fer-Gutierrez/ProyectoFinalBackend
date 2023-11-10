@@ -383,3 +383,7 @@ error: The user needs the following documents to be premium: identificacion, com
 error: Invalid Token - Time: 2023-10-23T05:16:57.170Z
 error: Cannot set headers after they are sent to the client - Time: 2023-10-23T05:26:27.919Z
 error: The user needs the following documents to be premium: identificacion - Time: 2023-10-25T02:34:22.040Z
+error: email (user) are required. Please Login - Time: 2023-11-06T18:44:47.968Z
+error: Cannot set headers after they are sent to the client - Time: 2023-11-06T18:46:47.590Z
+error: infoUsersRemoved is not defined - Time: 2023-11-06T19:54:36.420Z
+error: Token doesnt exists - Time: 2023-11-06T20:00:56.251Z

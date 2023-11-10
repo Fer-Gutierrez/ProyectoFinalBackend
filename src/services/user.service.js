@@ -1,18 +1,67 @@
-import {
-  HttpError,
-  StatusCodes,
-  createHash,
-  isValidPassword,
-} from "../utils.js";
+import { createHash, isValidPassword } from "../utils.js";
 import FactoryDAO from "../dao/daoFactory.js";
 import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
 import mailService from "./mail.service.js";
 import jwt from "jsonwebtoken";
 import { CONFIG } from "../config/config.js";
+import userRouter from "../routes/user.router.js";
+
+const calcularHorasTranscurridas = (fechaInicio, fechaFin) => {
+  const diffEnMilisegundos = fechaFin - fechaInicio;
+  const horas = diffEnMilisegundos / 1000 / 60 / 60;
+  return parseFloat(horas.toFixed(2));
+};
 
 class UserService {
   constructor() {
     this.userManagerDAO = FactoryDAO.getUserManager();
+  }
+
+  async RemoveUsersWithTwoDaysInactivity() {
+    try {
+      let users = await this.userManagerDAO.getAll();
+      console.log(users);
+      let usersToRemove = [];
+
+      if (users.length <= 0)
+        throw new NotFoundError(`No existen usuarios por eliminar.`);
+      users.forEach((u) => {
+        const horasTranscurridas = calcularHorasTranscurridas(
+          u.last_connection,
+          new Date()
+        );
+        console.log("horas transcurridas:", horasTranscurridas);
+        if (horasTranscurridas > 48) usersToRemove.push(u);
+      });
+
+      if (usersToRemove.length > 0) {
+        let infoUsersRemoved = [];
+        for (const user of usersToRemove) {
+          console.log(user._id);
+          let result = await this.userManagerDAO.delete(user._id);
+          infoUsersRemoved.push({ ...result, email: user.email });
+        }
+
+        console.log(infoUsersRemoved);
+        let mensaje = `Se eliminaron ${infoUsersRemoved.length} usuario que no tenian actividad hace 2 días.`;
+        return { mensaje, infoUsersRemoved };
+      }
+
+      return {
+        mensaje:
+          "Se recorrieron todos los usuarios. Ninguno debió ser eliminado por inactividad.",
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUsers() {
+    try {
+      return await this.userManagerDAO.getAll();
+    } catch (error) {
+      throw error;
+    }
   }
 
   async createUser(user) {

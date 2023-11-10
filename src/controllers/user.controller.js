@@ -2,6 +2,24 @@ import userService from "../services/user.service.js";
 import { BadRequestError } from "../exceptions/exceptions.js";
 
 class UserController {
+  async RemoveUsersWithTwoDaysInactivity(req, res, next) {
+    try {
+      let result = await userService.RemoveUsersWithTwoDaysInactivity();
+      res.sendSuccess(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async GetUsers(req, res, next) {
+    try {
+      let result = await userService.getUsers();
+      res.sendSuccess(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async AddDocumentsToUser(req, res, next) {
     try {
       const fileName = req.body.fileName;

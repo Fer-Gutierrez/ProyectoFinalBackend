@@ -49,4 +49,13 @@ export default class UserDbManager {
       throw new Error(error.message);
     }
   };
+
+  delete = async (id) =>{
+    try {
+      let result = await userModel.deleteOne({ _id: id });
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
