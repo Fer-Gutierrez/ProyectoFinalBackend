@@ -4,10 +4,12 @@ import {
   BadRequestError,
   AuthorizationError,
 } from "../exceptions/exceptions.js";
+import mailService from "./mail.service.js";
 
 class ProductService {
   constructor() {
     this.productManagerDAO = FactoryDAO.getProductManager();
+    this.userManagerDAO = FactoryDAO.getUserManager();
   }
 
   getProducts = async (
@@ -156,7 +158,34 @@ class ProductService {
       if (user.role === "premium" && user.id !== existProduct.owner)
         throw new AuthorizationError("Owner not authorized.");
 
-      return await this.productManagerDAO.deleteProduct(id);
+      let result = await this.productManagerDAO.deleteProduct(id);
+      console.log(result);
+      if (existProduct.owner !== "admin") {
+        let userOwner = await this.userManagerDAO.getById(existProduct.owner);
+        if (userOwner && userOwner?.role === "premium") {
+          let mailSent = await mailService.sendSimpleMail({
+            from: "",
+            to: userOwner.email,
+            subject: `Producto ${existProduct.title} (${existProduct._id}) Borrado`,
+            html: `
+            <div>
+              <p>Hola ${userOwner.first_name}:</p>
+              <p>Le informamos que el siguiente producto a sido eliminado:</p>
+              <p>Title:${existProduct.title}</p>
+              <p>Code:${existProduct.code}</p>
+              <p>Description:${existProduct.description}</p>
+              <p>Categoy:${existProduct.category}</p>
+              <p>Price:${existProduct.price}</p>
+              <p>Stock:${existProduct.stock}</p>
+              <p>Status:${existProduct.status}</p>
+              <p>Muchas Gracias!</p>
+            </div>`,
+          });
+          console.log(mailSent);
+        }
+      }
+
+      return result;
     } catch (error) {
       throw error;
     }

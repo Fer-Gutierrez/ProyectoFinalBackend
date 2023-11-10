@@ -387,3 +387,23 @@ error: email (user) are required. Please Login - Time: 2023-11-06T18:44:47.968Z
 error: Cannot set headers after they are sent to the client - Time: 2023-11-06T18:46:47.590Z
 error: infoUsersRemoved is not defined - Time: 2023-11-06T19:54:36.420Z
 error: Token doesnt exists - Time: 2023-11-06T20:00:56.251Z
+error: data and hash must be strings - Time: 2023-11-10T13:36:42.254Z
+error: data and hash must be strings - Time: 2023-11-10T13:38:23.038Z
+error: data and hash must be strings - Time: 2023-11-10T13:38:44.711Z
+error: data and hash must be strings - Time: 2023-11-10T13:39:22.266Z
+error: Found non-callable @@iterator - Time: 2023-11-10T13:53:02.920Z
+error: Cannot set headers after they are sent to the client - Time: 2023-11-10T14:44:52.433Z
+error: No existen usuarios por eliminar. - Time: 2023-11-10T16:17:22.863Z
+error: Cannot set headers after they are sent to the client - Time: 2023-11-10T16:21:31.575Z
+error: Missing credentials - Time: 2023-11-10T16:21:36.700Z
+error: Cannot set headers after they are sent to the client - Time: 2023-11-10T18:27:06.162Z
+error: Acceso denegado - Time: 2023-11-10T18:28:03.531Z
+error: The user needs the following documents to be premium: identificacion, comprobante de domicilio, comprobante de estado de cuenta - Time: 2023-11-10T18:31:43.248Z
+error: Cast to ObjectId failed for value ":uid" (type string) at path "_id" for model "users" - Time: 2023-11-10T18:35:32.778Z
+error: The user needs the following documents to be premium: identificacion, comprobante de domicilio - Time: 2023-11-10T18:36:19.381Z
+error: The user needs the following documents to be premium: comprobante de domicilio - Time: 2023-11-10T18:36:41.578Z
+error: Acceso denegado - Time: 2023-11-10T18:38:17.806Z
+error: Acceso denegado - Time: 2023-11-10T18:47:08.019Z
+error: The user needs the following documents to be premium: identificacion, comprobante de estado de cuenta - Time: 2023-11-10T18:49:07.264Z
+error: The user needs the following documents to be premium: comprobante de estado de cuenta - Time: 2023-11-10T18:49:28.302Z
+error: Owner not authorized. - Time: 2023-11-10T18:50:23.676Z

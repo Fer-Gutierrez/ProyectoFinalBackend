@@ -4,7 +4,7 @@ import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
 import mailService from "./mail.service.js";
 import jwt from "jsonwebtoken";
 import { CONFIG } from "../config/config.js";
-import userRouter from "../routes/user.router.js";
+import { UserDTO } from "../dao/Dtos/user.dto.js";
 
 const calcularHorasTranscurridas = (fechaInicio, fechaFin) => {
   const diffEnMilisegundos = fechaFin - fechaInicio;
@@ -19,38 +19,50 @@ class UserService {
 
   async RemoveUsersWithTwoDaysInactivity() {
     try {
+      const limitHours = 48;
       let users = await this.userManagerDAO.getAll();
-      console.log(users);
       let usersToRemove = [];
 
       if (users.length <= 0)
         throw new NotFoundError(`No existen usuarios por eliminar.`);
+
       users.forEach((u) => {
         const horasTranscurridas = calcularHorasTranscurridas(
           u.last_connection,
           new Date()
         );
+
         console.log("horas transcurridas:", horasTranscurridas);
-        if (horasTranscurridas > 48) usersToRemove.push(u);
+
+        if (horasTranscurridas > limitHours) usersToRemove.push(u);
       });
 
-      if (usersToRemove.length > 0) {
-        let infoUsersRemoved = [];
-        for (const user of usersToRemove) {
-          console.log(user._id);
-          let result = await this.userManagerDAO.delete(user._id);
-          infoUsersRemoved.push({ ...result, email: user.email });
-        }
-
-        console.log(infoUsersRemoved);
-        let mensaje = `Se eliminaron ${infoUsersRemoved.length} usuario que no tenian actividad hace 2 días.`;
-        return { mensaje, infoUsersRemoved };
+      if (usersToRemove.length <= 0)
+        throw new NotFoundError(`No existen usuarios por eliminar.`);
+      let infoUsersRemoved = [];
+      for (const user of usersToRemove) {
+        let result = await this.userManagerDAO.delete(user._id);
+        let mailSended = await mailService.sendSimpleMail({
+          from: "",
+          to: user.email,
+          subject: "Eliminacion de cuenta por inactividad",
+          html: `
+          <div>
+            <p>Hola ${user.first_name}:</p>
+            <p>Le informamos que su cuenta a sido eliminada por inactividad. Registramos que no ingresó a la aplicación en las ultimas ${limitHours} horas.</p>
+            <p>Puede volver a registrarse en el siguiente link:</p>
+            <a href="http://localhost:8080/register">REGISTRARSE</a>
+          </div>`,
+        });
+        infoUsersRemoved.push({
+          ...result,
+          email: user.email,
+          mailSent: mailSended.accepted.length > 0 ? true : false,
+        });
       }
 
-      return {
-        mensaje:
-          "Se recorrieron todos los usuarios. Ninguno debió ser eliminado por inactividad.",
-      };
+      let mensaje = `Se eliminaron ${infoUsersRemoved.length} usuarios que no tenian actividad hace ${limitHours} horas.`;
+      return { mensaje, infoUsersRemoved };
     } catch (error) {
       throw error;
     }
@@ -58,7 +70,17 @@ class UserService {
 
   async getUsers() {
     try {
-      return await this.userManagerDAO.getAll();
+      let users = await this.userManagerDAO.getAll();
+      let usersDto = [];
+      if (users.length <= 0)
+        throw new NotFoundError("No se encontraron usuarios.");
+
+      users.forEach((u) => {
+        let userDto = new UserDTO(u);
+        usersDto.push({ ...userDto });
+      });
+
+      return usersDto;
     } catch (error) {
       throw error;
     }
@@ -79,6 +101,7 @@ class UserService {
         throw new BadRequestError("User must have password property");
 
       const result = await this.userManagerDAO.create(user);
+
       return result;
     } catch (error) {
       throw error;
@@ -209,9 +232,6 @@ class UserService {
 
   async addDocumentsToUser(id, fileName, filesPath) {
     try {
-      console.log(id);
-      console.log(fileName);
-      console.log(filesPath);
       if (!id) throw new BadRequestError("id must have value");
       let user = await this.userManagerDAO.getById(id);
       if (!user) throw new NotFoundError(`User wwith id ${id} not found.`);

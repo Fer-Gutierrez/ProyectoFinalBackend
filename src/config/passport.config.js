@@ -9,6 +9,7 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 import { cookieExtractor } from "../utils.js";
 import { UserDTO } from "../dao/Dtos/user.dto.js";
 import { BadRequestError, NotFoundError } from "../exceptions/exceptions.js";
+import mailService from "../services/mail.service.js";
 
 const LocalStrategy = local.Strategy;
 const initializedPassport = () => {
@@ -38,6 +39,20 @@ const initializedPassport = () => {
           req.logger.info(
             `Passport-Register: Registro exitoso de usuario ${newUser.email}`
           );
+
+          let sendedMail = await mailService.sendSimpleMail({
+            from: "",
+            to: newUser.email,
+            subject: "Bienvenido a AppProyectoFinalBackEnd",
+            html: `
+            <div>
+              <p>Hola ${newUser.first_name}:</p>
+              <p>Gracias por registrarte en la aplicación del proyecto final del curso de Desarrollador Full Stack de CorderHose.</p>
+              <p>Puedes ingresar en el siguiente link:</p>
+              <a href="http://localhost:8080/login">INGRESAR</a>
+            </div>`,
+          });
+
           return done(null, result);
         } catch (error) {
           return done(error);

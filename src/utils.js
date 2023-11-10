@@ -55,7 +55,7 @@ export const createHash = (password) =>
 
 //Metodo para validar el HASH
 export const isValidPassword = async (user, password) => {
-  const resultado = await bcrypt.compare(password, user.password);
+  const resultado = await bcrypt.compare(password.toString(), user.password);
   return resultado;
 };
 

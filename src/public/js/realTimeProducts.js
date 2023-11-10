@@ -37,7 +37,7 @@ addProductForm.addEventListener("submit", async (e) => {
 
   const result = await fetch("http://localhost:8080/api/products/", options);
   Inforesult = await result.json();
-  console.log(Inforesult);
+
   if (result.status !== 200) {
     alert(`${Inforesult.errorCause}: ${Inforesult.message}`);
   } else {
@@ -56,9 +56,9 @@ deleteProductForm.addEventListener("submit", (e) => {
   })
     .then((res) => res.json())
     .then((res) => {
-      res.status === "OK"
-        ? alert(res.message)
-        : alert(JSON.stringify(res.message, null, "\t"));
+      res.status === "success"
+        ? alert(res.payload.message)
+        : alert(res.message);
     })
     .catch((err) => console.log("error", err));
   deleteProductForm.reset();

@@ -19,5 +19,6 @@ form.addEventListener("submit", async (e) => {
   if (result.status === 200) {
     result = await result.json();
     alert(result.payload.message);
+    window.location.href = "/login";
   }
 });
