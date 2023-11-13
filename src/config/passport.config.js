@@ -49,7 +49,7 @@ const initializedPassport = () => {
               <p>Hola ${newUser.first_name}:</p>
               <p>Gracias por registrarte en la aplicación del proyecto final del curso de Desarrollador Full Stack de CorderHose.</p>
               <p>Puedes ingresar en el siguiente link:</p>
-              <a href="http://localhost:8080/login">INGRESAR</a>
+              <a href="${CONFIG.SERVER}/login">INGRESAR</a>
             </div>`,
           });
 
@@ -114,7 +114,7 @@ const initializedPassport = () => {
       {
         clientID: CONFIG.GITHUB_CLIENTID,
         clientSecret: CONFIG.GITHUB_CLIENTSECRET,
-        callbackURL: "http://localhost:8080/api/sessions/githubcallback",
+        callbackURL: `${CONFIG.SERVER}/api/sessions/githubcallback`,
       },
       async (accessToken, refreshToken, profile, done) => {
         try {

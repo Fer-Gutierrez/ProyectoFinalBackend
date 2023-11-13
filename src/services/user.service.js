@@ -51,7 +51,7 @@ class UserService {
             <p>Hola ${user.first_name}:</p>
             <p>Le informamos que su cuenta a sido eliminada por inactividad. Registramos que no ingresó a la aplicación en las ultimas ${limitHours} horas.</p>
             <p>Puede volver a registrarse en el siguiente link:</p>
-            <a href="http://localhost:8080/register">REGISTRARSE</a>
+            <a href="${CONFIG.SERVER}/register">REGISTRARSE</a>
           </div>`,
         });
         infoUsersRemoved.push({
@@ -189,7 +189,7 @@ class UserService {
         html: `
         <div>
           <p>Este correo fue enviado para recuperar una contraseña. Favor de dirigirse al siguiente link:</p>
-          <a href="http://localhost:8080/resetPassword?token=${token}">LINK</a>
+          <a href="${CONFIG.SERVER}/resetPassword?token=${token}">LINK</a>
         </div>`,
       });
       return {

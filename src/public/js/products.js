@@ -111,7 +111,6 @@ limpiarPanelDatos = () => {
 
 crearCarrito = async () => {
   try {
-    // let response = await fetch("http://localhost:8080/api/carts/", {
     let response = await fetch(`${baseUrl}/api/carts/`, {
       method: "POST",
     });
@@ -133,7 +132,6 @@ crearCarrito = async () => {
 agregarProductoAlCarrito = async (cartId, productId) => {
   try {
     let response = await fetch(
-      // `http://localhost:8080/api/carts/${cartId}/products/${productId}`,
       `${baseUrl}/api/carts/${cartId}/products/${productId}`,
       {
         method: "POST",
@@ -176,7 +174,6 @@ formFilter.addEventListener("submit", (e) => {
     limit,
   };
 
-  // urlFiltro = `http://localhost:8080/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
   urlFiltro = `${baseUrl}/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
 
   realizarConsulta(urlFiltro);
@@ -196,7 +193,6 @@ let btnViewCart = document.getElementById("ViewCart");
 btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
   cartId
-    ? // ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
-      (window.location.href = `${baseUrl}/carts/${cartId}`)
+    ? (window.location.href = `${baseUrl}/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
