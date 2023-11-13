@@ -2,10 +2,6 @@
   font-family: "Roboto", sans-serif;
 }
 
-.text-white {
-  color: whitesmoke;
-}
-
 p,
 label {
   font-weight: 200;
@@ -17,10 +13,6 @@ p {
   margin: 0.5rem;
 }
 
-a {
-  align-self: center;
-}
-
 button {
   margin: 0.5rem auto;
   min-width: 200px;
@@ -28,41 +20,46 @@ button {
   font-size: medium;
 }
 
-.login-title {
-  text-align: center;
+a {
+  align-self: center;
+}
+
+input {
+  width: 250px;
+}
+
+.text-white {
+  color: whitesmoke;
 }
 
 .container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
-.container-login {
+.register-title {
+  text-align: center;
+}
+
+#registerForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.container-register {
   display: flex;
   flex-direction: column;
   background-color: rgb(48, 91, 129);
   margin: 0 auto;
   padding: 1rem;
   border-radius: 1rem;
-}
-
-#loginForm {
-  display: flex;
-  flex-direction: column;
+  max-width: 60%;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: max-content 2fr;
   gap: 0.5rem;
   margin-bottom: 1rem;
-}
-
-.invisible {
-  display: none;
-}
-
-.visible {
-  display: flex;
-  flex-direction: column;
 }

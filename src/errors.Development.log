@@ -407,3 +407,4 @@ error: Acceso denegado - Time: 2023-11-10T18:47:08.019Z
 error: The user needs the following documents to be premium: identificacion, comprobante de estado de cuenta - Time: 2023-11-10T18:49:07.264Z
 error: The user needs the following documents to be premium: comprobante de estado de cuenta - Time: 2023-11-10T18:49:28.302Z
 error: Owner not authorized. - Time: 2023-11-10T18:50:23.676Z
+error: Cannot set headers after they are sent to the client - Time: 2023-11-12T23:47:14.241Z

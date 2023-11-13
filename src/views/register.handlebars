@@ -1,23 +1,24 @@
-<div>
-    <h1>Registro</h1>
-    <form id="registerForm">
-        <label>Nombre:</label>
-        <input name="first_name">
-        <br/>
-        <label>Apellido:</label>
-        <input name="last_name">
-        <br/>
-        <label>Email:</label>
-        <input name="email">
-        <br/>
-        <label>Edad:</label>
-        <input name="age">
-        <br/>
-        <label>Contraseña:</label>
-        <input type="password" name="password">
-        <button type="submit">Registrar</button>
-    </form>
-    <p>¿Ya tienes una cuenta?</p> <a href="/login"><button>Login</button></a>
+<div class="container">
+    <h1 class="register-title">Registro</h1>
+    <div class="container-register">
+        <form id="registerForm">
+            <div class="form-grid">
+                <label class="text-white">Nombre:</label>
+                <input name="first_name">
+                <label class="text-white">Apellido:</label>
+                <input name="last_name">
+                <label class="text-white">Email:</label>
+                <input name="email">
+                <label class="text-white">Edad:</label>
+                <input name="age">
+                <label class="text-white"   >Contraseña:</label>
+                <input type="password" name="password">
+            </div>
+            <button type="submit">Registrar</button>
+        </form>
+    </div>
+    <p style="font-weight: 300; margin-top: 2rem;">¿Ya tienes una cuenta?</p>
+    <a href="/login"><button>Login</button></a>
 </div>
 
 <script src="/js/register.js"></script>

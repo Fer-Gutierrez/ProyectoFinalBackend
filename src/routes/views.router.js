@@ -106,6 +106,7 @@ router.get("/ticket/:tid", userCookieExtractor, async (req, res) => {
 router.get("/register", (req, res) => {
   res.render("register", {
     title: "Resgister",
+    styles: "css/registerStyle.css",
   });
 });
 

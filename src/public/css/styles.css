@@ -1,3 +1,7 @@
+* {
+  font-family: "Roboto", sans-serif;
+}
+
 .chatContainer {
   display: flex;
   flex-direction: column;
@@ -61,4 +65,3 @@ p.user {
 p.message {
   font-style: italic;
 }
-

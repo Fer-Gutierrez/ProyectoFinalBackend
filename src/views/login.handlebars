@@ -4,20 +4,25 @@
         <a href="http://localhost:8080/"><button>Ir al Home</button></a>
         <a href="http://localhost:8080/realtimeProducts"><button>Ir a RealTimeProducts</button></a>
     </div>
-    <h1>Login</h1>
-    <a href="/api/sessions/github"><button>Autenticate con Git Hub</button></a>
-    <form action="" id="loginForm">
-        <label for="email">Email:</label>
-        <input type="text" name="email" id="email">
-        <br>
-        <label for="password">Contraseña:</label>
-        <input type="password" name="password" id="password">
-        <button type="submit">Ingresar</button>
-    </form>
-    <p>¿Ovidaste tu contraseña?</p>
-    <a href="/sendMailToRestorePassword"><button>Recuperar contraseña</button></a> 
-    <p>¿No tienes cuenta? Registrate gratis:</p>
-    <a href="http://localhost:8080/register"><button>Registrarse</button></a>
+    <h1 class="login-title">Login</h1>
+    <div class="container">
+        <div class="container-login">
+            <form action="" id="loginForm">
+                <div class="form-grid">
+                    <label class="text-white" for="email">Email:</label>
+                    <input type="text" name="email" id="email">
+                    <label class="text-white" for="password">Contraseña:</label>
+                    <input type="password" name="password" id="password">
+                </div>
+                <button type="submit">Ingresar</button>
+                <a href="/api/sessions/github"><button>Autenticate con Git Hub</button></a>
+            </form>
+            <p class="text-white">¿Ovidaste tu contraseña?</p>
+            <a href="/sendMailToRestorePassword"><button>Recuperar contraseña</button></a> 
+        </div>
+        <p style="font-weight: 300; margin-top: 2rem;">¿No tienes cuenta?</p>
+        <a href="http://localhost:8080/register"><button>Registrate</button></a>
+    </div>
 
 </div>
 <script src="js/login.js"></script>
