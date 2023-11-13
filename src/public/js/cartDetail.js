@@ -1,9 +1,11 @@
 let purchaseCart_btn = document.getElementById("purchaseCart");
 let strongWithCartId = document.getElementById("cartid");
 let cartId = strongWithCartId.innerText;
+const baseUrl = window.location.origin;
+
 purchaseCart_btn.addEventListener("click", async () => {
   let response = await fetch(
-    `http://localhost:8080/api/carts/${cartId}/purchase`,
+    `${baseUrl}/api/carts/${cartId}/purchase`,
     { method: "POST" }
   );
   let res = await response.json();
@@ -22,7 +24,7 @@ purchaseCart_btn.addEventListener("click", async () => {
       });
       //console.log(arrayProducts);
       let resultUpdate = await fetch(
-        `http://localhost:8080/api/carts/${cartId}`,
+        `${baseUrl}/api/carts/${cartId}`,
         {
           method: "PUT",
           headers: {

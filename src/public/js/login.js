@@ -1,4 +1,5 @@
 const form = document.getElementById("loginForm");
+const baseUrl = window.location.origin;
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();

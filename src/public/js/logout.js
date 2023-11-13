@@ -1,4 +1,6 @@
 const btnLogout = document.getElementById("logout-btn");
+const baseUrl = window.location.origin;
+
 btnLogout &&
   btnLogout.addEventListener("click", async () => {
     let result = await fetch("/api/sessions/logout", { method: "GET" });

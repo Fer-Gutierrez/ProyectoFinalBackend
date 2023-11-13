@@ -1,4 +1,5 @@
 const socket = io();
+const baseUrl = window.location.origin;
 
 //FUNCIONES
 //VALIDAMOS EXISTENCIA DE USUARIO:
@@ -19,7 +20,7 @@ const validarUsuario = async () => {
       window.location.href = "/";
     }
   } catch (error) {
-    alert(error)
+    alert(error);
   }
 };
 validarUsuario();
@@ -30,7 +31,7 @@ btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
 
   cartId
-    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    ? (window.location.href = `${baseUrl}/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
 
