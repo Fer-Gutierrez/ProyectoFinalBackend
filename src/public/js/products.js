@@ -2,6 +2,7 @@
 let urlFiltro = "";
 let urlNextPage = "";
 let urlPrevPage = "";
+const baseUrl = window.location.origin;
 
 //FUNCIONES
 realizarConsulta = async (url) => {
@@ -80,7 +81,7 @@ actualizarDatosEnPantalle = (payload) => {
           <div style="display: flex; flex-direction:row; gap: .5rem;">
               <strong>Stock: </strong><p>${p.stock}</p>
           </div>
-          <a href="http://localhost:8080/product/${p._id}"><button>Ver Detalle</button></a>
+          <a href="${baseUrl}/product/${p._id}"><button>Ver Detalle</button></a>
         `;
 
       let productId = p._id;
@@ -110,7 +111,8 @@ limpiarPanelDatos = () => {
 
 crearCarrito = async () => {
   try {
-    let response = await fetch("http://localhost:8080/api/carts/", {
+    // let response = await fetch("http://localhost:8080/api/carts/", {
+    let response = await fetch(`${baseUrl}/api/carts/`, {
       method: "POST",
     });
     let res = await response.json();
@@ -131,7 +133,8 @@ crearCarrito = async () => {
 agregarProductoAlCarrito = async (cartId, productId) => {
   try {
     let response = await fetch(
-      `http://localhost:8080/api/carts/${cartId}/products/${productId}`,
+      // `http://localhost:8080/api/carts/${cartId}/products/${productId}`,
+      `${baseUrl}/api/carts/${cartId}/products/${productId}`,
       {
         method: "POST",
       }
@@ -173,7 +176,8 @@ formFilter.addEventListener("submit", (e) => {
     limit,
   };
 
-  urlFiltro = `http://localhost:8080/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
+  // urlFiltro = `http://localhost:8080/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
+  urlFiltro = `${baseUrl}/api/products?code=${query.code}&title=${query.title}&description=${query.description}&category=${query.category}&status=${query.status}&price=${query.price}&stock=${query.stock}&limit=${limit}`;
 
   realizarConsulta(urlFiltro);
 });
@@ -192,6 +196,7 @@ let btnViewCart = document.getElementById("ViewCart");
 btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
   cartId
-    ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+    ? // ? (window.location.href = `http://localhost:8080/carts/${cartId}`)
+      (window.location.href = `${baseUrl}/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
