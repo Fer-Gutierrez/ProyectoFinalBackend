@@ -1,5 +1,4 @@
 const btnLogout = document.getElementById("logout-btn");
-const baseUrl = window.location.origin;
 
 btnLogout &&
   btnLogout.addEventListener("click", async () => {

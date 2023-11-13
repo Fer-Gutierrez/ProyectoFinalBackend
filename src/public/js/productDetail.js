@@ -1,7 +1,6 @@
 //VARIABLES
 let parrWithId = document.getElementById("productId");
 let productId = parrWithId.innerText;
-const baseUrl = window.location.origin;
 
 //ELEMENTOS
 let btnAddToCart = document.getElementById("btnAddToCart");
@@ -22,14 +21,14 @@ btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
 
   cartId
-    ? (window.location.href = `${baseUrl}/carts/${cartId}`)
+    ? (window.location.href = `/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
 
 //FUNCIONES
 crearCarrito = async () => {
   try {
-    let response = await fetch(`${baseUrl}/api/carts/`, {
+    let response = await fetch(`/api/carts/`, {
       method: "POST",
     });
     let res = await response.json();
@@ -51,7 +50,7 @@ crearCarrito = async () => {
 agregarProductoAlCarrito = async (cartId, productId) => {
   try {
     let response = await fetch(
-      `${baseUrl}/api/carts/${cartId}/products/${productId}`,
+      `/api/carts/${cartId}/products/${productId}`,
       {
         method: "POST",
       }
