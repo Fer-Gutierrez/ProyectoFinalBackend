@@ -1,12 +1,11 @@
 console.log("Se activo el socket del cliente -chat-");
 const socket = io();
-const baseUrl = window.location.origin;
 
 let btnViewCart = document.getElementById("ViewCart");
 btnViewCart.addEventListener("click", () => {
   let cartId = localStorage.getItem("carritoId");
   cartId
-    ? (window.location.href = `${baseUrl}/carts/${cartId}`)
+    ? (window.location.href = `/carts/${cartId}`)
     : alert("No tiene nada en el carrito, favor de agregar un producto.");
 });
 
@@ -36,7 +35,7 @@ addProductForm.addEventListener("submit", async (e) => {
     body: formData,
   };
 
-  const result = await fetch(`${baseUrl}/api/products/`, options);
+  const result = await fetch(`/api/products/`, options);
   Inforesult = await result.json();
 
   if (result.status !== 200) {
@@ -52,7 +51,7 @@ addProductForm.addEventListener("submit", async (e) => {
 let deleteProductForm = document.getElementById("deleteProductForm");
 deleteProductForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  fetch(`${baseUrl}/api/products/${e.target.id.value}`, {
+  fetch(`/api/products/${e.target.id.value}`, {
     method: "DELETE",
   })
     .then((res) => res.json())
